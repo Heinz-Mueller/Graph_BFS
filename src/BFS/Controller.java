@@ -108,6 +108,8 @@ public class Controller
     private Queue<Knoten> queue;
     static ArrayList<Knoten> nodes = new ArrayList<Knoten>();
 
+    static ArrayList<Circle> alleKnoten = new ArrayList<Circle>();
+
 
 
     public Controller()
@@ -194,6 +196,12 @@ public class Controller
         nodes.add(C);
         nodes.add(D);
         nodes.add(E);
+
+        alleKnoten.add(knotenA);
+        alleKnoten.add(knotenB);
+        alleKnoten.add(knotenC);
+        alleKnoten.add(knotenD);
+        alleKnoten.add(knotenE);
 
         int adjacency_matrix[][] ={
                 {0,1,1,0,0}, // A: 40
