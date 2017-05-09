@@ -108,6 +108,7 @@ public class Controller
     private Queue<Knoten> queue;
     static ArrayList<Knoten> nodes = new ArrayList<Knoten>();
 
+    private Queue<Knoten> warteschlange;
     static ArrayList<Circle> alleKnoten = new ArrayList<Circle>();
 
 
@@ -115,14 +116,32 @@ public class Controller
     public Controller()
     {
         queue = new LinkedList<Knoten>();
+        warteschlange = new LinkedList<Knoten>();
+
     }
 
     static class Knoten
     {
+        int entfernung = 0;
+        Circle kreis;
+        boolean entfernungGesetzt;
+
         int data;
         boolean besucht;
 
-        Knoten(int data)
+        Knoten(int data, Circle kreis)
+        {
+            this.data = data;
+            this.kreis = kreis;
+        }
+    }
+
+    static class graphKnoten
+    {
+        int data;
+        boolean besucht;
+
+        graphKnoten(int data)
         {
             this.data = data;
         }
@@ -140,7 +159,7 @@ public class Controller
         {
             if(nodes.get(i).equals(x))
             {
-                nodeIndex=i;
+                nodeIndex = i;
                 break;
             }
         }
@@ -162,34 +181,74 @@ public class Controller
 
     public void bfs(int adjacency_matrix[][], Knoten node)
     {
+        int rot = 100;
+        int gruen = 255;
+        int blau = 255;
+
+        Color farbe = Color.rgb(100, 150, 255);
+
         queue.add(node);
         node.besucht = true;
         while (!queue.isEmpty())
         {
             Knoten element = queue.remove();
             System.out.print(element.data + "\t");
-            knotenA.setFill(Color.RED);
-            ArrayList<Knoten> neighbours = findNeighbours(adjacency_matrix,element);
+
+            farbe = Color.rgb(rot, gruen, blau);
+
+            //element.kreis.setFill(farbe);
+
+            rot = rot - 20;
+            gruen = gruen -50;
+            blau = blau - 60;
+
+            ArrayList<Knoten> neighbours = findNeighbours(adjacency_matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
+                //element.kreis.setFill(Color.GOLD);
+                if(!neighbours.get(i).entfernungGesetzt)
+                {
+                    neighbours.get(i).entfernung = element.entfernung + 1;
+                    neighbours.get(i).entfernungGesetzt = true;
+                }
+                //neighbours.get(i).entfernung = element.entfernung + 1;
+
+                System.out.print("NACHBAR " + neighbours.get(i).data + "\t");
+                System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
+
+
                 Knoten n = neighbours.get(i);
-                if(n!=null && !n.besucht)
+//                n.entfernung = n.entfernung + 1;
+
+//                System.out.print(" ENTFERNUNG: " + n.entfernung + " ");
+                if (n.entfernung == 1)
+                {
+                  n.kreis.setFill(Color.GREEN);
+                }
+                if (n.entfernung == 2)
+                {
+                    n.kreis.setFill(Color.GOLD);
+                }
+
+                if(n != null && !n.besucht)
                 {
                     queue.add(n);
                     n.besucht = true;
+                    //neighbours.get(i).kreis.setFill(Color.GOLD);
                 }
             }
+            System.out.print("\n");
         }
     }
 
 
     public void knotenAnlegen()
     {
-        Knoten A = new Knoten(40);
-        Knoten B = new Knoten(10);
-        Knoten C = new Knoten(20);
-        Knoten D = new Knoten(30);
-        Knoten E = new Knoten(60);
+        Knoten A = new Knoten(10, knotenA);
+        Knoten B = new Knoten(20, knotenB);
+        Knoten C = new Knoten(30, knotenC);
+        Knoten D = new Knoten(40, knotenD);
+        Knoten E = new Knoten(50, knotenE);
 
         nodes.add(A);
         nodes.add(B);
