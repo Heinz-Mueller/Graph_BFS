@@ -199,14 +199,15 @@ public class Controller
             //element.kreis.setFill(farbe);
 
             rot = rot - 20;
-            gruen = gruen -50;
+            gruen = gruen - 0;
             blau = blau - 60;
 
             ArrayList<Knoten> neighbours = findNeighbours(adjacency_matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
+                Knoten n = neighbours.get(i);
                 //element.kreis.setFill(Color.GOLD);
-                if(!neighbours.get(i).entfernungGesetzt)
+                if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
                     neighbours.get(i).entfernung = element.entfernung + 1;
                     neighbours.get(i).entfernungGesetzt = true;
@@ -217,7 +218,7 @@ public class Controller
                 System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
 
 
-                Knoten n = neighbours.get(i);
+
 //                n.entfernung = n.entfernung + 1;
 
 //                System.out.print(" ENTFERNUNG: " + n.entfernung + " ");
@@ -272,6 +273,7 @@ public class Controller
 
         System.out.println("BFS: ");
         bfs(adjacency_matrix, A);
+        bfs.setDisable(true);
     }
 
 }
