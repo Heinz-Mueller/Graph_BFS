@@ -10,7 +10,10 @@ import javafx.stage.Stage;
 
 /** Example of dragging anchors around to manipulate a line. */
 public class LineManipulator extends Application {
-  public static void main(String[] args) throws Exception { launch(args); }
+  public static void main(String[] args) throws Exception
+  {
+      launch(args);
+  }
   @Override public void start(final Stage stage) throws Exception {
     DoubleProperty startX = new SimpleDoubleProperty(100);
     DoubleProperty startY = new SimpleDoubleProperty(100);
@@ -41,8 +44,10 @@ public class LineManipulator extends Application {
   }
 
   // a draggable anchor displayed around a point.
-  class Anchor extends Circle { 
-    Anchor(Color color, DoubleProperty x, DoubleProperty y) {
+  class Anchor extends Circle
+  {
+    Anchor(Color color, DoubleProperty x, DoubleProperty y)
+    {
       super(x.get(), y.get(), 10);
       setFill(color.deriveColor(1, 1, 1, 0.5));
       setStroke(color);
@@ -55,7 +60,8 @@ public class LineManipulator extends Application {
     }
 
     // make a node movable by dragging it around with the mouse.
-    private void enableDrag() {
+    private void enableDrag()
+    {
       final Delta dragDelta = new Delta();
       setOnMousePressed(new EventHandler<MouseEvent>() {
         @Override public void handle(MouseEvent mouseEvent) {
@@ -99,6 +105,7 @@ public class LineManipulator extends Application {
     }
 
     // records relative x and y co-ordinates.
-    private class Delta { double x, y; }
+    private class Delta
+    { double x, y; }
   }  
 }

@@ -99,7 +99,7 @@ public class BreadthFirstSearchExample
 	
 		int adjacency_matrix[][] = {
 		{0,1,1,0,0,0,0}, // Node 1: 40
-		{0,0,0,1,0,0,0}, // Node 2 :10
+		{0,0,0,1,0,0,0}, // Node 2: 10
 		{0,1,0,1,1,1,0}, // Node 3: 20
 		{0,0,0,0,1,0,0}, // Node 4: 30
 		{0,0,0,0,0,0,1}, // Node 5: 60

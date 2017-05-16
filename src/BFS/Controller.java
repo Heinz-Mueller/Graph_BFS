@@ -4,19 +4,28 @@ import javafx.animation.Animation;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 /**
  * Created by Fuse on 06.05.2017.
@@ -28,9 +37,12 @@ public class Controller
     @FXML
     public AnchorPane root;
 
+    public TextField eingabeFeld;
+
     public Button go;
     public Button bind;
     public Button bfs;
+    public Button bfs2;
 
     public Line kanteA;
     public Line kanteB;
@@ -44,16 +56,20 @@ public class Controller
     public Circle knotenC;
     public Circle knotenD;
     public Circle knotenE;
+    public Circle knotenF;
+    public Circle knotenG;
+    public Circle knotenH;
+    public Circle knotenI;
 
 
 
+    public Label label;
 
 
     public void handleButtonAction(ActionEvent e)
     {
         TranslateTransition circle1Animation = new TranslateTransition(Duration.seconds(1), knotenA);
         circle1Animation.setByY(150);
-
 
         TranslateTransition circle2Animation = new TranslateTransition(Duration.seconds(1), knotenB);
         circle2Animation.setByX(150);
@@ -80,7 +96,10 @@ public class Controller
         kanteA.setStrokeLineCap(StrokeLineCap.BUTT);
         kanteA.getStrokeDashArray().setAll(10.0, 5.0);
 
-        // A mit B verbinden
+
+        label.layoutXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty()));
+        label.layoutYProperty().bind(knotenA.layoutYProperty().add(knotenA.translateYProperty()));
+
         kanteA.startXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty()));
         kanteA.startYProperty().bind(knotenA.layoutYProperty().add(knotenA.translateYProperty()));
         kanteA.endXProperty().bind(knotenB.layoutXProperty().add(knotenB.translateXProperty()));
@@ -108,15 +127,16 @@ public class Controller
     private Queue<Knoten> queue;
     static ArrayList<Knoten> nodes = new ArrayList<Knoten>();
 
-    private Queue<Knoten> warteschlange;
-    static ArrayList<Circle> alleKnoten = new ArrayList<Circle>();
+
+    private Queue<Knoten2> warteschlange;
+    static ArrayList<Knoten2> alleKnoten = new ArrayList<Knoten2>();
 
 
 
     public Controller()
     {
         queue = new LinkedList<Knoten>();
-        warteschlange = new LinkedList<Knoten>();
+        warteschlange = new LinkedList<Knoten2>();
 
     }
 
@@ -136,16 +156,92 @@ public class Controller
         }
     }
 
-    static class graphKnoten
+    // Knoten erbt von Circle
+    class Knoten2 extends Circle
     {
-        int data;
+        int entfernung = 0;
+        boolean entfernungGesetzt;
+
+        String inhalt;
         boolean besucht;
 
-        graphKnoten(int data)
+        Text text2 = new Text("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
+
+        Knoten2(Color color, DoubleProperty x, DoubleProperty y, String inhalt)
         {
-            this.data = data;
+            //super(30, color);
+            super(x.get(), y.get(), 30);
+            setFill(color.deriveColor(1, 1, 1, 0.5));
+            setStroke(color);
+            setStrokeWidth(2);
+            setStrokeType(StrokeType.OUTSIDE);
+
+            this.inhalt = inhalt;
+            text2.setText(inhalt);
+
+            //Reinfolge spielt eine Rolle
+            root.getChildren().add(text2);
+            root.getChildren().add(Knoten2.this);
+
+
+            text2.layoutXProperty().bindBidirectional(centerXProperty());
+            text2.layoutYProperty().bindBidirectional(centerYProperty());
+
+            x.bind(centerXProperty());
+            y.bind(centerYProperty());
+            enableDrag();
         }
+
+        // make a node movable by dragging it around with the mouse.
+        private void enableDrag()
+        {
+            final Delta dragDelta = new Delta();
+            setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    // record a delta distance for the drag and drop operation.
+                    dragDelta.x = getCenterX() - mouseEvent.getX();
+                    dragDelta.y = getCenterY() - mouseEvent.getY();
+                    getScene().setCursor(Cursor.MOVE);
+                }
+            });
+            setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    getScene().setCursor(Cursor.HAND);
+                }
+            });
+            setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    double newX = mouseEvent.getX() + dragDelta.x;
+                    if (newX > 0 && newX < getScene().getWidth()) {
+                        setCenterX(newX);
+                    }
+                    double newY = mouseEvent.getY() + dragDelta.y;
+                    if (newY > 0 && newY < getScene().getHeight()) {
+                        setCenterY(newY);
+                    }
+                }
+            });
+            setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    if (!mouseEvent.isPrimaryButtonDown()) {
+                        getScene().setCursor(Cursor.HAND);
+                    }
+                }
+            });
+            setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    if (!mouseEvent.isPrimaryButtonDown()) {
+                        getScene().setCursor(Cursor.DEFAULT);
+                    }
+                }
+            });
+        }
+
+        // records relative x and y co-ordinates.
+        private class Delta
+        { double x, y; }
     }
+
 
 
     // Nachbarn mit Hilfe der Matrix finden
@@ -174,18 +270,19 @@ public class Controller
                 }
             }
         }
-
         return nachbar;
     }
 
 
+    //Breitensuche
     public void bfs(int adjacency_matrix[][], Knoten node)
     {
-        int rot = 100;
-        int gruen = 255;
-        int blau = 255;
+        float rot = 0.0f;
+        float gruen = 0.0f;
+        float blau = 0.0f;
 
-        Color farbe = Color.rgb(100, 150, 255);
+        Color farbe = Color.color(rot, gruen, blau);
+
 
         queue.add(node);
         node.besucht = true;
@@ -194,41 +291,42 @@ public class Controller
             Knoten element = queue.remove();
             System.out.print(element.data + "\t");
 
-            farbe = Color.rgb(rot, gruen, blau);
+            rot = new Random().nextFloat();
+            gruen = new Random().nextFloat();
+            blau = new Random().nextFloat();
+            farbe = Color.color(rot, gruen, blau);
 
-            //element.kreis.setFill(farbe);
-
-            rot = rot - 20;
-            gruen = gruen - 0;
-            blau = blau - 60;
 
             ArrayList<Knoten> neighbours = findNeighbours(adjacency_matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
                 Knoten n = neighbours.get(i);
-                //element.kreis.setFill(Color.GOLD);
+
                 if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
                     neighbours.get(i).entfernung = element.entfernung + 1;
                     neighbours.get(i).entfernungGesetzt = true;
                 }
-                //neighbours.get(i).entfernung = element.entfernung + 1;
 
                 System.out.print("NACHBAR " + neighbours.get(i).data + "\t");
                 System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
 
 
-
-//                n.entfernung = n.entfernung + 1;
-
-//                System.out.print(" ENTFERNUNG: " + n.entfernung + " ");
                 if (n.entfernung == 1)
                 {
-                  n.kreis.setFill(Color.GREEN);
+                  n.kreis.setFill(Color.GOLD);
                 }
                 if (n.entfernung == 2)
                 {
-                    n.kreis.setFill(Color.GOLD);
+                    n.kreis.setFill(Color.AQUA);
+                }
+                if (n.entfernung == 3)
+                {
+                    n.kreis.setFill(Color.CHOCOLATE);
+                }
+                if (n.entfernung == 4)
+                {
+                    n.kreis.setFill(Color.AZURE);
                 }
 
                 if(n != null && !n.besucht)
@@ -243,6 +341,180 @@ public class Controller
     }
 
 
+
+    public void test()
+    {
+        DoubleProperty startX = new SimpleDoubleProperty(100);
+        DoubleProperty startY = new SimpleDoubleProperty(100);
+        String knotenBezeichnung;
+        knotenBezeichnung = eingabeFeld.getText();
+
+        Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+
+        alleKnoten.add(zieh);
+        bfs2(zieh);
+    }
+
+
+    public ArrayList<Knoten2> findNeighbours2(int[][] adjacency_matrix, Knoten2 x)
+    {
+        int nodeIndex = -1;
+
+        ArrayList<Knoten2> nachbar = new ArrayList<Knoten2>();
+        for (int i = 0; i < alleKnoten.size(); i++)
+        {
+            if(alleKnoten.get(i).equals(x))
+            {
+                nodeIndex = i;
+                break;
+            }
+        }
+
+        if(nodeIndex!=-1)
+        {
+            for (int j = 0; j < adjacency_matrix[nodeIndex].length; j++)
+            {
+                if(adjacency_matrix[nodeIndex][j]==1)
+                {
+                    nachbar.add(alleKnoten.get(j));
+                }
+            }
+        }
+        return nachbar;
+    }
+
+    //Breitensuche
+    public void bfs2(Knoten2 node)
+    {
+        int matrix[][] ={
+                {0,0,0,0,0,0,0,0,0}, // 1
+                {1,0,0,0,0,0,0,0,0}, // 2
+                {1,0,0,0,0,0,0,0,0}, // 3
+                {1,0,1,0,0,0,0,0,0}, // 4
+                {0,1,0,0,0,0,0,0,0}, // 5
+                {1,0,0,0,1,0,0,0,0}, // 6
+                {0,0,0,1,1,0,0,1,0}, // 7
+                {1,0,1,0,0,0,0,0,0}, // 8
+                {0,0,0,0,1,1,1,0,0}, // 9
+        };
+
+
+        warteschlange.add(node);
+        node.besucht = true;
+
+        while (!warteschlange.isEmpty())
+        {
+            Knoten2 element = warteschlange.remove();
+            System.out.print(element.inhalt + "\t"); //macht der
+
+
+            ArrayList<Knoten2> neighbours = findNeighbours2(matrix, element);
+            for (int i = 0; i < neighbours.size(); i++)
+            {
+                Knoten2 n = neighbours.get(i);
+
+                if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
+                {
+                    neighbours.get(i).entfernung = element.entfernung + 1;
+                    neighbours.get(i).entfernungGesetzt = true;
+                }
+
+                System.out.print("NACHBAR " + neighbours.get(i).inhalt + "\t");
+                System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
+
+
+                if (n.entfernung == 0)
+                {
+                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.5));
+                }
+                if (n.entfernung == 1)
+                {
+                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.5));
+                }
+                if (n.entfernung == 2)
+                {
+                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.5));
+                }
+                if (n.entfernung == 3)
+                {
+                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.5));
+                }
+                if (n.entfernung == 4)
+                {
+                    n.setFill(Color.AZURE);
+                }
+
+                if(n != null && !n.besucht)
+                {
+                    warteschlange.add(n);
+                    n.besucht = true;
+                    //neighbours.get(i).setFill(Color.GOLD);
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+
+
+    public void erstellKnoten()
+    {
+        Circle kreis = new Circle(20, Color.GREEN);
+        root.getChildren().add(kreis);
+
+        // Kreis verschieben
+        kreis.setTranslateY(300);
+        kreis.setTranslateX(300);
+
+        Knoten knoten = new Knoten(10, kreis);
+    }
+
+
+    public void erstelleZiehKnoten()
+    {
+        DoubleProperty startX = new SimpleDoubleProperty(100);
+        DoubleProperty startY = new SimpleDoubleProperty(100);
+        String knotenBezeichnung;
+        knotenBezeichnung = eingabeFeld.getText();
+
+        Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+
+        eingabeFeld.setText("");
+
+        alleKnoten.add(zieh);
+
+        //Label label = new Label("HiiiiiiiiiiiiiiiiIIIIIIII");
+        //Text text = new Text("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
+
+
+//        text.layoutXProperty().bind(zieh.layoutXProperty().add(zieh.translateXProperty()));
+//        text.layoutYProperty().bind(zieh.layoutYProperty().add(zieh.translateYProperty()));
+
+        //text.setTranslateX(300);
+        //text.setTranslateY(300);
+        //text.layoutXProperty().bind(zieh.layoutXProperty());
+        //text.layoutYProperty().bind(zieh.layoutYProperty());
+
+        //label.layoutYProperty().bind(startY);
+        //label.layoutXProperty().bind(startX);
+
+        //root.getChildren().add(label);
+
+        //label.layoutXProperty().bind(zieh.centerXProperty());
+        //label.layoutYProperty().bind(zieh.centerYProperty());
+
+
+        //root.getChildren().add(zieh);
+        //root.getChildren().addAll(zieh, label);
+
+
+        //zieh.radiusProperty().bind(label.widthProperty());
+        //zieh.setFill(Color.PALEGREEN);
+
+    }
+
+
+
+
     public void knotenAnlegen()
     {
         Knoten A = new Knoten(10, knotenA);
@@ -250,29 +522,45 @@ public class Controller
         Knoten C = new Knoten(30, knotenC);
         Knoten D = new Knoten(40, knotenD);
         Knoten E = new Knoten(50, knotenE);
+        Knoten F = new Knoten(60, knotenF);
+        Knoten G = new Knoten(70, knotenG);
+        Knoten H = new Knoten(80, knotenH);
+        Knoten I = new Knoten(90, knotenI);
 
         nodes.add(A);
         nodes.add(B);
         nodes.add(C);
         nodes.add(D);
         nodes.add(E);
+        nodes.add(F);
+        nodes.add(G);
+        nodes.add(H);
+        nodes.add(I);
 
-        alleKnoten.add(knotenA);
-        alleKnoten.add(knotenB);
-        alleKnoten.add(knotenC);
-        alleKnoten.add(knotenD);
-        alleKnoten.add(knotenE);
 
         int adjacency_matrix[][] ={
-                {0,1,1,0,0}, // A: 40
-                {1,0,0,1,0}, // B :10
-                {1,0,0,0,1}, // C: 20
-                {0,1,0,0,0}, // D: 30
-                {0,0,1,0,0}, // E: 60
+                {0,1,1,0,0}, // A: 10
+                {1,0,0,1,0}, // B: 20
+                {1,0,0,0,1}, // C: 30
+                {0,1,0,0,0}, // D: 40
+                {0,0,1,0,0}, // E: 50
+        };
+
+
+        int matrix[][] ={
+                {0,0,0,0,0,0,0,0,0}, // 1
+                {1,0,0,0,0,0,0,0,0}, // 2
+                {1,0,0,0,0,0,0,0,0}, // 3
+                {1,0,1,0,0,0,0,0,0}, // 4
+                {0,1,0,0,0,0,0,0,0}, // 5
+                {1,0,0,0,1,0,0,0,0}, // 6
+                {0,0,0,1,1,0,0,1,0}, // 7
+                {1,0,1,0,0,0,0,0,0}, // 8
+                {0,0,0,0,1,1,1,0,0}, // 9
         };
 
         System.out.println("BFS: ");
-        bfs(adjacency_matrix, A);
+        bfs(matrix, I); //Matrix und Startknoten mitgeben
         bfs.setDisable(true);
     }
 
