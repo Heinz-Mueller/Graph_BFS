@@ -122,10 +122,6 @@ public class Controller
         kanteD.startYProperty().bind(knotenB.layoutYProperty().add(knotenB.translateYProperty()));
         kanteD.endXProperty().bind(knotenD.layoutXProperty().add(knotenD.translateXProperty()));
         kanteD.endYProperty().bind(knotenD.layoutYProperty().add(knotenD.translateYProperty()));
-
-        // C mit E verbinden
-
-
     }
 
 
@@ -351,7 +347,6 @@ public class Controller
     }
 
 
-
     public void test()
     {
         //DoubleProperty startX = new SimpleDoubleProperty(100);
@@ -469,19 +464,6 @@ public class Controller
     }
 
 
-    public void erstellKnoten()
-    {
-        Circle kreis = new Circle(20, Color.GREEN);
-        root.getChildren().add(kreis);
-
-        // Kreis verschieben
-        kreis.setTranslateY(300);
-        kreis.setTranslateX(300);
-
-        Knoten knoten = new Knoten(10, kreis);
-    }
-
-
     public void erstelleZiehKnoten()
     {
         DoubleProperty startX = new SimpleDoubleProperty(100);
@@ -498,31 +480,6 @@ public class Controller
         comboBox1.getItems().addAll(zieh.inhalt);
         comboBox2.getItems().addAll(zieh.inhalt);
 
-        //Label label = new Label("HiiiiiiiiiiiiiiiiIIIIIIII");
-        //Text text = new Text("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
-
-//        text.layoutXProperty().bind(zieh.layoutXProperty().add(zieh.translateXProperty()));
-//        text.layoutYProperty().bind(zieh.layoutYProperty().add(zieh.translateYProperty()));
-
-        //text.setTranslateX(300);
-        //text.setTranslateY(300);
-        //text.layoutXProperty().bind(zieh.layoutXProperty());
-        //text.layoutYProperty().bind(zieh.layoutYProperty());
-
-        //label.layoutYProperty().bind(startY);
-        //label.layoutXProperty().bind(startX);
-
-        //root.getChildren().add(label);
-
-        //label.layoutXProperty().bind(zieh.centerXProperty());
-        //label.layoutYProperty().bind(zieh.centerYProperty());
-
-        //root.getChildren().add(zieh);
-        //root.getChildren().addAll(zieh, label);
-
-        //zieh.radiusProperty().bind(label.widthProperty());
-        //zieh.setFill(Color.PALEGREEN);
-
     }
 
     public void knotenVerbinden()
@@ -537,7 +494,6 @@ public class Controller
 
         Knoten2 test = alleKnoten.get(knotenNr);
         Knoten2 test2 = alleKnoten.get(knotenNr2);
-
 
         //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
         //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
