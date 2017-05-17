@@ -5,11 +5,13 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -39,10 +41,14 @@ public class Controller
 
     public TextField eingabeFeld;
 
+    public ComboBox comboBox1;
+    public ComboBox comboBox2;
+
     public Button go;
     public Button bind;
     public Button bfs;
     public Button bfs2;
+    public Button verbinden;
 
     public Line kanteA;
     public Line kanteB;
@@ -162,10 +168,14 @@ public class Controller
         int entfernung = 0;
         boolean entfernungGesetzt;
 
+        //Brauche es einmal als String und einmal als "Text"
         String inhalt;
+        Text text = new Text("");
+
         boolean besucht;
 
-        Text text2 = new Text("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
+        DoubleProperty X;
+        DoubleProperty Y;
 
         Knoten2(Color color, DoubleProperty x, DoubleProperty y, String inhalt)
         {
@@ -177,15 +187,15 @@ public class Controller
             setStrokeType(StrokeType.OUTSIDE);
 
             this.inhalt = inhalt;
-            text2.setText(inhalt);
+            this.text.setText(inhalt);
 
             //Reinfolge spielt eine Rolle
-            root.getChildren().add(text2);
+            root.getChildren().add(text);
             root.getChildren().add(Knoten2.this);
 
 
-            text2.layoutXProperty().bindBidirectional(centerXProperty());
-            text2.layoutYProperty().bindBidirectional(centerYProperty());
+            text.layoutXProperty().bindBidirectional(centerXProperty());
+            text.layoutYProperty().bindBidirectional(centerYProperty());
 
             x.bind(centerXProperty());
             y.bind(centerYProperty());
@@ -353,9 +363,7 @@ public class Controller
         //alleKnoten.add(zieh);
 
         //Startknotten aus dem Array nehmen und los gehst
-        Knoten2 startKnotten = alleKnoten.get(8);
-
-        System.out.print(startKnotten.inhalt + "\t");
+        Knoten2 startKnotten = alleKnoten.get(8); //Index 8 = Knoten 9
 
         bfs2(startKnotten);
     }
@@ -487,9 +495,11 @@ public class Controller
 
         alleKnoten.add(zieh);
 
+        comboBox1.getItems().addAll(zieh.inhalt);
+        comboBox2.getItems().addAll(zieh.inhalt);
+
         //Label label = new Label("HiiiiiiiiiiiiiiiiIIIIIIII");
         //Text text = new Text("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
-
 
 //        text.layoutXProperty().bind(zieh.layoutXProperty().add(zieh.translateXProperty()));
 //        text.layoutYProperty().bind(zieh.layoutYProperty().add(zieh.translateYProperty()));
@@ -507,14 +517,40 @@ public class Controller
         //label.layoutXProperty().bind(zieh.centerXProperty());
         //label.layoutYProperty().bind(zieh.centerYProperty());
 
-
         //root.getChildren().add(zieh);
         //root.getChildren().addAll(zieh, label);
-
 
         //zieh.radiusProperty().bind(label.widthProperty());
         //zieh.setFill(Color.PALEGREEN);
 
+    }
+
+    public void knotenVerbinden()
+    {
+        int knotenNr = comboBox1.getSelectionModel().getSelectedIndex();
+        int knotenNr2 = comboBox2.getSelectionModel().getSelectedIndex();
+
+        System.out.print(knotenNr + "\t");
+        System.out.print(alleKnoten.get(knotenNr).inhalt + "\t"+"\n");
+
+        Line kante = new Line();
+
+        Knoten2 test = alleKnoten.get(knotenNr);
+        Knoten2 test2 = alleKnoten.get(knotenNr2);
+
+
+        //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
+        //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
+
+        //kante.startXProperty().set(test.centerXProperty().doubleValue());
+        //kante.startYProperty().set(test.centerXProperty().doubleValue());
+
+        kante.startXProperty().bind(test.centerXProperty().add(test.translateXProperty()));
+        kante.startYProperty().bind(test.centerYProperty().add(test.translateYProperty()));
+        kante.endXProperty().bind(test2.centerXProperty().add(test2.translateXProperty()));
+        kante.endYProperty().bind(test2.centerYProperty().add(test2.translateYProperty()));
+
+        root.getChildren().add(kante);
     }
 
 

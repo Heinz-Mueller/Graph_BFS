@@ -10,9 +10,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="root" prefHeight="679.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
+<AnchorPane fx:id="root" prefHeight="680.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
    <children>
-      <Pane prefHeight="450.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane prefHeight="680.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="194.0" AnchorPane.topAnchor="0.0">
          <children>
             <Circle fx:id="knotenA" fill="DODGERBLUE" layoutX="70.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="knotenB" fill="DODGERBLUE" layoutX="400.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
@@ -62,6 +62,13 @@
             <Button layoutX="514.0" layoutY="630.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" text="New Knoten" />
             <TextField fx:id="eingabeFeld" layoutX="361.0" layoutY="630.0" promptText="Knoten-Bezeichnung" />
             <Button fx:id="bfs2" layoutX="314.0" layoutY="632.0" mnemonicParsing="false" onAction="#test" text="BFS2" />
+         </children>
+      </Pane>
+      <Pane fx:id="Pane_2" layoutX="600.0" prefHeight="680.0" prefWidth="200.0">
+         <children>
+            <ComboBox fx:id="comboBox1" layoutX="25.0" layoutY="41.0" prefWidth="150.0" />
+            <ComboBox fx:id="comboBox2" layoutX="25.0" layoutY="294.0" prefWidth="150.0" />
+            <Button fx:id="verbinden" layoutX="74.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenVerbinden" text="Verbinden" />
          </children>
       </Pane>
    </children>
