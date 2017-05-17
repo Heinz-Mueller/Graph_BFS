@@ -54,8 +54,6 @@ public class Controller
     public Line kanteB;
     public Line kanteC;
     public Line kanteD;
-    public Line kanteE;
-    public Line kanteF;
 
     public Circle knotenA;
     public Circle knotenB;
@@ -66,8 +64,6 @@ public class Controller
     public Circle knotenG;
     public Circle knotenH;
     public Circle knotenI;
-
-
 
     public Label label;
 
