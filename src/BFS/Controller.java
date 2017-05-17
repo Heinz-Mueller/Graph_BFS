@@ -344,15 +344,20 @@ public class Controller
 
     public void test()
     {
-        DoubleProperty startX = new SimpleDoubleProperty(100);
-        DoubleProperty startY = new SimpleDoubleProperty(100);
-        String knotenBezeichnung;
-        knotenBezeichnung = eingabeFeld.getText();
+        //DoubleProperty startX = new SimpleDoubleProperty(100);
+        //DoubleProperty startY = new SimpleDoubleProperty(100);
+        //String knotenBezeichnung;
+        //knotenBezeichnung = eingabeFeld.getText();
 
-        Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+        //Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+        //alleKnoten.add(zieh);
 
-        alleKnoten.add(zieh);
-        bfs2(zieh);
+        //Startknotten aus dem Array nehmen und los gehst
+        Knoten2 startKnotten = alleKnoten.get(8);
+
+        System.out.print(startKnotten.inhalt + "\t");
+
+        bfs2(startKnotten);
     }
 
 
