@@ -93,7 +93,7 @@ public class Controller
 
     public void binden()
     {
-        kanteA.setStrokeWidth(2);
+        kanteA.setStrokeWidth(5);
         kanteA.setStroke(Color.GRAY.deriveColor(0, 1, 1, 0.5));
         kanteA.setStrokeLineCap(StrokeLineCap.BUTT);
         kanteA.getStrokeDashArray().setAll(10.0, 5.0);
@@ -102,7 +102,7 @@ public class Controller
         label.layoutXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty()));
         label.layoutYProperty().bind(knotenA.layoutYProperty().add(knotenA.translateYProperty()));
 
-        kanteA.startXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty()));
+        kanteA.startXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty().subtract(-30)));
         kanteA.startYProperty().bind(knotenA.layoutYProperty().add(knotenA.translateYProperty()));
         kanteA.endXProperty().bind(knotenB.layoutXProperty().add(knotenB.translateXProperty()));
         kanteA.endYProperty().bind(knotenB.layoutYProperty().add(knotenB.translateYProperty()));
@@ -173,18 +173,20 @@ public class Controller
         {
             //super(30, color);
             super(x.get(), y.get(), 30);
-            setFill(color.deriveColor(1, 1, 1, 0.5));
-            setStroke(color);
+            setFill(color.deriveColor(1, 1, 1, 0.7));
+            setStroke(color.GRAY);
             setStrokeWidth(2);
             setStrokeType(StrokeType.OUTSIDE);
 
             this.inhalt = inhalt;
             this.text.setText(inhalt);
 
-            //Reinfolge spielt eine Rolle
+            //Reihnfolge spielt eine Rolle
             root.getChildren().add(text);
             root.getChildren().add(Knoten2.this);
 
+            text.toFront();
+            text.setMouseTransparent(true); //DAS WOLLTE ICH
 
             text.layoutXProperty().bindBidirectional(centerXProperty());
             text.layoutYProperty().bindBidirectional(centerYProperty());
@@ -497,15 +499,15 @@ public class Controller
         //kante.startXProperty().set(test.centerXProperty().doubleValue());
         //kante.startYProperty().set(test.centerXProperty().doubleValue());
 
-        kante.startXProperty().bind(test.centerXProperty().add(test.translateXProperty()));
+        kante.startXProperty().bind(test.centerXProperty().add(test.translateXProperty()).subtract(-30));
         kante.startYProperty().bind(test.centerYProperty().add(test.translateYProperty()));
-        kante.endXProperty().bind(test2.centerXProperty().add(test2.translateXProperty()));
+        kante.endXProperty().bind(test2.centerXProperty().add(test2.translateXProperty()).subtract(30));
         kante.endYProperty().bind(test2.centerYProperty().add(test2.translateYProperty()));
 
         root.getChildren().add(kante);
+
+        kante.toBack();
     }
-
-
 
 
     public void knotenAnlegen()
@@ -556,7 +558,6 @@ public class Controller
         bfs(matrix, I); //Matrix und Startknoten mitgeben
         bfs.setDisable(true);
     }
-
 }
 
 
