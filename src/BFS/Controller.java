@@ -129,6 +129,8 @@ public class Controller
     private Queue<Knoten2> warteschlange;
     static ArrayList<Knoten2> alleKnoten = new ArrayList<Knoten2>();
 
+    static ArrayList<Kante> alleKanten = new ArrayList<>();
+
 
 
     public Controller()
@@ -154,9 +156,22 @@ public class Controller
         }
     }
 
+
+    class Kante extends Line
+    {
+        int von;
+        int zu;
+
+    }
+
     // Knoten erbt von Circle
     class Knoten2 extends Circle
     {
+        int vonMir = 0;
+        int zuMir = 0;
+        public int vonMirZurNR;
+        public int zuMirVonNR;
+
         int entfernung = 0;
         boolean entfernungGesetzt;
 
@@ -169,11 +184,12 @@ public class Controller
         DoubleProperty X;
         DoubleProperty Y;
 
+
         Knoten2(Color color, DoubleProperty x, DoubleProperty y, String inhalt)
         {
             //super(30, color);
             super(x.get(), y.get(), 30);
-            setFill(color.deriveColor(1, 1, 1, 0.7));
+            setFill(color.deriveColor(1, 1, 1, 0.8));
             setStroke(color.GRAY);
             setStrokeWidth(2);
             setStrokeType(StrokeType.OUTSIDE);
@@ -355,10 +371,11 @@ public class Controller
         //Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
         //alleKnoten.add(zieh);
 
-        //Startknotten aus dem Array nehmen und los gehst
-        Knoten2 startKnotten = alleKnoten.get(8); //Index 8 = Knoten 9
 
-        bfs2(startKnotten);
+        //Startknotten aus dem Array nehmen und los gehst
+        Knoten2 startKnoten = alleKnoten.get(1); //Index 8 = Knoten 9
+
+        bfs2(startKnoten);
     }
 
 
@@ -376,11 +393,11 @@ public class Controller
             }
         }
 
-        if(nodeIndex!=-1)
+        if(nodeIndex != -1)
         {
             for (int j = 0; j < adjacency_matrix[nodeIndex].length; j++)
             {
-                if(adjacency_matrix[nodeIndex][j]==1)
+                if(adjacency_matrix[nodeIndex][j] == 1)
                 {
                     nachbar.add(alleKnoten.get(j));
                 }
@@ -405,6 +422,27 @@ public class Controller
         };
 
 
+        int knotenAnzahl = alleKnoten.size();
+        int matrixTest[][] = new int[knotenAnzahl][knotenAnzahl];
+
+
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            matrixTest[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+        }
+
+
+        for (int i = 0; i < matrixTest.length; i++)
+        {
+            for (int j = 0; j < matrixTest.length; j++)
+            {
+                System.out.print(matrixTest[i][j] + "\t");
+            }
+            System.out.print("\n");
+        }
+
+
+
         warteschlange.add(node);
         node.besucht = true;
 
@@ -412,7 +450,6 @@ public class Controller
         {
             Knoten2 element = warteschlange.remove();
             System.out.print(element.inhalt + "\t"); //macht der
-
 
             ArrayList<Knoten2> neighbours = findNeighbours2(matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
@@ -485,13 +522,29 @@ public class Controller
         int knotenNr = comboBox1.getSelectionModel().getSelectedIndex();
         int knotenNr2 = comboBox2.getSelectionModel().getSelectedIndex();
 
-        System.out.print(knotenNr + "\t");
-        System.out.print(alleKnoten.get(knotenNr).inhalt + "\t"+"\n");
+        //System.out.print(knotenNr + "\t");
+        //System.out.print(alleKnoten.get(knotenNr).inhalt + "\t"+"\n");
 
-        Line kante = new Line();
 
-        Knoten2 test = alleKnoten.get(knotenNr);
-        Knoten2 test2 = alleKnoten.get(knotenNr2);
+        Kante kante = new Kante();
+        kante.von = knotenNr;
+        kante.zu = knotenNr2;
+        alleKanten.add(kante);
+
+        System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
+
+
+        Knoten2 vonKnoten = alleKnoten.get(knotenNr);
+        Knoten2 zuKnoten = alleKnoten.get(knotenNr2);
+
+        //Wenn Knoten verbunden werden, dann Werte für Matrix setzen.
+        alleKnoten.get(knotenNr).vonMirZurNR = knotenNr2;
+        alleKnoten.get(knotenNr2).zuMirVonNR = knotenNr;
+
+        alleKnoten.get(knotenNr).vonMir = 1;
+        alleKnoten.get(knotenNr2).zuMir = 1;
+
+        //System.out.print("vonKnoten Wert:  " + alleKnoten.get(knotenNr).vonMir  + "\t");
 
         //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
         //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
@@ -499,10 +552,12 @@ public class Controller
         //kante.startXProperty().set(test.centerXProperty().doubleValue());
         //kante.startYProperty().set(test.centerXProperty().doubleValue());
 
-        kante.startXProperty().bind(test.centerXProperty().add(test.translateXProperty()).subtract(-30));
-        kante.startYProperty().bind(test.centerYProperty().add(test.translateYProperty()));
-        kante.endXProperty().bind(test2.centerXProperty().add(test2.translateXProperty()).subtract(30));
-        kante.endYProperty().bind(test2.centerYProperty().add(test2.translateYProperty()));
+        //kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()).subtract(-30));
+        kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
+        kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
+        kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
+        kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
+
 
         root.getChildren().add(kante);
 
