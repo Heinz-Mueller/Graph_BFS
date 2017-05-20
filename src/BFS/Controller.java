@@ -43,6 +43,7 @@ public class Controller
 
     public ComboBox comboBox1;
     public ComboBox comboBox2;
+    public ComboBox startKnoten;
 
     public Button go;
     public Button bind;
@@ -189,7 +190,7 @@ public class Controller
         {
             //super(30, color);
             super(x.get(), y.get(), 30);
-            setFill(color.deriveColor(1, 1, 1, 0.8));
+            setFill(color.deriveColor(1, 1, 1, 0.9));
             setStroke(color.GRAY);
             setStrokeWidth(2);
             setStrokeType(StrokeType.OUTSIDE);
@@ -363,17 +364,9 @@ public class Controller
 
     public void test()
     {
-        //DoubleProperty startX = new SimpleDoubleProperty(100);
-        //DoubleProperty startY = new SimpleDoubleProperty(100);
-        //String knotenBezeichnung;
-        //knotenBezeichnung = eingabeFeld.getText();
-
-        //Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
-        //alleKnoten.add(zieh);
-
-
         //Startknotten aus dem Array nehmen und los gehst
-        Knoten2 startKnoten = alleKnoten.get(1); //Index 8 = Knoten 9
+        int start = startKnoten.getSelectionModel().getSelectedIndex();
+        Knoten2 startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
 
         bfs2(startKnoten);
     }
@@ -409,19 +402,6 @@ public class Controller
     //Breitensuche
     public void bfs2(Knoten2 node)
     {
-        int matrix[][] ={
-                {0,0,0,0,0,0,0,0,0}, // 1
-                {1,0,0,0,0,0,0,0,0}, // 2
-                {1,0,0,0,0,0,0,0,0}, // 3
-                {1,0,1,0,0,0,0,0,0}, // 4
-                {0,1,0,0,0,0,0,0,0}, // 5
-                {1,0,0,0,1,0,0,0,0}, // 6
-                {0,0,0,1,1,0,0,1,0}, // 7
-                {1,0,1,0,0,0,0,0,0}, // 8
-                {0,0,0,0,1,1,1,0,0}, // 9
-        };
-
-
         int knotenAnzahl = alleKnoten.size();
         int matrixTest[][] = new int[knotenAnzahl][knotenAnzahl];
 
@@ -451,7 +431,7 @@ public class Controller
             Knoten2 element = warteschlange.remove();
             System.out.print(element.inhalt + "\t"); //macht der
 
-            ArrayList<Knoten2> neighbours = findNeighbours2(matrix, element);
+            ArrayList<Knoten2> neighbours = findNeighbours2(matrixTest, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
                 Knoten2 n = neighbours.get(i);
@@ -468,19 +448,19 @@ public class Controller
 
                 if (n.entfernung == 0)
                 {
-                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.5));
+                    n.setFill(Color.WHITE.deriveColor(1,1,1, 0.8));
                 }
                 if (n.entfernung == 1)
                 {
-                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.5));
+                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.8));
                 }
                 if (n.entfernung == 2)
                 {
-                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.5));
+                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.8));
                 }
                 if (n.entfernung == 3)
                 {
-                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.5));
+                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.8));
                 }
                 if (n.entfernung == 4)
                 {
@@ -514,6 +494,7 @@ public class Controller
 
         comboBox1.getItems().addAll(zieh.inhalt);
         comboBox2.getItems().addAll(zieh.inhalt);
+        startKnoten.getItems().addAll(zieh.inhalt);
 
     }
 
@@ -557,7 +538,6 @@ public class Controller
         kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
         kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
         kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
-
 
         root.getChildren().add(kante);
 
