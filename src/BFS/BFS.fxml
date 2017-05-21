@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.embed.swing.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -58,8 +52,8 @@
       </Pane>
       <Pane fx:id="Pane_2" layoutX="600.0" prefHeight="680.0" prefWidth="200.0">
          <children>
-            <ComboBox fx:id="comboBox1" layoutX="25.0" layoutY="41.0" prefWidth="150.0" promptText="VON" />
-            <ComboBox fx:id="comboBox2" layoutX="25.0" layoutY="294.0" prefWidth="150.0" promptText="ZU" />
+            <ComboBox fx:id="comboBoxVON" layoutX="25.0" layoutY="41.0" prefWidth="150.0" promptText="VON" />
+            <ComboBox fx:id="comboBoxZU" layoutX="25.0" layoutY="294.0" prefWidth="150.0" promptText="ZU" />
             <Button fx:id="verbinden" layoutX="74.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenVerbinden" text="Verbinden" />
             <ComboBox fx:id="startKnoten" layoutX="25.0" layoutY="533.0" prefWidth="150.0" promptText="Start-Knoten" />
          </children>

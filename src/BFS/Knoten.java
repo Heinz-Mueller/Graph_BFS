@@ -14,18 +14,12 @@ import javafx.scene.text.Text;
  */
 
 
-// Knoten erbt von Circle
 class Knoten extends Circle
 {
-    int vonMir = 0;
-    int zuMir = 0;
-    public int vonMirZurNR;
-    public int zuMirVonNR;
-
     int entfernung = 0;
     boolean entfernungGesetzt;
 
-    //Brauche es einmal als String und einmal als "Text"
+    //Brauche es einmal als String und einmal als "Text", cast toString ging irgendwo nicht :/
     String inhalt;
     Text text = new Text("");
 
@@ -36,9 +30,9 @@ class Knoten extends Circle
 
     Knoten(Color color, DoubleProperty x, DoubleProperty y, String inhalt)
     {
-        //super(30, color);
         super(x.get(), y.get(), 30);
         setFill(color.deriveColor(1, 1, 1, 0.9));
+        //Ränder um den Kreis setzen und so Sachen
         setStroke(color.GRAY);
         setStrokeWidth(2);
         setStrokeType(StrokeType.OUTSIDE);
@@ -54,7 +48,7 @@ class Knoten extends Circle
         enableDrag();
     }
 
-    //Macht den Knoten beweglich durch Mausklick und Ziehen
+    /**Macht den Knoten beweglich durch Mausklick und Ziehen*/
     private void enableDrag()
     {
         final Delta dragDelta = new Delta();
@@ -100,7 +94,7 @@ class Knoten extends Circle
     }
 
 
-    // records relative x and y co-ordinates.
+    /**x und y Koordinaten*/
     private class Delta
     { double x, y; }
 }

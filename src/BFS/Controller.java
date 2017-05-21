@@ -35,8 +35,8 @@ public class Controller
 
     public TextField eingabeFeld;
 
-    public ComboBox comboBox1;
-    public ComboBox comboBox2;
+    public ComboBox comboBoxVON;
+    public ComboBox comboBoxZU;
     public ComboBox startKnoten;
 
     public Button go;
@@ -58,6 +58,22 @@ public class Controller
 
     public Label label;
 
+
+    private Queue<Knoten_ALT> queue;
+    private ArrayList<Knoten_ALT> nodes = new ArrayList<>();
+
+    /**Warteschlange für die Knoten*/
+    private Queue<Knoten> warteschlange;
+    /**Listen für alle angelegten Knoten und Kanten*/
+    static ArrayList<Knoten> alleKnoten = new ArrayList<>();
+    static ArrayList<Kante> alleKanten = new ArrayList<>();
+
+
+    public Controller()
+    {
+        queue = new LinkedList<>(); //ALT
+        warteschlange = new LinkedList<>();
+    }
 
     public void handleButtonAction(ActionEvent e)
     {
@@ -81,7 +97,7 @@ public class Controller
         }
     }
 
-
+    //ALT: Test-Binden
     public void binden()
     {
         kanteA.setStrokeWidth(5);
@@ -112,22 +128,6 @@ public class Controller
     }
 
 
-    private Queue<Knoten_ALT> queue;
-    static ArrayList<Knoten_ALT> nodes = new ArrayList<>();
-
-
-    private Queue<Knoten> warteschlange;
-    static ArrayList<Knoten> alleKnoten = new ArrayList<>();
-
-    static ArrayList<Kante> alleKanten = new ArrayList<>();
-
-
-    public Controller()
-    {
-        queue = new LinkedList<>(); //ALT
-        warteschlange = new LinkedList<Knoten>();
-    }
-
     //ALT--------------------------------------------
     // Nachbarn mit Hilfe der Matrix finden
     // wenn adjacency_matrix[i][j]==1, dann Knoten i und j verbunden
@@ -135,7 +135,7 @@ public class Controller
     {
         int nodeIndex = -1;
 
-        ArrayList<Knoten_ALT> nachbar = new ArrayList<Knoten_ALT>();
+        ArrayList<Knoten_ALT> nachbar = new ArrayList<>();
         for (int i = 0; i < nodes.size(); i++)
         {
             if(nodes.get(i).equals(x))
@@ -177,7 +177,6 @@ public class Controller
             gruen = new Random().nextFloat();
             blau = new Random().nextFloat();
             farbe = Color.color(rot, gruen, blau);
-
 
             ArrayList<Knoten_ALT> neighbours = findNeighbours(adjacency_matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
@@ -223,20 +222,25 @@ public class Controller
     }
 
 
+    /**Start-Knoten wird ausgewählt und BFS mit Start-Knoten ausführen*/
     public void start()
     {
-        //Startknoten aus dem Array nehmen und los gehts
         int start = startKnoten.getSelectionModel().getSelectedIndex();
+        if(start == -1)
+        {
+            //TODO
+            //JavaFX PopUp "bla bla Sie haben keinen Startknoten gewählt"
+        }
         Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
         bfs(startKnoten);
     }
 
-
+    /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
     public ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
     {
         int nodeIndex = -1;
 
-        ArrayList<Knoten> nachbar = new ArrayList<Knoten>();
+        ArrayList<Knoten> nachbar = new ArrayList<>();
         for (int i = 0; i < alleKnoten.size(); i++)
         {
             if(alleKnoten.get(i).equals(x))
@@ -245,7 +249,6 @@ public class Controller
                 break;
             }
         }
-
         if(nodeIndex != -1)
         {
             for (int j = 0; j < adjazenzmatrix[nodeIndex].length; j++)
@@ -259,42 +262,41 @@ public class Controller
         return nachbar;
     }
 
-    //Breitensuche
-    public void bfs(Knoten node)
+    /**Breitensuche mit startKnoten*/
+    public void bfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
-        int matrixTest[][] = new int[knotenAnzahl][knotenAnzahl];
+        int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
 
-
+        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            matrixTest[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
         }
-
-
-        for (int i = 0; i < matrixTest.length; i++)
+        //TESTAUSGABE Matrix anschauen
+        for (int i = 0; i < matrix.length; i++)
         {
-            for (int j = 0; j < matrixTest.length; j++)
+            for (int j = 0; j < matrix.length; j++)
             {
-                System.out.print(matrixTest[i][j] + "\t");
+                System.out.print(matrix[i][j] + "\t");
             }
             System.out.print("\n");
         }
 
-
-        warteschlange.add(node);
-        node.besucht = true;
+        warteschlange.add(startKnoten);
+        startKnoten.besucht = true;
 
         while (!warteschlange.isEmpty())
         {
             Knoten element = warteschlange.remove();
-            System.out.print(element.inhalt + "\t"); //macht der
 
-            ArrayList<Knoten> neighbours = findeNachbar(matrixTest, element);
+            ArrayList<Knoten> neighbours = findeNachbar(matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
                 Knoten n = neighbours.get(i);
 
+                /**Wenn Knoten noch nicht besucht wurde und seine Entfernung noch nicht eingetragen ist
+                 * Entfernung vom NAchbarn nehmen und einen Schritt dazu addieren*/
                 if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
                     neighbours.get(i).entfernung = element.entfernung + 1;
@@ -304,6 +306,8 @@ public class Controller
                 System.out.print("NACHBAR " + neighbours.get(i).inhalt + "\t");
                 System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
 
+                /**Knoten nach Entfernung einfärben*/
+                //TODO eine Funktion die Entfernung nimmt und Farbe zurückgibt
                 if (n.entfernung == 0)
                 {
                     n.setFill(Color.WHITE.deriveColor(1,1,1, 0.8));
@@ -324,7 +328,7 @@ public class Controller
                 {
                     n.setFill(Color.AZURE);
                 }
-
+                /**Knoten in die Warteschlange packen und als besucht markieren*/
                 if(n != null && !n.besucht)
                 {
                     warteschlange.add(n);
@@ -343,54 +347,41 @@ public class Controller
         DoubleProperty startY = new SimpleDoubleProperty(100);
         String knotenBezeichnung;
         knotenBezeichnung = eingabeFeld.getText();
+        //TODO wenn keine Bezeichnung eingegeben wurde, dann "bla bla..."
 
         Knoten zieh = new Knoten(Color.PALEGREEN, startX, startY, knotenBezeichnung);
 
-        //Reihnfolge spielt eine Rolle
+        /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
+         *  und Mausklicks auf Bezeichnung ignorieren*/
         root.getChildren().add(zieh.text);
         root.getChildren().add(zieh);
-
         zieh.text.toFront();
-        zieh.text.setMouseTransparent(true); //DAS WOLLTE ICH
-
+        zieh.text.setMouseTransparent(true);
 
         eingabeFeld.setText("");
-
         alleKnoten.add(zieh);
-
-        comboBox1.getItems().addAll(zieh.inhalt);
-        comboBox2.getItems().addAll(zieh.inhalt);
+        /**Knoten-Bezeichnung in die Combo-Boxen packen*/
+        comboBoxVON.getItems().addAll(zieh.inhalt);
+        comboBoxZU.getItems().addAll(zieh.inhalt);
         startKnoten.getItems().addAll(zieh.inhalt);
-
     }
 
     public void knotenVerbinden()
     {
-        int knotenNr = comboBox1.getSelectionModel().getSelectedIndex();
-        int knotenNr2 = comboBox2.getSelectionModel().getSelectedIndex();
+        int knotenNrVon = comboBoxVON.getSelectionModel().getSelectedIndex();
+        int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
 
-        //System.out.print(knotenNr + "\t");
-        //System.out.print(alleKnoten.get(knotenNr).inhalt + "\t"+"\n");
-
+        /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
         Kante kante = new Kante();
-        kante.von = knotenNr;
-        kante.zu = knotenNr2;
+        kante.von = knotenNrVon;
+        kante.zu = knotenNrZu;
         alleKanten.add(kante);
 
         System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
-
-        Knoten vonKnoten = alleKnoten.get(knotenNr);
-        Knoten zuKnoten = alleKnoten.get(knotenNr2);
-
-        //Wenn Knoten verbunden werden, dann Werte für Matrix setzen.
-        alleKnoten.get(knotenNr).vonMirZurNR = knotenNr2;
-        alleKnoten.get(knotenNr2).zuMirVonNR = knotenNr;
-
-        alleKnoten.get(knotenNr).vonMir = 1;
-        alleKnoten.get(knotenNr2).zuMir = 1;
-
-        //System.out.print("vonKnoten Wert:  " + alleKnoten.get(knotenNr).vonMir  + "\t");
+        /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
+        Knoten vonKnoten = alleKnoten.get(knotenNrVon);
+        Knoten zuKnoten = alleKnoten.get(knotenNrZu);
 
         //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
         //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
@@ -405,7 +396,6 @@ public class Controller
         kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
 
         root.getChildren().add(kante);
-
         kante.toBack();
     }
 
