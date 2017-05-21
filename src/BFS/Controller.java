@@ -5,23 +5,17 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -30,7 +24,7 @@ import java.util.Queue;
 import java.util.Random;
 
 /**
- * Created by Fuse on 06.05.2017.
+ * Created by E.E on 06.05.2017.
  */
 
 
@@ -61,10 +55,6 @@ public class Controller
     public Circle knotenC;
     public Circle knotenD;
     public Circle knotenE;
-    public Circle knotenF;
-    public Circle knotenG;
-    public Circle knotenH;
-    public Circle knotenI;
 
     public Label label;
 
@@ -122,156 +112,30 @@ public class Controller
     }
 
 
+    private Queue<Knoten_ALT> queue;
+    static ArrayList<Knoten_ALT> nodes = new ArrayList<>();
 
-    private Queue<Knoten> queue;
-    static ArrayList<Knoten> nodes = new ArrayList<Knoten>();
 
-
-    private Queue<Knoten2> warteschlange;
-    static ArrayList<Knoten2> alleKnoten = new ArrayList<Knoten2>();
+    private Queue<Knoten> warteschlange;
+    static ArrayList<Knoten> alleKnoten = new ArrayList<>();
 
     static ArrayList<Kante> alleKanten = new ArrayList<>();
 
 
-
     public Controller()
     {
-        queue = new LinkedList<Knoten>();
-        warteschlange = new LinkedList<Knoten2>();
-
+        queue = new LinkedList<>(); //ALT
+        warteschlange = new LinkedList<Knoten>();
     }
 
-    static class Knoten
-    {
-        int entfernung = 0;
-        Circle kreis;
-        boolean entfernungGesetzt;
-
-        int data;
-        boolean besucht;
-
-        Knoten(int data, Circle kreis)
-        {
-            this.data = data;
-            this.kreis = kreis;
-        }
-    }
-
-
-    class Kante extends Line
-    {
-        int von;
-        int zu;
-
-    }
-
-    // Knoten erbt von Circle
-    class Knoten2 extends Circle
-    {
-        int vonMir = 0;
-        int zuMir = 0;
-        public int vonMirZurNR;
-        public int zuMirVonNR;
-
-        int entfernung = 0;
-        boolean entfernungGesetzt;
-
-        //Brauche es einmal als String und einmal als "Text"
-        String inhalt;
-        Text text = new Text("");
-
-        boolean besucht;
-
-        DoubleProperty X;
-        DoubleProperty Y;
-
-
-        Knoten2(Color color, DoubleProperty x, DoubleProperty y, String inhalt)
-        {
-            //super(30, color);
-            super(x.get(), y.get(), 30);
-            setFill(color.deriveColor(1, 1, 1, 0.9));
-            setStroke(color.GRAY);
-            setStrokeWidth(2);
-            setStrokeType(StrokeType.OUTSIDE);
-
-            this.inhalt = inhalt;
-            this.text.setText(inhalt);
-
-            //Reihnfolge spielt eine Rolle
-            root.getChildren().add(text);
-            root.getChildren().add(Knoten2.this);
-
-            text.toFront();
-            text.setMouseTransparent(true); //DAS WOLLTE ICH
-
-            text.layoutXProperty().bindBidirectional(centerXProperty());
-            text.layoutYProperty().bindBidirectional(centerYProperty());
-
-            x.bind(centerXProperty());
-            y.bind(centerYProperty());
-            enableDrag();
-        }
-
-        // make a node movable by dragging it around with the mouse.
-        private void enableDrag()
-        {
-            final Delta dragDelta = new Delta();
-            setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    // record a delta distance for the drag and drop operation.
-                    dragDelta.x = getCenterX() - mouseEvent.getX();
-                    dragDelta.y = getCenterY() - mouseEvent.getY();
-                    getScene().setCursor(Cursor.MOVE);
-                }
-            });
-            setOnMouseReleased(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    getScene().setCursor(Cursor.HAND);
-                }
-            });
-            setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    double newX = mouseEvent.getX() + dragDelta.x;
-                    if (newX > 0 && newX < getScene().getWidth()) {
-                        setCenterX(newX);
-                    }
-                    double newY = mouseEvent.getY() + dragDelta.y;
-                    if (newY > 0 && newY < getScene().getHeight()) {
-                        setCenterY(newY);
-                    }
-                }
-            });
-            setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    if (!mouseEvent.isPrimaryButtonDown()) {
-                        getScene().setCursor(Cursor.HAND);
-                    }
-                }
-            });
-            setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
-                    if (!mouseEvent.isPrimaryButtonDown()) {
-                        getScene().setCursor(Cursor.DEFAULT);
-                    }
-                }
-            });
-        }
-
-        // records relative x and y co-ordinates.
-        private class Delta
-        { double x, y; }
-    }
-
-
-
+    //ALT--------------------------------------------
     // Nachbarn mit Hilfe der Matrix finden
     // wenn adjacency_matrix[i][j]==1, dann Knoten i und j verbunden
-    public ArrayList<Knoten> findNeighbours(int adjacency_matrix[][], Knoten x)
+    public ArrayList<Knoten_ALT> findNeighbours(int adjacency_matrix[][], Knoten_ALT x)
     {
         int nodeIndex = -1;
 
-        ArrayList<Knoten> nachbar = new ArrayList<Knoten>();
+        ArrayList<Knoten_ALT> nachbar = new ArrayList<Knoten_ALT>();
         for (int i = 0; i < nodes.size(); i++)
         {
             if(nodes.get(i).equals(x))
@@ -280,7 +144,6 @@ public class Controller
                 break;
             }
         }
-
         if(nodeIndex!=-1)
         {
             for (int j = 0; j < adjacency_matrix[nodeIndex].length; j++)
@@ -293,10 +156,9 @@ public class Controller
         }
         return nachbar;
     }
-
-
+    //ALT--------------------------------------------------------------
     //Breitensuche
-    public void bfs(int adjacency_matrix[][], Knoten node)
+    public void bfs_ALT(int adjacency_matrix[][], Knoten_ALT node)
     {
         float rot = 0.0f;
         float gruen = 0.0f;
@@ -304,12 +166,11 @@ public class Controller
 
         Color farbe = Color.color(rot, gruen, blau);
 
-
         queue.add(node);
         node.besucht = true;
         while (!queue.isEmpty())
         {
-            Knoten element = queue.remove();
+            Knoten_ALT element = queue.remove();
             System.out.print(element.data + "\t");
 
             rot = new Random().nextFloat();
@@ -318,10 +179,10 @@ public class Controller
             farbe = Color.color(rot, gruen, blau);
 
 
-            ArrayList<Knoten> neighbours = findNeighbours(adjacency_matrix, element);
+            ArrayList<Knoten_ALT> neighbours = findNeighbours(adjacency_matrix, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
-                Knoten n = neighbours.get(i);
+                Knoten_ALT n = neighbours.get(i);
 
                 if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
@@ -362,21 +223,20 @@ public class Controller
     }
 
 
-    public void test()
+    public void start()
     {
-        //Startknotten aus dem Array nehmen und los gehst
+        //Startknoten aus dem Array nehmen und los gehts
         int start = startKnoten.getSelectionModel().getSelectedIndex();
-        Knoten2 startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
-
-        bfs2(startKnoten);
+        Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+        bfs(startKnoten);
     }
 
 
-    public ArrayList<Knoten2> findNeighbours2(int[][] adjacency_matrix, Knoten2 x)
+    public ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
     {
         int nodeIndex = -1;
 
-        ArrayList<Knoten2> nachbar = new ArrayList<Knoten2>();
+        ArrayList<Knoten> nachbar = new ArrayList<Knoten>();
         for (int i = 0; i < alleKnoten.size(); i++)
         {
             if(alleKnoten.get(i).equals(x))
@@ -388,9 +248,9 @@ public class Controller
 
         if(nodeIndex != -1)
         {
-            for (int j = 0; j < adjacency_matrix[nodeIndex].length; j++)
+            for (int j = 0; j < adjazenzmatrix[nodeIndex].length; j++)
             {
-                if(adjacency_matrix[nodeIndex][j] == 1)
+                if(adjazenzmatrix[nodeIndex][j] == 1)
                 {
                     nachbar.add(alleKnoten.get(j));
                 }
@@ -400,7 +260,7 @@ public class Controller
     }
 
     //Breitensuche
-    public void bfs2(Knoten2 node)
+    public void bfs(Knoten node)
     {
         int knotenAnzahl = alleKnoten.size();
         int matrixTest[][] = new int[knotenAnzahl][knotenAnzahl];
@@ -422,19 +282,18 @@ public class Controller
         }
 
 
-
         warteschlange.add(node);
         node.besucht = true;
 
         while (!warteschlange.isEmpty())
         {
-            Knoten2 element = warteschlange.remove();
+            Knoten element = warteschlange.remove();
             System.out.print(element.inhalt + "\t"); //macht der
 
-            ArrayList<Knoten2> neighbours = findNeighbours2(matrixTest, element);
+            ArrayList<Knoten> neighbours = findeNachbar(matrixTest, element);
             for (int i = 0; i < neighbours.size(); i++)
             {
-                Knoten2 n = neighbours.get(i);
+                Knoten n = neighbours.get(i);
 
                 if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
@@ -444,7 +303,6 @@ public class Controller
 
                 System.out.print("NACHBAR " + neighbours.get(i).inhalt + "\t");
                 System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
-
 
                 if (n.entfernung == 0)
                 {
@@ -486,7 +344,15 @@ public class Controller
         String knotenBezeichnung;
         knotenBezeichnung = eingabeFeld.getText();
 
-        Knoten2 zieh = new Knoten2(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+        Knoten zieh = new Knoten(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+
+        //Reihnfolge spielt eine Rolle
+        root.getChildren().add(zieh.text);
+        root.getChildren().add(zieh);
+
+        zieh.text.toFront();
+        zieh.text.setMouseTransparent(true); //DAS WOLLTE ICH
+
 
         eingabeFeld.setText("");
 
@@ -506,7 +372,6 @@ public class Controller
         //System.out.print(knotenNr + "\t");
         //System.out.print(alleKnoten.get(knotenNr).inhalt + "\t"+"\n");
 
-
         Kante kante = new Kante();
         kante.von = knotenNr;
         kante.zu = knotenNr2;
@@ -515,8 +380,8 @@ public class Controller
         System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
 
-        Knoten2 vonKnoten = alleKnoten.get(knotenNr);
-        Knoten2 zuKnoten = alleKnoten.get(knotenNr2);
+        Knoten vonKnoten = alleKnoten.get(knotenNr);
+        Knoten zuKnoten = alleKnoten.get(knotenNr2);
 
         //Wenn Knoten verbunden werden, dann Werte für Matrix setzen.
         alleKnoten.get(knotenNr).vonMirZurNR = knotenNr2;
@@ -545,28 +410,20 @@ public class Controller
     }
 
 
+    //ALT-----------------------------------------------------
     public void knotenAnlegen()
     {
-        Knoten A = new Knoten(10, knotenA);
-        Knoten B = new Knoten(20, knotenB);
-        Knoten C = new Knoten(30, knotenC);
-        Knoten D = new Knoten(40, knotenD);
-        Knoten E = new Knoten(50, knotenE);
-        Knoten F = new Knoten(60, knotenF);
-        Knoten G = new Knoten(70, knotenG);
-        Knoten H = new Knoten(80, knotenH);
-        Knoten I = new Knoten(90, knotenI);
+        Knoten_ALT A = new Knoten_ALT(10, knotenA);
+        Knoten_ALT B = new Knoten_ALT(20, knotenB);
+        Knoten_ALT C = new Knoten_ALT(30, knotenC);
+        Knoten_ALT D = new Knoten_ALT(40, knotenD);
+        Knoten_ALT E = new Knoten_ALT(50, knotenE);
 
         nodes.add(A);
         nodes.add(B);
         nodes.add(C);
         nodes.add(D);
         nodes.add(E);
-        nodes.add(F);
-        nodes.add(G);
-        nodes.add(H);
-        nodes.add(I);
-
 
         int adjacency_matrix[][] ={
                 {0,1,1,0,0}, // A: 10
@@ -575,7 +432,6 @@ public class Controller
                 {0,1,0,0,0}, // D: 40
                 {0,0,1,0,0}, // E: 50
         };
-
 
         int matrix[][] ={
                 {0,0,0,0,0,0,0,0,0}, // 1
@@ -590,9 +446,7 @@ public class Controller
         };
 
         System.out.println("BFS: ");
-        bfs(matrix, I); //Matrix und Startknoten mitgeben
+        bfs_ALT(adjacency_matrix, E); //Matrix und Startknoten mitgeben
         bfs.setDisable(true);
     }
 }
-
-

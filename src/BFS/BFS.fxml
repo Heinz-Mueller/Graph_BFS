@@ -51,17 +51,9 @@
                </font>
             </Label>
             <Button fx:id="bfs" layoutX="255.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenAnlegen" text="BFS" />
-            <Circle fx:id="knotenF" fill="DODGERBLUE" layoutX="49.0" layoutY="356.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="knotenH" fill="DODGERBLUE" layoutX="137.0" layoutY="429.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="knotenI" fill="DODGERBLUE" layoutX="174.0" layoutY="347.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="knotenG" fill="DODGERBLUE" layoutX="49.0" layoutY="437.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
-            <Label layoutX="36.0" layoutY="348.0" text="F: 60" />
-            <Label layoutX="34.0" layoutY="429.0" text="G: 70" />
-            <Label layoutX="123.0" layoutY="421.0" text="H: 80" />
-            <Label layoutX="163.0" layoutY="339.0" text="I: 90" />
             <Button layoutX="514.0" layoutY="630.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" text="New Knoten" />
             <TextField fx:id="eingabeFeld" layoutX="361.0" layoutY="630.0" promptText="Knoten-Bezeichnung" />
-            <Button fx:id="bfs2" layoutX="314.0" layoutY="632.0" mnemonicParsing="false" onAction="#test" text="BFS2" />
+            <Button fx:id="bfs2" layoutX="314.0" layoutY="632.0" mnemonicParsing="false" onAction="#start" text="BFS2" />
          </children>
       </Pane>
       <Pane fx:id="Pane_2" layoutX="600.0" prefHeight="680.0" prefWidth="200.0">
