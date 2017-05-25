@@ -11,6 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -314,6 +317,14 @@ public class Controller
                 if (n.entfernung == 1)
                 {
                     n.setFill(Color.GOLD.deriveColor(1,1,1, 0.99));
+                    //n.setBlendMode(BlendMode.COLOR_BURN);
+                    DropShadow borderGlow= new DropShadow();
+                    borderGlow.setOffsetY(0f);
+                    borderGlow.setOffsetX(0f);
+                    borderGlow.setColor(Color.RED);
+                    borderGlow.setWidth(15);
+                    borderGlow.setHeight(15);
+                    n.setEffect(borderGlow);
                 }
                 if (n.entfernung == 2)
                 {
@@ -366,7 +377,7 @@ public class Controller
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
          *  und Mausklicks auf Bezeichnung ignorieren*/
-        root.getChildren().add(zieh.text);
+        root.getChildren().add(zieh.text); //-----------------------------------------
         root.getChildren().add(zieh);
         zieh.text.toFront();
         zieh.text.setMouseTransparent(true);

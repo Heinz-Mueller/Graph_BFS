@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="root" prefHeight="680.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
+<AnchorPane fx:id="root" prefHeight="680.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
    <children>
-      <Pane prefHeight="680.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="194.0" AnchorPane.topAnchor="0.0">
+      <Pane prefHeight="680.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Circle fx:id="knotenA" fill="DODGERBLUE" layoutX="70.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="knotenB" fill="DODGERBLUE" layoutX="243.0" layoutY="71.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="knotenA" fill="DODGERBLUE" layoutX="70.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE">
+               <effect>
+                  <Bloom />
+               </effect></Circle>
+            <Circle fx:id="knotenB" fill="DODGERBLUE" layoutX="243.0" layoutY="71.0" radius="30.0" stroke="BLACK" strokeType="INSIDE">
+               <effect>
+                  <Bloom threshold="0.25" />
+               </effect></Circle>
             <Circle fx:id="knotenC" fill="DODGERBLUE" layoutX="70.0" layoutY="170.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="knotenD" fill="DODGERBLUE" layoutX="320.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="knotenE" fill="DODGERBLUE" layoutX="55.0" layoutY="277.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
@@ -34,7 +41,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label layoutX="294.0" layoutY="54.0" prefHeight="27.0" prefWidth="41.0" text="D: 40">
+            <Label blendMode="ADD" layoutX="294.0" layoutY="54.0" prefHeight="27.0" prefWidth="41.0" text="D: 40">
                <font>
                   <Font size="18.0" />
                </font>
@@ -45,17 +52,17 @@
                </font>
             </Label>
             <Button fx:id="bfs" layoutX="131.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenAnlegen" text="BFS" />
-            <Button fx:id="newKnoten" layoutX="514.0" layoutY="630.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" text="New Knoten" />
-            <TextField fx:id="eingabeFeld" layoutX="361.0" layoutY="630.0" promptText="Knoten-Bezeichnung" />
-            <Button fx:id="bfs2" disable="true" layoutX="314.0" layoutY="632.0" mnemonicParsing="false" onAction="#bfsAusführen" text="BFS2" />
          </children>
       </Pane>
-      <Pane fx:id="Pane_2" layoutX="600.0" prefHeight="680.0" prefWidth="200.0">
+      <Pane fx:id="Pane_2" layoutX="700.0" prefHeight="165.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;">
          <children>
-            <ComboBox fx:id="comboBoxVON" layoutX="25.0" layoutY="41.0" prefWidth="150.0" promptText="VON" />
-            <ComboBox fx:id="comboBoxZU" layoutX="25.0" layoutY="294.0" prefWidth="150.0" promptText="ZU" />
-            <Button fx:id="verbinden" layoutX="74.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenVerbinden" text="Verbinden" />
-            <ComboBox fx:id="startKnoten" layoutX="25.0" layoutY="533.0" onAction="#start" prefWidth="150.0" promptText="Start-Knoten" />
+            <TextField fx:id="eingabeFeld" layoutX="13.0" layoutY="14.0" prefHeight="25.0" prefWidth="154.0" promptText="Knoten-Bezeichnung" />
+            <Button fx:id="newKnoten" layoutX="183.0" layoutY="14.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" prefHeight="25.0" prefWidth="101.0" text="New Knoten" />
+            <ComboBox fx:id="comboBoxVON" layoutX="14.0" layoutY="71.0" prefWidth="80.0" promptText="VON" />
+            <ComboBox fx:id="comboBoxZU" layoutX="105.0" layoutY="71.0" prefWidth="80.0" promptText="ZU" />
+            <Button fx:id="verbinden" layoutX="200.0" layoutY="71.0" mnemonicParsing="false" onAction="#knotenVerbinden" prefHeight="25.0" prefWidth="80.0" text="Verbinden" />
+            <Button fx:id="bfs2" disable="true" layoutX="200.0" layoutY="120.0" mnemonicParsing="false" onAction="#bfsAusführen" prefHeight="25.0" prefWidth="80.0" text="BFS2" />
+            <ComboBox fx:id="startKnoten" layoutX="13.0" layoutY="120.0" onAction="#start" prefHeight="25.0" prefWidth="173.0" promptText="Start-Knoten" />
          </children>
       </Pane>
    </children>

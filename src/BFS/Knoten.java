@@ -3,6 +3,7 @@ package BFS;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -37,14 +38,16 @@ class Knoten extends Circle
         setStrokeWidth(2);
         setStrokeType(StrokeType.OUTSIDE);
 
+        //setBlendMode(BlendMode.SRC_OVER);
+
         this.inhalt = inhalt;
         this.text.setText(inhalt);
 
         text.layoutXProperty().bindBidirectional(centerXProperty());
         text.layoutYProperty().bindBidirectional(centerYProperty());
 
-        x.bind(centerXProperty());
-        y.bind(centerYProperty());
+        //x.bind(centerXProperty());
+        //y.bind(centerYProperty());
         enableDrag();
     }
 
