@@ -289,21 +289,21 @@ public class Controller
         {
             Knoten element = warteschlange.remove();
 
-            ArrayList<Knoten> neighbours = findeNachbar(matrix, element);
-            for (int i = 0; i < neighbours.size(); i++)
+            ArrayList<Knoten> nachbarn = findeNachbar(matrix, element);
+            for (int i = 0; i < nachbarn.size(); i++)
             {
-                Knoten n = neighbours.get(i);
+                Knoten n = nachbarn.get(i);
 
                 /**Wenn Knoten noch nicht besucht wurde und seine Entfernung noch nicht eingetragen ist
                  * Entfernung vom Nachbarn nehmen und einen Schritt dazu addieren*/
-                if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
+                if(!nachbarn.get(i).entfernungGesetzt && !n.besucht)
                 {
-                    neighbours.get(i).entfernung = element.entfernung + 1;
-                    neighbours.get(i).entfernungGesetzt = true;
+                    nachbarn.get(i).entfernung = element.entfernung + 1;
+                    nachbarn.get(i).entfernungGesetzt = true;
                 }
 
-                System.out.print("NACHBAR " + neighbours.get(i).inhalt + "\t");
-                System.out.print("ENTFERNUNG " + neighbours.get(i).entfernung + "\t");
+                System.out.print("NACHBAR " + nachbarn.get(i).inhalt + "\t");
+                System.out.print("ENTFERNUNG " + nachbarn.get(i).entfernung + "\t");
 
                 /**Knoten nach Entfernung einfärben*/
                 //TODO eine Funktion die Entfernung nimmt und Farbe zurückgibt
