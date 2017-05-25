@@ -43,12 +43,12 @@ public class Controller
     public Button bind;
     public Button bfs;
     public Button bfs2;
+
     public Button verbinden;
+    public Button newKnoten;
 
     public Line kanteA;
     public Line kanteB;
-    public Line kanteC;
-    public Line kanteD;
 
     public Circle knotenA;
     public Circle knotenB;
@@ -120,11 +120,6 @@ public class Controller
         kanteB.endXProperty().bind(knotenC.layoutXProperty().add(knotenC.translateXProperty()));
         kanteB.endYProperty().bind(knotenC.layoutYProperty().add(knotenC.translateYProperty()));
 
-        // B mit D verbinden
-        kanteD.startXProperty().bind(knotenB.layoutXProperty().add(knotenB.translateXProperty()));
-        kanteD.startYProperty().bind(knotenB.layoutYProperty().add(knotenB.translateYProperty()));
-        kanteD.endXProperty().bind(knotenD.layoutXProperty().add(knotenD.translateXProperty()));
-        kanteD.endYProperty().bind(knotenD.layoutYProperty().add(knotenD.translateYProperty()));
     }
 
 
@@ -226,11 +221,15 @@ public class Controller
     public void start()
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
-        if(start == -1)
+        if(start != -1)
         {
-            //TODO
-            //JavaFX PopUp "bla bla Sie haben keinen Startknoten gewählt"
+            bfs2.setDisable(false);
         }
+    }
+
+    public void bfsAusführen()
+    {
+        int start = startKnoten.getSelectionModel().getSelectedIndex();
         Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
         bfs(startKnoten);
     }
@@ -273,7 +272,7 @@ public class Controller
         {
             matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
         }
-        //TESTAUSGABE Matrix anschauen
+        //TESTAUSGABE: Matrix anschauen
         for (int i = 0; i < matrix.length; i++)
         {
             for (int j = 0; j < matrix.length; j++)
@@ -296,7 +295,7 @@ public class Controller
                 Knoten n = neighbours.get(i);
 
                 /**Wenn Knoten noch nicht besucht wurde und seine Entfernung noch nicht eingetragen ist
-                 * Entfernung vom NAchbarn nehmen und einen Schritt dazu addieren*/
+                 * Entfernung vom Nachbarn nehmen und einen Schritt dazu addieren*/
                 if(!neighbours.get(i).entfernungGesetzt && !n.besucht)
                 {
                     neighbours.get(i).entfernung = element.entfernung + 1;
@@ -310,19 +309,19 @@ public class Controller
                 //TODO eine Funktion die Entfernung nimmt und Farbe zurückgibt
                 if (n.entfernung == 0)
                 {
-                    n.setFill(Color.WHITE.deriveColor(1,1,1, 0.8));
+                    n.setFill(Color.WHITE.deriveColor(1,1,1, 0.99));
                 }
                 if (n.entfernung == 1)
                 {
-                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.8));
+                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.99));
                 }
                 if (n.entfernung == 2)
                 {
-                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.8));
+                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.99));
                 }
                 if (n.entfernung == 3)
                 {
-                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.8));
+                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.99));
                 }
                 if (n.entfernung == 4)
                 {
@@ -343,13 +342,27 @@ public class Controller
 
     public void erstelleZiehKnoten()
     {
-        DoubleProperty startX = new SimpleDoubleProperty(100);
-        DoubleProperty startY = new SimpleDoubleProperty(100);
+        DoubleProperty startX = new SimpleDoubleProperty(200);
+        DoubleProperty startY = new SimpleDoubleProperty(200);
         String knotenBezeichnung;
-        knotenBezeichnung = eingabeFeld.getText();
-        //TODO wenn keine Bezeichnung eingegeben wurde, dann "bla bla..."
+        knotenBezeichnung = eingabeFeld.getText().trim();
+        if(knotenBezeichnung.equals(""))
+        {
+            knotenBezeichnung = "x";
+            //TODO wenn keine Bezeichnung eingegeben wurde, dann "bla bla..."
+        }
 
         Knoten zieh = new Knoten(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+
+        //In TESTPHASE
+        zieh.setCenterX(100);
+        int groesse = alleKnoten.size();
+        if(groesse != 0)
+        {
+            int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
+            zieh.setCenterX(entfernungVomLetzen + 10);
+        }
+
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
          *  und Mausklicks auf Bezeichnung ignorieren*/
@@ -379,6 +392,7 @@ public class Controller
 
         System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
+
         /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
         Knoten vonKnoten = alleKnoten.get(knotenNrVon);
         Knoten zuKnoten = alleKnoten.get(knotenNrZu);
@@ -395,8 +409,44 @@ public class Controller
         kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
         kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
 
-        root.getChildren().add(kante);
+        //root.getChildren().add(kante);
         kante.toBack();
+
+
+
+        //TEST
+
+        Arrow b = new Arrow();
+        root.getChildren().add(b);
+        b.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
+        b.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
+        b.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
+        b.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
+        b.toBack();
+
+        //Mit MAusklick Pfeil auf Punkt
+//        root.setOnMouseClicked(evt -> {
+//            switch (evt.getButton()) {
+//                case PRIMARY:
+//                    // set pos of end with arrow head
+//                    b.setEndX(evt.getX());
+//                    b.setEndY(evt.getY());
+//                    break;
+//                case SECONDARY:
+//                    // set pos of end without arrow head
+//                    b.setStartX(evt.getX());
+//                    b.setStartY(evt.getY());
+//                    break;
+//            }
+//        });
+
+
+//        b.setStartX(150);
+//        b.setStartY(300);
+//        b.setEndX(500);
+//        b.setEndY(350);
+
+        //TEST-ENDE
     }
 
 

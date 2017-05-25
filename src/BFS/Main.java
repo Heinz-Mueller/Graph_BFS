@@ -17,7 +17,6 @@ public class Main extends Application
         primaryStage.setTitle("BFS");
         primaryStage.setScene(new Scene(root, 800, 700));
         primaryStage.show();
-
     }
 
 
