@@ -368,7 +368,6 @@ public class Controller
             Random r = new Random();
             char c = (char)(r.nextInt(26) + 'a');
             knotenBezeichnung = String.valueOf(c).toUpperCase();
-            //TODO wenn keine Bezeichnung eingegeben wurde, dann "bla bla..."
         }
 
         //Text test = new Text(knotenBezeichnung);
