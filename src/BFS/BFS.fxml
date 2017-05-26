@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="root" prefHeight="680.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
    <children>
-      <Pane prefHeight="680.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane prefHeight="680.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="0.0">
          <children>
             <Circle fx:id="knotenA" fill="DODGERBLUE" layoutX="70.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE">
                <effect>
@@ -65,5 +65,12 @@
             <ComboBox fx:id="startKnoten" layoutX="13.0" layoutY="120.0" onAction="#start" prefHeight="25.0" prefWidth="173.0" promptText="Start-Knoten" />
          </children>
       </Pane>
+      <AnchorPane layoutX="801.0" layoutY="165.0" prefHeight="117.0" prefWidth="194.0">
+         <children>
+            <Button fx:id="löschButton" layoutX="134.0" layoutY="14.0" mnemonicParsing="false" onAction="#knotenLöschen" text="Löschen" />
+            <ComboBox fx:id="löschComboBox" layoutX="10.0" layoutY="14.0" promptText="Löschen" />
+            <Button fx:id="reset" layoutX="14.0" layoutY="78.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

@@ -41,11 +41,14 @@ public class Controller
     public ComboBox comboBoxVON;
     public ComboBox comboBoxZU;
     public ComboBox startKnoten;
+    public ComboBox löschComboBox;
 
     public Button go;
     public Button bind;
     public Button bfs;
     public Button bfs2;
+    public Button löschButton;
+    public Button reset;
 
     public Button verbinden;
     public Button newKnoten;
@@ -388,6 +391,67 @@ public class Controller
         comboBoxVON.getItems().addAll(zieh.inhalt);
         comboBoxZU.getItems().addAll(zieh.inhalt);
         startKnoten.getItems().addAll(zieh.inhalt);
+        löschComboBox.getItems().addAll(zieh.inhalt);
+    }
+
+    public void knotenLöschen()
+    {
+        int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
+        root.getChildren().remove(alleKnoten.get(löschIndex).text);
+        root.getChildren().remove(alleKnoten.get(löschIndex));
+        alleKnoten.remove(löschIndex);
+        //updateAlleKnoten();
+        updateComboBoxen();
+        //root.getChildren().remove(alleKanten.get(0));
+    }
+
+    private void updateAlleKnoten()
+    {
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            System.out.print("ALLE: INDEX:  " + alleKnoten.indexOf(i) + " INHALT  " + alleKnoten.get(i).inhalt + "\t\n");
+        }
+        ArrayList<Knoten> temp = new ArrayList<>(alleKnoten);
+        for(int i = 0; i < temp.size(); i++)
+        {
+            System.out.print("TEMP: INDEX:  " + temp.get(i) + " INHALT  " + temp.get(i).inhalt + "\t\n");
+        }
+    }
+
+    private void updateComboBoxen()
+    {
+        löschComboBox.getItems().clear();
+        comboBoxVON.getItems().clear();
+        comboBoxZU.getItems().clear();
+        startKnoten.getItems().clear();
+
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            löschComboBox.getItems().add(alleKnoten.get(i).inhalt);
+            comboBoxVON.getItems().addAll(alleKnoten.get(i).inhalt);
+            comboBoxZU.getItems().addAll(alleKnoten.get(i).inhalt);
+            startKnoten.getItems().addAll(alleKnoten.get(i).inhalt);
+        }
+    }
+
+
+    public void reset()
+    {
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            root.getChildren().remove(alleKnoten.get(i).text);
+            root.getChildren().remove(alleKnoten.get(i));
+        }
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            root.getChildren().remove(alleKanten.get(i));
+        }
+        alleKnoten.clear();
+        alleKanten.clear();
+        löschComboBox.getItems().clear();
+        comboBoxVON.getItems().clear();
+        comboBoxZU.getItems().clear();
+        startKnoten.getItems().clear();
     }
 
     public void knotenVerbinden()
@@ -420,7 +484,7 @@ public class Controller
         kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
         kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
 
-        //root.getChildren().add(kante);
+        root.getChildren().add(kante);
         kante.toBack();
 
 
@@ -428,14 +492,14 @@ public class Controller
         //TEST
 
         Arrow b = new Arrow();
-        root.getChildren().add(b);
+        //root.getChildren().add(b);
         b.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
         b.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
         b.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
         b.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
         b.toBack();
 
-        //Mit MAusklick Pfeil auf Punkt
+        //Mit Mausklick Pfeil auf Punkt
 //        root.setOnMouseClicked(evt -> {
 //            switch (evt.getButton()) {
 //                case PRIMARY:
