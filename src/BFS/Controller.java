@@ -42,12 +42,14 @@ public class Controller
     public ComboBox comboBoxZU;
     public ComboBox startKnoten;
     public ComboBox löschComboBox;
+    public ComboBox löschComboBoxKanten;
 
     public Button go;
     public Button bind;
     public Button bfs;
     public Button bfs2;
     public Button löschButton;
+    public Button löschButtonKante;
     public Button reset;
 
     public Button verbinden;
@@ -405,6 +407,13 @@ public class Controller
         //root.getChildren().remove(alleKanten.get(0));
     }
 
+    public void kanteLöschen()
+    {
+        int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
+        root.getChildren().remove(alleKanten.get(löschKanteIndex));
+        alleKanten.remove(löschKanteIndex);
+    }
+
     private void updateAlleKnoten()
     {
         for(int i = 0; i < alleKnoten.size(); i++)
@@ -465,12 +474,14 @@ public class Controller
         kante.zu = knotenNrZu;
         alleKanten.add(kante);
 
+
         System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
 
         /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
         Knoten vonKnoten = alleKnoten.get(knotenNrVon);
         Knoten zuKnoten = alleKnoten.get(knotenNrZu);
+        löschComboBoxKanten.getItems().add(vonKnoten.inhalt + " -> " + zuKnoten.inhalt);
 
         //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
         //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
