@@ -373,7 +373,7 @@ public class Controller
         //Text test = new Text(knotenBezeichnung);
         Knoten zieh = new Knoten(Color.PALEGREEN, startX, startY, knotenBezeichnung);
 
-        //In TESTPHASE
+        //Neuen Knoten etwas versetzt plazieren
         zieh.setCenterX(100);
         int groesse = alleKnoten.size();
         if(groesse != 0)
@@ -405,6 +405,13 @@ public class Controller
         root.getChildren().remove(alleKnoten.get(löschIndex).text);
         root.getChildren().remove(alleKnoten.get(löschIndex));
         alleKnoten.remove(löschIndex);
+
+
+        root.getChildren().remove(alleKanten.get(löschIndex));
+        alleKanten.remove(löschIndex);
+        root.getChildren().remove(alleKanten.get(löschIndex-1));
+        alleKanten.remove(löschIndex-1);
+
         updateComboBoxen();
     }
 
@@ -413,6 +420,7 @@ public class Controller
         int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
         root.getChildren().remove(alleKanten.get(löschKanteIndex));
         alleKanten.remove(löschKanteIndex);
+        updateComboBoxen();
     }
 
     private void updateAlleKnoten() //Nicht nötig, weil ArrayListen sich selbst updaten?
@@ -434,13 +442,19 @@ public class Controller
         comboBoxVON.getItems().clear();
         comboBoxZU.getItems().clear();
         startKnoten.getItems().clear();
+        löschComboBoxKanten.getItems().clear();
 
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             löschComboBox.getItems().add(alleKnoten.get(i).bezeichnung);
-            comboBoxVON.getItems().addAll(alleKnoten.get(i).bezeichnung);
-            comboBoxZU.getItems().addAll(alleKnoten.get(i).bezeichnung);
-            startKnoten.getItems().addAll(alleKnoten.get(i).bezeichnung);
+            comboBoxVON.getItems().add(alleKnoten.get(i).bezeichnung);
+            comboBoxZU.getItems().add(alleKnoten.get(i).bezeichnung);
+            startKnoten.getItems().add(alleKnoten.get(i).bezeichnung);
+        }
+
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            löschComboBoxKanten.getItems().add(alleKanten.get(i).vonKnoten +"->"+ alleKanten.get(i).zuKnoten);
         }
     }
 
@@ -475,6 +489,9 @@ public class Controller
         kante.zu = knotenNrZu;
         alleKanten.add(kante);
 
+        kante.vonKnoten = alleKnoten.get(knotenNrVon).bezeichnung;
+        kante.zuKnoten = alleKnoten.get(knotenNrZu).bezeichnung;
+
 
         System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
@@ -482,7 +499,7 @@ public class Controller
         /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
         Knoten vonKnoten = alleKnoten.get(knotenNrVon);
         Knoten zuKnoten = alleKnoten.get(knotenNrZu);
-        löschComboBoxKanten.getItems().add(vonKnoten.bezeichnung + " -> " + zuKnoten.bezeichnung);
+        löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
         //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
         //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");

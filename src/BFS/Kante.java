@@ -9,4 +9,6 @@ class Kante extends Line
 {
     int von;
     int zu;
+    String vonKnoten;
+    String zuKnoten;
 }
