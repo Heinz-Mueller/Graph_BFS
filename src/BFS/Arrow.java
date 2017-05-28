@@ -12,14 +12,15 @@ public class Arrow extends Group
 
     private final Line line;
 
-
     public Arrow()
     {
-        this(new Line(), new Line(), new Line());
+        //this(new Line(), new Line(), new Line());
+        this(new Line(), new Line(), new Line() );
     }
 
-    private static final double arrowLength = 45;
-    private static final double arrowWidth = 2.5;
+    private static final double arrowLength = 50;
+    private static final double arrowWidth = 3.0;
+
 
     private Arrow(Line line, Line arrow1, Line arrow2)
     {
@@ -34,8 +35,14 @@ public class Arrow extends Group
         line.setStroke(Color.GRAY.deriveColor(1,1,1, 0.8));
 
         //Pfeil-Eigenschaften
-        arrow1.setStrokeWidth(2.0);
-        arrow2.setStrokeWidth(2.0);
+        arrow1.setSmooth(true);
+        arrow2.setSmooth(true);
+        arrow1.setStroke(Color.GREEN.deriveColor(1,1,1, 0.7));
+        arrow2.setStroke(Color.GREEN.deriveColor(1,1,1, 0.7));
+        arrow1.getStrokeDashArray().addAll(20.0, 32.0);
+        arrow2.getStrokeDashArray().addAll(20.0, 32.0);
+        arrow1.setStrokeWidth(1.5);
+        arrow2.setStrokeWidth(1.5);
         arrow1.setStrokeLineCap(StrokeLineCap.ROUND);
         arrow2.setStrokeLineCap(StrokeLineCap.ROUND);
 
@@ -46,12 +53,11 @@ public class Arrow extends Group
             double sy = getStartY();
 
 
-           // arrow1.setEndX(ex);
-           // arrow1.setEndY(ey);
+            arrow1.setEndX(ex);
+            arrow1.setEndY(ey);
             //binden funktioniert auch
-            arrow1.endXProperty().bind(line.endXProperty().add(line.translateXProperty()));
-            arrow1.endYProperty().bind(line.endYProperty().add(line.translateYProperty()));
-
+            //arrow1.endXProperty().bind(line.endXProperty());
+            //arrow1.endYProperty().bind(line.endYProperty().add(line.translateYProperty()));
             arrow2.setEndX(ex);
             arrow2.setEndY(ey);
 

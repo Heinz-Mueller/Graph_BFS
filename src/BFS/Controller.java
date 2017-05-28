@@ -1,12 +1,11 @@
 package BFS;
 
-import javafx.animation.Animation;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -16,9 +15,10 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -379,7 +379,7 @@ public class Controller
         if(groesse != 0)
         {
             int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
-            zieh.setCenterX(entfernungVomLetzen + 10);
+            zieh.setCenterX(entfernungVomLetzen + 20);
         }
 
 
@@ -397,6 +397,30 @@ public class Controller
         comboBoxZU.getItems().addAll(zieh.bezeichnung);
         startKnoten.getItems().addAll(zieh.bezeichnung);
         löschComboBox.getItems().addAll(zieh.bezeichnung);
+
+        //TEST
+
+//        Arrow b = new Arrow();
+//        root.getChildren().add(b);
+//        b.endXProperty().bind(zieh.centerXProperty());
+//        b.endYProperty().bind(zieh.centerYProperty());
+
+
+
+        //Circle c2 = new Circle(50, 100, 5);
+        //Line l1 = new Line(100, 100, 200, 300);
+        //root.getChildren().add(l1);
+
+        //c2.setCenterX(zieh.getCenterX());
+        //c2.centerXProperty().bind(zieh.centerXProperty().add(l1.scaleXProperty()));
+        //c2.centerYProperty().bind(zieh.centerYProperty().add(l1.translateYProperty()));
+
+        //l1.endXProperty().bind(c2.centerXProperty());
+        //l1.endYProperty().bind(c2.centerYProperty());
+        //c2.centerXProperty().bind(l1.endXProperty().add(50));
+        //root.getChildren().add(c2);
+
+
     }
 
     public void knotenLöschen()
@@ -405,14 +429,19 @@ public class Controller
         root.getChildren().remove(alleKnoten.get(löschIndex).text);
         root.getChildren().remove(alleKnoten.get(löschIndex));
         alleKnoten.remove(löschIndex);
-
-
-        root.getChildren().remove(alleKanten.get(löschIndex));
-        alleKanten.remove(löschIndex);
-        root.getChildren().remove(alleKanten.get(löschIndex-1));
-        alleKanten.remove(löschIndex-1);
-
         updateComboBoxen();
+
+//TODO: Wenn Knoten löschen, dann alle Kanten löschen die dran hängen!
+//        if(!alleKanten.isEmpty())
+//        {
+//            root.getChildren().remove(alleKanten.get(löschIndex));
+//            alleKanten.remove(löschIndex);
+//        }
+//        if(root.getChildren().get(löschIndex-1) != null)
+//        {
+//            root.getChildren().remove(alleKanten.get(löschIndex-1));
+//            alleKanten.remove(löschIndex-1);
+//        }
     }
 
     public void kanteLöschen()
@@ -476,57 +505,95 @@ public class Controller
         comboBoxVON.getItems().clear();
         comboBoxZU.getItems().clear();
         startKnoten.getItems().clear();
+
+
+        //TEST
+        MoveTo start = new MoveTo();
+        LineTo line1 = new LineTo();
+        LineTo line2 = new LineTo();
+
+        Circle c1 = new Circle(10, 100, 5);
+        Circle c2 = new Circle(50, 100, 5);
+        Circle c3 = new Circle(100, 100, 5);
+
+        c1.setFill(Color.RED);
+        c2.setFill(Color.RED);
+        c3.setFill(Color.RED);
+
+        start.xProperty().bind(c1.centerXProperty());
+        start.yProperty().bind(c1.centerYProperty());
+        bindLinePosTo(c2, line1);
+        bindLinePosTo(c3, line2);
+
+        Path path = new Path(start, line1, line2);
+
+        root.getChildren().add(path);
+        root.getChildren().add(c1);
+        root.getChildren().add(c2);
+        root.getChildren().add(c3);
+
+        animate(c1, Duration.seconds(1), 100);
+        animate(c2, Duration.seconds(2), 50);
+        animate(c3, Duration.seconds(0.5), 150);
+
+
     }
 
     public void knotenVerbinden()
     {
         int knotenNrVon = comboBoxVON.getSelectionModel().getSelectedIndex();
         int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
+        String knotenVonBezeichnung;
+        String knotenZuBezeichnung;
 
-        /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
-        Kante kante = new Kante();
-        kante.von = knotenNrVon;
-        kante.zu = knotenNrZu;
-        alleKanten.add(kante);
+        if( (knotenNrVon != -1) && (knotenNrZu != -1) )
+        {
+            knotenVonBezeichnung = alleKnoten.get(knotenNrVon).bezeichnung;
+            knotenZuBezeichnung = alleKnoten.get(knotenNrZu).bezeichnung;
 
-        kante.vonKnoten = alleKnoten.get(knotenNrVon).bezeichnung;
-        kante.zuKnoten = alleKnoten.get(knotenNrZu).bezeichnung;
+            /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
+            Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
+            //kante.von = knotenNrVon;
+            //kante.zu = knotenNrZu;
+            //kante.vonKnoten = alleKnoten.get(knotenNrVon).bezeichnung;
+            //kante.zuKnoten = alleKnoten.get(knotenNrZu).bezeichnung;
+            alleKanten.add(kante);
 
 
-        System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
+            System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
 
-        /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
-        Knoten vonKnoten = alleKnoten.get(knotenNrVon);
-        Knoten zuKnoten = alleKnoten.get(knotenNrZu);
-        löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
+            Knoten vonKnoten = alleKnoten.get(knotenNrVon);
+            Knoten zuKnoten = alleKnoten.get(knotenNrZu);
+            löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
-        //System.out.print("X:  " + test.centerXProperty().toString() + "\t");
-        //System.out.print("Y:  " + test.centerYProperty().toString() + "\t" + "\n");
 
-        //kante.startXProperty().set(test.centerXProperty().doubleValue());
-        //kante.startYProperty().set(test.centerXProperty().doubleValue());
+            /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
+            Arrow pfeil = new Arrow();
+            root.getChildren().add(pfeil);
+            pfeil.toBack();
+            pfeil.startXProperty().bind(vonKnoten.centerXProperty());
+            pfeil.startYProperty().bind(vonKnoten.centerYProperty());
+            pfeil.endXProperty().bind(zuKnoten.centerXProperty());
+            pfeil.endYProperty().bind(zuKnoten.centerYProperty());
 
-        //kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()).subtract(-30));
-        kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
-        kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
-        kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
-        kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
+            //kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()).subtract(-30));
+            kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
+            kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
+            kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
+            kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
 
-        root.getChildren().add(kante);
-        kante.toBack();
+            root.getChildren().add(kante);
+            kante.toBack();
+
+        }
+
+
 
 
 
         //TEST
 
-        Arrow b = new Arrow();
-        //root.getChildren().add(b);
-        b.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
-        b.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
-        b.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
-        b.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
-        b.toBack();
 
         //Mit Mausklick Pfeil auf Punkt
 //        root.setOnMouseClicked(evt -> {
@@ -553,6 +620,22 @@ public class Controller
         //TEST-ENDE
     }
 
+
+    //TEST
+    private static void bindLinePosTo(Circle circle, LineTo lineTo)
+    {
+        lineTo.xProperty().bind(circle.centerXProperty());
+        lineTo.yProperty().bind(circle.centerYProperty());
+    }
+    private static void animate(Circle circle, Duration duration, double dy)
+    {
+        Timeline animation = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(circle.centerYProperty(), circle.getCenterY())),
+                new KeyFrame(duration, new KeyValue(circle.centerYProperty(), circle.getCenterY()+dy)));
+        animation.setAutoReverse(true);
+        animation.setCycleCount(Animation.INDEFINITE);
+        animation.play();
+    }
 
     //ALT-----------------------------------------------------
     public void knotenAnlegen()

@@ -11,4 +11,12 @@ class Kante extends Line
     int zu;
     String vonKnoten;
     String zuKnoten;
+
+    Kante(int von, int zu, String vonKnoten, String zuKnoten)
+    {
+        this.von = von;
+        this.zu = zu;
+        this.vonKnoten = vonKnoten;
+        this.zuKnoten = zuKnoten;
+    }
 }
