@@ -32,7 +32,7 @@ class Knoten extends Circle
     Knoten(Color color, DoubleProperty x, DoubleProperty y, String bezeichnung)
     {
         super(x.get(), y.get(), 30);
-        setFill(color.deriveColor(1, 1, 1, 0.9));
+        setFill(color.deriveColor(1, 1, 1, 0.98));
         //Ränder um den Kreis setzen und so Sachen
         setStroke(color.GRAY);
         setStrokeWidth(2);

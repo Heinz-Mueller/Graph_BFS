@@ -77,6 +77,8 @@ public class Controller
     static ArrayList<Knoten> alleKnoten = new ArrayList<>();
     static ArrayList<Kante> alleKanten = new ArrayList<>();
 
+    static ArrayList<Arrow> allePfeile = new ArrayList<>();
+
 
     public Controller()
     {
@@ -273,6 +275,18 @@ public class Controller
     /**Breitensuche mit startKnoten*/
     public void bfs(Knoten startKnoten)
     {
+        FillTransition flächeÜbergang = new FillTransition(); //Fläche
+        StrokeTransition übergang = new StrokeTransition(); //Linie
+
+        DropShadow borderGlow = new DropShadow();
+        DropShadow leuchten = new DropShadow();
+        //borderGlow.setOffsetY(0f);
+        //borderGlow.setOffsetX(0f);
+        leuchten.setWidth(55);
+        leuchten.setHeight(15);
+        borderGlow.setWidth(55);
+        borderGlow.setHeight(15);
+
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
 
@@ -324,17 +338,33 @@ public class Controller
                 {
                     n.setFill(Color.GOLD.deriveColor(1,1,1, 0.99));
                     //n.setBlendMode(BlendMode.COLOR_BURN);
-                    DropShadow borderGlow= new DropShadow();
-                    borderGlow.setOffsetY(0f);
-                    borderGlow.setOffsetX(0f);
-                    borderGlow.setColor(Color.RED);
-                    borderGlow.setWidth(15);
-                    borderGlow.setHeight(15);
+                    borderGlow.setColor(Color.GOLD.deriveColor(1,1,1, 0.99));
                     n.setEffect(borderGlow);
                 }
                 if (n.entfernung == 2)
                 {
+
+                    n.setStrokeWidth(4.0);
                     n.setFill(Color.AQUA.deriveColor(1,1,1, 0.99));
+
+                    leuchten.setColor(Color.AQUA.deriveColor(1,1,1, 0.99));
+                    n.setEffect(leuchten);
+
+                    übergang.setShape(n);
+                    übergang.setDuration(new Duration(2000));
+                    übergang.setToValue(Color.RED.deriveColor(1,1,1, 0.9));
+                    übergang.setCycleCount(Timeline.INDEFINITE);
+                    übergang.setAutoReverse(true);
+                    übergang.play();
+
+                    flächeÜbergang.setShape(n);
+                    flächeÜbergang.setDuration(new Duration(4000));
+                    flächeÜbergang.setToValue(Color.RED.deriveColor(1,1,1, 0.9));
+                    flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
+                    flächeÜbergang.setAutoReverse(true);
+                    flächeÜbergang.play();
+
+
                 }
                 if (n.entfernung == 3)
                 {
@@ -498,9 +528,11 @@ public class Controller
         for(int i = 0; i < alleKanten.size(); i++)
         {
             root.getChildren().remove(alleKanten.get(i));
+            root.getChildren().remove(allePfeile.get(i)); //
         }
         alleKnoten.clear();
         alleKanten.clear();
+        allePfeile.clear(); //
         löschComboBox.getItems().clear();
         comboBoxVON.getItems().clear();
         comboBoxZU.getItems().clear();
@@ -535,8 +567,6 @@ public class Controller
         animate(c1, Duration.seconds(1), 100);
         animate(c2, Duration.seconds(2), 50);
         animate(c3, Duration.seconds(0.5), 150);
-
-
     }
 
     public void knotenVerbinden()
@@ -562,7 +592,6 @@ public class Controller
 
             System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
-
             Knoten vonKnoten = alleKnoten.get(knotenNrVon);
             Knoten zuKnoten = alleKnoten.get(knotenNrZu);
             löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
@@ -571,12 +600,14 @@ public class Controller
             /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
             Arrow pfeil = new Arrow();
             root.getChildren().add(pfeil);
+            allePfeile.add(pfeil);
             pfeil.toBack();
             pfeil.startXProperty().bind(vonKnoten.centerXProperty());
             pfeil.startYProperty().bind(vonKnoten.centerYProperty());
             pfeil.endXProperty().bind(zuKnoten.centerXProperty());
             pfeil.endYProperty().bind(zuKnoten.centerYProperty());
 
+            //
             //kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()).subtract(-30));
             kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
             kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
@@ -585,7 +616,6 @@ public class Controller
 
             root.getChildren().add(kante);
             kante.toBack();
-
         }
 
 

@@ -32,13 +32,13 @@ public class Arrow extends Group
         line.setStrokeWidth(1.2);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         line.getStrokeDashArray().addAll(20.0, 5.0);
-        line.setStroke(Color.GRAY.deriveColor(1,1,1, 0.8));
+        line.setStroke(Color.GRAY.deriveColor(1,1,1, 0.0));
 
         //Pfeil-Eigenschaften
         arrow1.setSmooth(true);
         arrow2.setSmooth(true);
-        arrow1.setStroke(Color.GREEN.deriveColor(1,1,1, 0.7));
-        arrow2.setStroke(Color.GREEN.deriveColor(1,1,1, 0.7));
+        arrow1.setStroke(Color.GREY.deriveColor(1,1,1, 0.7));
+        arrow2.setStroke(Color.GREY.deriveColor(1,1,1, 0.7));
         arrow1.getStrokeDashArray().addAll(20.0, 32.0);
         arrow2.getStrokeDashArray().addAll(20.0, 32.0);
         arrow1.setStrokeWidth(1.5);
@@ -125,9 +125,7 @@ public class Arrow extends Group
 
     public final double getEndX()
     {
-        double test = line.getEndX();
-        return test;
-        //return line.getEndX();
+        return line.getEndX();
     }
 
     public final DoubleProperty endXProperty() { return line.endXProperty(); }
@@ -137,8 +135,6 @@ public class Arrow extends Group
 
     public final double getEndY()
     {
-        //double test = line.getEndY() - 15;
-        //return test;
         return line.getEndY();
     }
 
