@@ -54,7 +54,7 @@
             <Button fx:id="bfs" layoutX="131.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenAnlegen" text="BFS" />
          </children>
       </Pane>
-      <Pane fx:id="Pane_2" layoutX="700.0" prefHeight="165.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;">
+      <Pane fx:id="Pane_2" layoutX="700.0" prefHeight="165.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TextField fx:id="eingabeFeld" layoutX="13.0" layoutY="14.0" prefHeight="25.0" prefWidth="154.0" promptText="Knoten-Bezeichnung" />
             <Button fx:id="newKnoten" layoutX="183.0" layoutY="14.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" prefHeight="25.0" prefWidth="101.0" text="New Knoten" />
@@ -65,7 +65,7 @@
             <ComboBox fx:id="startKnoten" layoutX="13.0" layoutY="120.0" onAction="#start" prefHeight="25.0" prefWidth="173.0" promptText="Start-Knoten" />
          </children>
       </Pane>
-      <AnchorPane layoutX="707.0" layoutY="165.0" prefHeight="180.0" prefWidth="301.0">
+      <AnchorPane layoutX="707.0" layoutY="165.0" prefHeight="180.0" prefWidth="301.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Button fx:id="löschButton" layoutX="198.0" layoutY="14.0" mnemonicParsing="false" onAction="#knotenLöschen" text="Lösche Knoten" />
             <ComboBox fx:id="löschComboBox" layoutX="10.0" layoutY="14.0" promptText="Knoten" />
