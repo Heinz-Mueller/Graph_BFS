@@ -38,14 +38,14 @@ class Knoten extends Circle
         setStrokeWidth(2);
         setStrokeType(StrokeType.OUTSIDE);
 
-        //setBlendMode(BlendMode.SRC_OVER);
-
         this.bezeichnung = bezeichnung;
         this.text.setText(bezeichnung);
 
-        text.layoutXProperty().bindBidirectional(centerXProperty());
-        text.layoutYProperty().bindBidirectional(centerYProperty());
+        //text.layoutXProperty().bindBidirectional(centerXProperty());
+        //text.layoutYProperty().bindBidirectional(centerYProperty());
 
+        text.xProperty().bind(this.centerXProperty().subtract(5));
+        text.yProperty().bind(this.centerYProperty());
         //x.bind(centerXProperty());
         //y.bind(centerYProperty());
         enableDrag();
@@ -55,27 +55,36 @@ class Knoten extends Circle
     private void enableDrag()
     {
         final Delta dragDelta = new Delta();
-            setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
+            setOnMousePressed(new EventHandler<MouseEvent>()
+            {
+                @Override public void handle(MouseEvent mouseEvent)
+                {
                     // record a delta distance for the drag and drop operation.
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
                 }
             });
-            setOnMouseReleased(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
+            setOnMouseReleased(new EventHandler<MouseEvent>()
+            {
+                @Override public void handle(MouseEvent mouseEvent)
+                {
                     getScene().setCursor(Cursor.HAND);
                 }
             });
-            setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override public void handle(MouseEvent mouseEvent) {
+            setOnMouseDragged(new EventHandler<MouseEvent>()
+            {
+                @Override public void handle(MouseEvent mouseEvent)
+                {
                     double newX = mouseEvent.getX() + dragDelta.x;
-                    if (newX > 0 && newX < getScene().getWidth()) {
+                    //if (newX > 0 && newX < getScene().getWidth())
+                    if (newX > 0 && newX < getScene().getWidth()-320)
+                    {
                         setCenterX(newX);
                     }
                     double newY = mouseEvent.getY() + dragDelta.y;
-                    if (newY > 0 && newY < getScene().getHeight()) {
+                    if (newY > 0 && newY < getScene().getHeight())
+                    {
                         setCenterY(newY);
                     }
                 }

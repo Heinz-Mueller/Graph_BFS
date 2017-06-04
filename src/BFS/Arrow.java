@@ -9,6 +9,11 @@ import javafx.scene.shape.StrokeLineCap;
 
 public class Arrow extends Group
 {
+    //TODO
+    int von;
+    int zu;
+    String vonKnoten;
+    String zuKnoten;
 
     private final Line line;
 
@@ -19,7 +24,7 @@ public class Arrow extends Group
     }
 
     private static final double arrowLength = 50;
-    private static final double arrowWidth = 3.0;
+    private static final double arrowWidth = 4.5;
 
 
     private Arrow(Line line, Line arrow1, Line arrow2)

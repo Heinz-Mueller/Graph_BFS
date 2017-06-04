@@ -3,6 +3,8 @@ package BFS;
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -26,6 +28,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by E.E on 06.05.2017.
@@ -62,8 +67,6 @@ public class Controller
     public Circle knotenA;
     public Circle knotenB;
     public Circle knotenC;
-    public Circle knotenD;
-    public Circle knotenE;
 
     public Label label;
 
@@ -80,11 +83,34 @@ public class Controller
     static ArrayList<Arrow> allePfeile = new ArrayList<>();
 
 
+    public TextField getEingabeFeld()
+    {
+        return eingabeFeld;
+    }
+
     public Controller()
     {
         queue = new LinkedList<>(); //ALT
         warteschlange = new LinkedList<>();
     }
+
+    /**Limitiert die Texteingabe bei Knoten-Bezeichnung*/
+    public void addTextLimiter()
+    {
+        final int maxLength = 4;
+        eingabeFeld.textProperty().addListener(new ChangeListener<String>()
+        {
+            @Override
+            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue)
+            {
+                if (eingabeFeld.getText().length() > maxLength) {
+                    String s = eingabeFeld.getText().substring(0, maxLength);
+                    eingabeFeld.setText(s);
+                }
+            }
+        });
+    }
+
 
     public void handleButtonAction(ActionEvent e)
     {
@@ -238,7 +264,7 @@ public class Controller
         }
     }
 
-    public void bfsAusführen()
+    public void bfsAusführen() throws InterruptedException
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
         Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
@@ -273,9 +299,15 @@ public class Controller
     }
 
     /**Breitensuche mit startKnoten*/
-    public void bfs(Knoten startKnoten)
+    public void bfs(Knoten startKnoten) throws InterruptedException
     {
-        FillTransition flächeÜbergang = new FillTransition(); //Fläche
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            alleKnoten.get(i).besucht = false;
+        }
+
+
+        //FillTransition flächeÜbergang = new FillTransition(); //Fläche
         StrokeTransition übergang = new StrokeTransition(); //Linie
 
         DropShadow borderGlow = new DropShadow();
@@ -324,7 +356,6 @@ public class Controller
                     nachbarn.get(i).entfernung = element.entfernung + 1;
                     nachbarn.get(i).entfernungGesetzt = true;
                 }
-
                 System.out.print("NACHBAR " + nachbarn.get(i).bezeichnung + "\t");
                 System.out.print("ENTFERNUNG " + nachbarn.get(i).entfernung + "\t");
 
@@ -336,39 +367,53 @@ public class Controller
                 }
                 if (n.entfernung == 1)
                 {
-                    n.setFill(Color.GOLD.deriveColor(1,1,1, 0.99));
-                    //n.setBlendMode(BlendMode.COLOR_BURN);
-                    borderGlow.setColor(Color.GOLD.deriveColor(1,1,1, 0.99));
-                    n.setEffect(borderGlow);
-                }
-                if (n.entfernung == 2)
-                {
+                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
 
-                    n.setStrokeWidth(4.0);
-                    n.setFill(Color.AQUA.deriveColor(1,1,1, 0.99));
-
-                    leuchten.setColor(Color.AQUA.deriveColor(1,1,1, 0.99));
-                    n.setEffect(leuchten);
-
-                    übergang.setShape(n);
-                    übergang.setDuration(new Duration(2000));
-                    übergang.setToValue(Color.RED.deriveColor(1,1,1, 0.9));
-                    übergang.setCycleCount(Timeline.INDEFINITE);
-                    übergang.setAutoReverse(true);
-                    übergang.play();
+                    //n.setFill(Color.GOLD.deriveColor(1,0.3,1, 1));
 
                     flächeÜbergang.setShape(n);
-                    flächeÜbergang.setDuration(new Duration(4000));
-                    flächeÜbergang.setToValue(Color.RED.deriveColor(1,1,1, 0.9));
-                    flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
+                    flächeÜbergang.setDuration(new Duration(1200));
+                    flächeÜbergang.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
+                    //flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
+                    flächeÜbergang.setCycleCount(3);
                     flächeÜbergang.setAutoReverse(true);
                     flächeÜbergang.play();
 
+                }
+                if (n.entfernung == 2)
+                {
+                    PauseTransition pause = new PauseTransition(Duration.millis(3600));
+                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
+                    //n.setStrokeWidth(5.0);
+                    //n.setFill(Color.AQUA.deriveColor(1,0.3,1, 1));
 
+                    //leuchten.setColor(Color.AQUA.deriveColor(1,0.3,1, 1));
+                    //n.setEffect(leuchten);
+
+                    flächeÜbergang.setShape(n);
+                    flächeÜbergang.setDuration(new Duration(1200));
+                    flächeÜbergang.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
+                    flächeÜbergang.setCycleCount(3);
+                    flächeÜbergang.setAutoReverse(true);
+
+                    SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
+                    sequence.play();
                 }
                 if (n.entfernung == 3)
                 {
-                    n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 0.99));
+                    PauseTransition pause = new PauseTransition(Duration.millis(7200));
+                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
+
+                    //n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 1));
+
+                    flächeÜbergang.setShape(n);
+                    flächeÜbergang.setDuration(new Duration(1200));
+                    flächeÜbergang.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
+                    flächeÜbergang.setCycleCount(3);
+                    flächeÜbergang.setAutoReverse(true);
+
+                    SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
+                    sequence.play();
                 }
                 if (n.entfernung == 4)
                 {
@@ -381,14 +426,55 @@ public class Controller
                     n.besucht = true;
                     //neighbours.get(i).setFill(Color.GOLD);
                 }
+                //sleep(5000);
+                //TimeUnit.SECONDS.sleep(2);
             }
             System.out.print("\n");
         }
     }
 
 
+    public void test()
+    {
+        Rectangle rect = new Rectangle (100, 40, 100, 100);
+        rect.setArcHeight(50);
+        rect.setArcWidth(50);
+        rect.setFill(Color.VIOLET);
+
+        root.getChildren().add(rect);
+
+        final Duration SEC_2 = Duration.millis(2000);
+        final Duration SEC_3 = Duration.millis(3000);
+
+        PauseTransition pt = new PauseTransition(Duration.millis(1000));
+        FadeTransition ft = new FadeTransition(SEC_3);
+        ft.setFromValue(1.0f);
+        ft.setToValue(0.3f);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        TranslateTransition tt = new TranslateTransition(SEC_2);
+        tt.setFromX(-100f);
+        tt.setToX(100f);
+        tt.setCycleCount(2);
+        tt.setAutoReverse(true);
+        RotateTransition rt = new RotateTransition(SEC_3);
+        rt.setByAngle(180f);
+        rt.setCycleCount(4);
+        rt.setAutoReverse(true);
+        ScaleTransition st = new ScaleTransition(SEC_2);
+        st.setByX(1.5f);
+        st.setByY(1.5f);
+        st.setCycleCount(2);
+        st.setAutoReverse(true);
+
+        SequentialTransition seqT = new SequentialTransition (rect, pt, ft, tt, rt, st);
+        seqT.play();
+    }
+
     public void erstelleZiehKnoten()
     {
+        //test();
+
         DoubleProperty startX = new SimpleDoubleProperty(200);
         DoubleProperty startY = new SimpleDoubleProperty(200);
         String knotenBezeichnung;
@@ -435,8 +521,6 @@ public class Controller
 //        b.endXProperty().bind(zieh.centerXProperty());
 //        b.endYProperty().bind(zieh.centerYProperty());
 
-
-
         //Circle c2 = new Circle(50, 100, 5);
         //Line l1 = new Line(100, 100, 200, 300);
         //root.getChildren().add(l1);
@@ -450,18 +534,22 @@ public class Controller
         //c2.centerXProperty().bind(l1.endXProperty().add(50));
         //root.getChildren().add(c2);
 
-
     }
 
     public void knotenLöschen()
     {
         int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
-        root.getChildren().remove(alleKnoten.get(löschIndex).text);
-        root.getChildren().remove(alleKnoten.get(löschIndex));
-        alleKnoten.remove(löschIndex);
-        updateComboBoxen();
+        if(löschIndex != -1)
+        {
+            root.getChildren().remove(alleKnoten.get(löschIndex).text);
+            root.getChildren().remove(alleKnoten.get(löschIndex));
+            alleKnoten.remove(löschIndex);
+            updateComboBoxen();
+        }
 
 //TODO: Wenn Knoten löschen, dann alle Kanten löschen die dran hängen!
+        //Dazu muss für jeden Knoten eine Liste geführt werden!
+
 //        if(!alleKanten.isEmpty())
 //        {
 //            root.getChildren().remove(alleKanten.get(löschIndex));
@@ -477,9 +565,14 @@ public class Controller
     public void kanteLöschen()
     {
         int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
-        root.getChildren().remove(alleKanten.get(löschKanteIndex));
-        alleKanten.remove(löschKanteIndex);
-        updateComboBoxen();
+        if(löschKanteIndex != -1)
+        {
+            root.getChildren().remove(alleKanten.get(löschKanteIndex));
+            root.getChildren().remove(allePfeile.get(löschKanteIndex));
+            allePfeile.remove(löschKanteIndex);
+            alleKanten.remove(löschKanteIndex);
+            updateComboBoxen();
+        }
     }
 
     private void updateAlleKnoten() //Nicht nötig, weil ArrayListen sich selbst updaten?
@@ -528,7 +621,10 @@ public class Controller
         for(int i = 0; i < alleKanten.size(); i++)
         {
             root.getChildren().remove(alleKanten.get(i));
-            root.getChildren().remove(allePfeile.get(i)); //
+        }
+        for(int i = 0; i < allePfeile.size(); i++)
+        {
+            root.getChildren().remove(allePfeile.get(i));
         }
         alleKnoten.clear();
         alleKanten.clear();
@@ -537,10 +633,11 @@ public class Controller
         comboBoxVON.getItems().clear();
         comboBoxZU.getItems().clear();
         startKnoten.getItems().clear();
+        bfs2.setDisable(true);
 
 
         //TEST
-        MoveTo start = new MoveTo();
+/*        MoveTo start = new MoveTo();
         LineTo line1 = new LineTo();
         LineTo line2 = new LineTo();
 
@@ -566,7 +663,7 @@ public class Controller
 
         animate(c1, Duration.seconds(1), 100);
         animate(c2, Duration.seconds(2), 50);
-        animate(c3, Duration.seconds(0.5), 150);
+        animate(c3, Duration.seconds(0.5), 150);*/
     }
 
     public void knotenVerbinden()
@@ -576,19 +673,19 @@ public class Controller
         String knotenVonBezeichnung;
         String knotenZuBezeichnung;
 
-        if( (knotenNrVon != -1) && (knotenNrZu != -1) )
+        if( (knotenNrVon != -1) && (knotenNrZu != -1) && (knotenNrVon != knotenNrZu) )
         {
             knotenVonBezeichnung = alleKnoten.get(knotenNrVon).bezeichnung;
             knotenZuBezeichnung = alleKnoten.get(knotenNrZu).bezeichnung;
 
+            if( verbindungNichtVorhanden(knotenNrVon, knotenNrZu) )
+            {
+                System.out.print("SIND NICHT GLEICH OK!!  "+ "\t\n");
+            }
+
             /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
             Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
-            //kante.von = knotenNrVon;
-            //kante.zu = knotenNrZu;
-            //kante.vonKnoten = alleKnoten.get(knotenNrVon).bezeichnung;
-            //kante.zuKnoten = alleKnoten.get(knotenNrZu).bezeichnung;
             alleKanten.add(kante);
-
 
             System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
 
@@ -607,8 +704,6 @@ public class Controller
             pfeil.endXProperty().bind(zuKnoten.centerXProperty());
             pfeil.endYProperty().bind(zuKnoten.centerYProperty());
 
-            //
-            //kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()).subtract(-30));
             kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
             kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
             kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
@@ -616,15 +711,10 @@ public class Controller
 
             root.getChildren().add(kante);
             kante.toBack();
+
         }
 
-
-
-
-
         //TEST
-
-
         //Mit Mausklick Pfeil auf Punkt
 //        root.setOnMouseClicked(evt -> {
 //            switch (evt.getButton()) {
@@ -640,14 +730,27 @@ public class Controller
 //                    break;
 //            }
 //        });
-
-
-//        b.setStartX(150);
-//        b.setStartY(300);
-//        b.setEndX(500);
-//        b.setEndY(350);
-
         //TEST-ENDE
+    }
+
+    private boolean verbindungNichtVorhanden(int von, int zu)
+    {
+        for(int i=0; i < alleKanten.size(); i++)
+        {
+            if( (alleKanten.get(i).von == von) && (alleKanten.get(i).zu == zu) )
+            {
+                System.out.print("bool_VON:  "+alleKanten.get(i).von + "\tbool_ZU:  "+alleKanten.get(i).zu + "\t\n");
+                return false;
+            }
+            else
+            {
+                System.out.print("ELSE_bool_VON:  "+alleKanten.get(i).von + "\tELSE_bool_ZU:  "+alleKanten.get(i).zu + "\t\n");
+                return true;
+            }
+
+
+        }
+        return true;
     }
 
 
@@ -673,21 +776,15 @@ public class Controller
         Knoten_ALT A = new Knoten_ALT(10, knotenA);
         Knoten_ALT B = new Knoten_ALT(20, knotenB);
         Knoten_ALT C = new Knoten_ALT(30, knotenC);
-        Knoten_ALT D = new Knoten_ALT(40, knotenD);
-        Knoten_ALT E = new Knoten_ALT(50, knotenE);
 
         nodes.add(A);
         nodes.add(B);
         nodes.add(C);
-        nodes.add(D);
-        nodes.add(E);
 
         int adjacency_matrix[][] ={
-                {0,1,1,0,0}, // A: 10
-                {1,0,0,1,0}, // B: 20
-                {1,0,0,0,1}, // C: 30
-                {0,1,0,0,0}, // D: 40
-                {0,0,1,0,0}, // E: 50
+                {0,1,1}, // A: 10
+                {1,0,0}, // B: 20
+                {1,0,0}, // C: 30
         };
 
         int matrix[][] ={
@@ -703,7 +800,7 @@ public class Controller
         };
 
         System.out.println("BFS: ");
-        bfs_ALT(adjacency_matrix, E); //Matrix und Startknoten mitgeben
+        bfs_ALT(adjacency_matrix, A); //Matrix und Startknoten mitgeben
         bfs.setDisable(true);
     }
 }
