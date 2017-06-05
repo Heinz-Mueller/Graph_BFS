@@ -629,10 +629,7 @@ public class Controller
         alleKnoten.clear();
         alleKanten.clear();
         allePfeile.clear(); //
-        löschComboBox.getItems().clear();
-        comboBoxVON.getItems().clear();
-        comboBoxZU.getItems().clear();
-        startKnoten.getItems().clear();
+        updateComboBoxen();
         bfs2.setDisable(true);
 
 
@@ -678,39 +675,35 @@ public class Controller
             knotenVonBezeichnung = alleKnoten.get(knotenNrVon).bezeichnung;
             knotenZuBezeichnung = alleKnoten.get(knotenNrZu).bezeichnung;
 
-            if( verbindungNichtVorhanden(knotenNrVon, knotenNrZu) )
+            if( !verbindungVorhanden(knotenNrVon, knotenNrZu) )
             {
-                System.out.print("SIND NICHT GLEICH OK!!  "+ "\t\n");
+                /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
+                Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
+                alleKanten.add(kante);
+
+                System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
+                Knoten vonKnoten = alleKnoten.get(knotenNrVon);
+                Knoten zuKnoten = alleKnoten.get(knotenNrZu);
+                löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
+
+                /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
+                Arrow pfeil = new Arrow();
+                root.getChildren().add(pfeil);
+                allePfeile.add(pfeil);
+                pfeil.toBack();
+                pfeil.startXProperty().bind(vonKnoten.centerXProperty());
+                pfeil.startYProperty().bind(vonKnoten.centerYProperty());
+                pfeil.endXProperty().bind(zuKnoten.centerXProperty());
+                pfeil.endYProperty().bind(zuKnoten.centerYProperty());
+
+                kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
+                kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
+                kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
+                kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
+
+                root.getChildren().add(kante);
+                kante.toBack();
             }
-
-            /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
-            Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
-            alleKanten.add(kante);
-
-            System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
-
-            Knoten vonKnoten = alleKnoten.get(knotenNrVon);
-            Knoten zuKnoten = alleKnoten.get(knotenNrZu);
-            löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
-
-
-            /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
-            Arrow pfeil = new Arrow();
-            root.getChildren().add(pfeil);
-            allePfeile.add(pfeil);
-            pfeil.toBack();
-            pfeil.startXProperty().bind(vonKnoten.centerXProperty());
-            pfeil.startYProperty().bind(vonKnoten.centerYProperty());
-            pfeil.endXProperty().bind(zuKnoten.centerXProperty());
-            pfeil.endYProperty().bind(zuKnoten.centerYProperty());
-
-            kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
-            kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
-            kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
-            kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
-
-            root.getChildren().add(kante);
-            kante.toBack();
 
         }
 
@@ -733,24 +726,18 @@ public class Controller
         //TEST-ENDE
     }
 
-    private boolean verbindungNichtVorhanden(int von, int zu)
+    private boolean verbindungVorhanden(int von, int zu)
     {
         for(int i=0; i < alleKanten.size(); i++)
         {
             if( (alleKanten.get(i).von == von) && (alleKanten.get(i).zu == zu) )
             {
-                System.out.print("bool_VON:  "+alleKanten.get(i).von + "\tbool_ZU:  "+alleKanten.get(i).zu + "\t\n");
-                return false;
-            }
-            else
-            {
-                System.out.print("ELSE_bool_VON:  "+alleKanten.get(i).von + "\tELSE_bool_ZU:  "+alleKanten.get(i).zu + "\t\n");
+                System.out.print("bool_VON:  "+alleKanten.get(i).von + "\tbool_ZU:  "+alleKanten.get(i).zu + "\t\n"); //TEST
                 return true;
             }
-
-
         }
-        return true;
+        System.out.print("\t\n");
+        return false;
     }
 
 
