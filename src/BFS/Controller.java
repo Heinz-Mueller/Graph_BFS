@@ -7,30 +7,21 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-import static java.lang.Thread.sleep;
 
 /**
  * Created by E.E on 06.05.2017.
@@ -78,6 +69,7 @@ public class Controller
     private Queue<Knoten> warteschlange;
     /**Listen für alle angelegten Knoten und Kanten*/
     static ArrayList<Knoten> alleKnoten = new ArrayList<>();
+    static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
     static ArrayList<Kante> alleKanten = new ArrayList<>();
 
     static ArrayList<Arrow> allePfeile = new ArrayList<>();
@@ -141,7 +133,6 @@ public class Controller
         kanteA.setStroke(Color.GRAY.deriveColor(0, 1, 1, 0.5));
         kanteA.setStrokeLineCap(StrokeLineCap.BUTT);
         kanteA.getStrokeDashArray().setAll(10.0, 5.0);
-
 
         label.layoutXProperty().bind(knotenA.layoutXProperty().add(knotenA.translateXProperty()));
         label.layoutYProperty().bind(knotenA.layoutYProperty().add(knotenA.translateYProperty()));
@@ -298,26 +289,13 @@ public class Controller
         return nachbar;
     }
 
-    /**Breitensuche mit startKnoten*/
-    public void bfs(Knoten startKnoten) throws InterruptedException
+    /**Breitensuche mit Start-Knoten*/
+    public void bfs(Knoten startKnoten)
     {
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
         }
-
-
-        //FillTransition flächeÜbergang = new FillTransition(); //Fläche
-        StrokeTransition übergang = new StrokeTransition(); //Linie
-
-        DropShadow borderGlow = new DropShadow();
-        DropShadow leuchten = new DropShadow();
-        //borderGlow.setOffsetY(0f);
-        //borderGlow.setOffsetX(0f);
-        leuchten.setWidth(55);
-        leuchten.setHeight(15);
-        borderGlow.setWidth(55);
-        borderGlow.setHeight(15);
 
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
@@ -356,82 +334,102 @@ public class Controller
                     nachbarn.get(i).entfernung = element.entfernung + 1;
                     nachbarn.get(i).entfernungGesetzt = true;
                 }
-                System.out.print("NACHBAR " + nachbarn.get(i).bezeichnung + "\t");
-                System.out.print("ENTFERNUNG " + nachbarn.get(i).entfernung + "\t");
 
-                /**Knoten nach Entfernung einfärben*/
-                //TODO eine Funktion die Entfernung nimmt und Farbe zurückgibt
-                if (n.entfernung == 0)
-                {
-                    n.setFill(Color.WHITE.deriveColor(1,1,1, 0.99));
-                }
-                if (n.entfernung == 1)
-                {
-                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
+                knotenZumFärben.add(n);
 
-                    //n.setFill(Color.GOLD.deriveColor(1,0.3,1, 1));
-
-                    flächeÜbergang.setShape(n);
-                    flächeÜbergang.setDuration(new Duration(1200));
-                    flächeÜbergang.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
-                    //flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
-                    flächeÜbergang.setCycleCount(3);
-                    flächeÜbergang.setAutoReverse(true);
-                    flächeÜbergang.play();
-
-                }
-                if (n.entfernung == 2)
-                {
-                    PauseTransition pause = new PauseTransition(Duration.millis(3600));
-                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
-                    //n.setStrokeWidth(5.0);
-                    //n.setFill(Color.AQUA.deriveColor(1,0.3,1, 1));
-
-                    //leuchten.setColor(Color.AQUA.deriveColor(1,0.3,1, 1));
-                    //n.setEffect(leuchten);
-
-                    flächeÜbergang.setShape(n);
-                    flächeÜbergang.setDuration(new Duration(1200));
-                    flächeÜbergang.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
-                    flächeÜbergang.setCycleCount(3);
-                    flächeÜbergang.setAutoReverse(true);
-
-                    SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
-                    sequence.play();
-                }
-                if (n.entfernung == 3)
-                {
-                    PauseTransition pause = new PauseTransition(Duration.millis(7200));
-                    FillTransition flächeÜbergang = new FillTransition(); //Fläche
-
-                    //n.setFill(Color.CHOCOLATE.deriveColor(1,1,1, 1));
-
-                    flächeÜbergang.setShape(n);
-                    flächeÜbergang.setDuration(new Duration(1200));
-                    flächeÜbergang.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
-                    flächeÜbergang.setCycleCount(3);
-                    flächeÜbergang.setAutoReverse(true);
-
-                    SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
-                    sequence.play();
-                }
-                if (n.entfernung == 4)
-                {
-                    n.setFill(Color.AZURE);
-                }
                 /**Knoten in die Warteschlange packen und als besucht markieren*/
                 if(n != null && !n.besucht)
                 {
                     warteschlange.add(n);
                     n.besucht = true;
-                    //neighbours.get(i).setFill(Color.GOLD);
                 }
-                //sleep(5000);
-                //TimeUnit.SECONDS.sleep(2);
             }
             System.out.print("\n");
         }
+        //Knoten nach Entfernung einfärben
+        einfärben();
     }
+
+
+    public void einfärben()
+    {
+        StrokeTransition übergang = new StrokeTransition(); //Linie
+        DropShadow leuchten = new DropShadow();
+        leuchten.setWidth(55);
+        leuchten.setHeight(15);
+
+
+        for (int i = 0; i < alleKnoten.size(); i++)
+        {
+            Knoten n = alleKnoten.get(i);
+            String name = alleKnoten.get(i).bezeichnung;
+            int entfernung = alleKnoten.get(i).entfernung;
+
+            //TESTAUSGABE
+            System.out.print("BEZEICHNUNG:\t"+name+"   ENTFERNUNG\t"+entfernung+"\n");
+
+            if (n.entfernung == 0)
+            {
+                //n.setFill(Color.WHITE.deriveColor(1,1,1, 0.99));
+            }
+            if (n.entfernung == 1)
+            {
+                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+
+                flächeÜbergang.setShape(n);
+                flächeÜbergang.setDuration(new Duration(1200));
+                flächeÜbergang.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
+                //flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
+                flächeÜbergang.setCycleCount(3);
+                flächeÜbergang.setAutoReverse(true);
+                flächeÜbergang.play();
+            }
+            if (n.entfernung == 2)
+            {
+                PauseTransition pause = new PauseTransition(Duration.millis(3600));
+                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+
+                flächeÜbergang.setShape(n);
+                flächeÜbergang.setDuration(new Duration(1200));
+                flächeÜbergang.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
+                flächeÜbergang.setCycleCount(3);
+                flächeÜbergang.setAutoReverse(true);
+
+                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
+                sequence.play();
+            }
+            if (n.entfernung == 3)
+            {
+                PauseTransition pause = new PauseTransition(Duration.millis(7200));
+                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+
+                flächeÜbergang.setShape(n);
+                flächeÜbergang.setDuration(new Duration(1200));
+                flächeÜbergang.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
+                flächeÜbergang.setCycleCount(3);
+                flächeÜbergang.setAutoReverse(true);
+
+                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
+                sequence.play();
+            }
+            if (n.entfernung == 4)
+            {
+                //n.setFill(Color.AZURE);
+                PauseTransition pause = new PauseTransition(Duration.millis(10800));
+                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+
+                flächeÜbergang.setShape(n);
+                flächeÜbergang.setDuration(new Duration(1200));
+                flächeÜbergang.setToValue(Color.AZURE.deriveColor(1,1,1, 1));
+                flächeÜbergang.setCycleCount(3);
+                flächeÜbergang.setAutoReverse(true);
+
+                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
+                sequence.play();
+            }
+        }
+    }
+
 
 
     public void test()
@@ -707,7 +705,6 @@ public class Controller
 
         }
 
-        //TEST
         //Mit Mausklick Pfeil auf Punkt
 //        root.setOnMouseClicked(evt -> {
 //            switch (evt.getButton()) {
@@ -723,7 +720,6 @@ public class Controller
 //                    break;
 //            }
 //        });
-        //TEST-ENDE
     }
 
     private boolean verbindungVorhanden(int von, int zu)
