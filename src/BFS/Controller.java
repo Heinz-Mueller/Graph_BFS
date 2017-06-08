@@ -253,6 +253,7 @@ public class Controller
         if(start != -1)
         {
             bfs2.setDisable(false);
+            dfs.setDisable(false);
         }
     }
 
