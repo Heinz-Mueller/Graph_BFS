@@ -597,20 +597,7 @@ public class Controller
             alleKnoten.remove(löschIndex);
             updateComboBoxen();
         }
-
-//TODO: Wenn Knoten löschen, dann alle Kanten löschen die dran hängen!
-        //Dazu muss für jeden Knoten eine Liste geführt werden!
-
-//        if(!alleKanten.isEmpty())
-//        {
-//            root.getChildren().remove(alleKanten.get(löschIndex));
-//            alleKanten.remove(löschIndex);
-//        }
-//        if(root.getChildren().get(löschIndex-1) != null)
-//        {
-//            root.getChildren().remove(alleKanten.get(löschIndex-1));
-//            alleKanten.remove(löschIndex-1);
-//        }
+        //TODO: Wenn Knoten löschen, dann alle Kanten löschen die dran hängen!
     }
 
     public void kanteLöschen()
