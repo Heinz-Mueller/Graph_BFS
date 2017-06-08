@@ -17,10 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -273,6 +270,7 @@ public class Controller
             alleKnoten.get(i).besucht = false;
         }
         dfs(startKnoten);
+        //dfsStack(startKnoten);
         ausgabe();
     }
 
@@ -463,15 +461,59 @@ public class Controller
         for (int i = 0; i < nachbarn.size(); i++)
         {
             Knoten n = nachbarn.get(i);
-            if(n!=null && !n.besucht)
+            n.hinBesucht = true;
+            if(n!=null && !n.besucht && n.zeitStempelHin<zeitStempel)
             {
                 dfs(n);
-                n.besucht=true;
+                n.besucht = true;
+                //dfs(n);
             }
         }
         zeitStempel++;
         startKnoten.zeitStempelZurück = zeitStempel;
         startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
+    }
+
+
+    // Iterative DFS using stack
+    public  void dfsStack(Knoten startKnoten)
+    {
+        int knotenAnzahl = alleKnoten.size();
+        int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
+
+        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+        }
+
+        zeitStempel++;
+        startKnoten.zeitStempelHin = zeitStempel;
+//        startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
+
+        Stack stack = new Stack();
+        stack.add(startKnoten);
+        startKnoten.besucht=true;
+        while (!stack.isEmpty())
+        {
+            Knoten element = (Knoten) stack.pop();
+            System.out.print(element.bezeichnung + "\t");
+
+            ArrayList neighbours=findeNachbar(matrix, element);
+            for (int i = 0; i < neighbours.size(); i++)
+            {
+                Knoten n= (Knoten) neighbours.get(i);
+                if(n!=null && !n.besucht)
+                {
+                    stack.add(n);
+                    n.besucht=true;
+                }
+            }
+        }
+
+        zeitStempel++;
+        startKnoten.zeitStempelZurück = zeitStempel;
+//        startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
     }
 
 

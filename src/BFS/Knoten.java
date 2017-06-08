@@ -30,6 +30,8 @@ class Knoten extends Circle
     Text stempelZurück = new Text("zurück");
 
     boolean besucht;
+    boolean hinBesucht;
+    boolean zurückBesucht;
 
     DoubleProperty X;
     DoubleProperty Y;
