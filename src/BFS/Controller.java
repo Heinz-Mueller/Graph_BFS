@@ -462,7 +462,7 @@ public class Controller
         {
             Knoten n = nachbarn.get(i);
             n.hinBesucht = true;
-            if(n!=null && !n.besucht && n.zeitStempelHin<zeitStempel)
+            if(n!=null && !n.besucht && n.zeitStempelHin<zeitStempel) //TODO HIER WAS ÄNDERN
             {
                 dfs(n);
                 n.besucht = true;
