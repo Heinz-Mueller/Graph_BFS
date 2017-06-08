@@ -19,10 +19,15 @@ class Knoten extends Circle
 {
     int entfernung = 0;
     boolean entfernungGesetzt;
+    int zeitStempelHin;
+    int zeitStempelZurück;
 
     //Brauche es einmal als String und einmal als "Text", cast toString ging irgendwo nicht :/
     String bezeichnung;
     Text text = new Text("");
+
+    Text stempelHin = new Text("hin");
+    Text stempelZurück = new Text("zurück");
 
     boolean besucht;
 
@@ -49,6 +54,9 @@ class Knoten extends Circle
         //x.bind(centerXProperty());
         //y.bind(centerYProperty());
         enableDrag();
+
+        zeitStempelSetzen();
+        //stempelHin.setVisible(true);
     }
 
     /**Macht den Knoten beweglich durch Mausklick und Ziehen*/
@@ -109,4 +117,12 @@ class Knoten extends Circle
     /**x und y Koordinaten*/
     private class Delta
     { double x, y; }
+
+    public void zeitStempelSetzen()
+    {
+        stempelHin.xProperty().bind(this.centerXProperty().subtract(30));
+        stempelHin.yProperty().bind(this.centerYProperty().add(35));
+        stempelZurück.xProperty().bind(this.centerXProperty().add(20));
+        stempelZurück.yProperty().bind(this.centerYProperty().add(35));
+    }
 }

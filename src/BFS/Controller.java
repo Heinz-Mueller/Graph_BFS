@@ -48,6 +48,7 @@ public class Controller
     public Button löschButton;
     public Button löschButtonKante;
     public Button reset;
+    public Button dfs;
 
     public Button verbinden;
     public Button newKnoten;
@@ -255,11 +256,23 @@ public class Controller
         }
     }
 
-    public void bfsAusführen() throws InterruptedException
+    public void bfsAusführen()
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
         Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
         bfs(startKnoten);
+    }
+
+    public void dfsAusführen()
+    {
+        int start = startKnoten.getSelectionModel().getSelectedIndex();
+        Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            alleKnoten.get(i).besucht = false;
+        }
+        dfs(startKnoten);
+        ausgabe();
     }
 
     /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
@@ -358,7 +371,6 @@ public class Controller
         leuchten.setWidth(55);
         leuchten.setHeight(15);
 
-
         for (int i = 0; i < alleKnoten.size(); i++)
         {
             Knoten n = alleKnoten.get(i);
@@ -430,7 +442,47 @@ public class Controller
         }
     }
 
+    int zeitStempel;
+    /**Tiefensuche*/
+    public void dfs(Knoten startKnoten)
+    {
+        int knotenAnzahl = alleKnoten.size();
+        int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
 
+        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+        }
+
+        zeitStempel++;
+        startKnoten.zeitStempelHin = zeitStempel;
+        startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
+        ArrayList<Knoten> nachbarn = findeNachbar(matrix, startKnoten);
+        for (int i = 0; i < nachbarn.size(); i++)
+        {
+            Knoten n = nachbarn.get(i);
+            if(n!=null && !n.besucht)
+            {
+                dfs(n);
+                n.besucht=true;
+            }
+        }
+        zeitStempel++;
+        startKnoten.zeitStempelZurück = zeitStempel;
+        startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
+    }
+
+
+    public static void ausgabe()
+    {
+        for (int i = 0; i<alleKnoten.size(); i++)
+        {
+            System.out.print("\nKnoten: " + alleKnoten.get(i).bezeichnung);
+            System.out.print("  TimeStampForward: " + alleKnoten.get(i).zeitStempelHin);
+            System.out.print("  TimeStampBack: " + alleKnoten.get(i).zeitStempelZurück);
+        }
+    }
 
     public void test()
     {
@@ -499,8 +551,10 @@ public class Controller
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
          *  und Mausklicks auf Bezeichnung ignorieren*/
-        root.getChildren().add(zieh.text); //-----------------------------------------
+        root.getChildren().add(zieh.text); //-------? Muss separat gemacht werden :/----------------------------------
         root.getChildren().add(zieh);
+        root.getChildren().add(zieh.stempelHin);
+        root.getChildren().add(zieh.stempelZurück);
         zieh.text.toFront();
         zieh.text.setMouseTransparent(true);
 
@@ -531,7 +585,6 @@ public class Controller
         //l1.endYProperty().bind(c2.centerYProperty());
         //c2.centerXProperty().bind(l1.endXProperty().add(50));
         //root.getChildren().add(c2);
-
     }
 
     public void knotenLöschen()
