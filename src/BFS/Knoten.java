@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 
 class Knoten extends Circle
 {
+
     int entfernung = 0;
     boolean entfernungGesetzt;
     int zeitStempelHin;

@@ -70,14 +70,6 @@ public class Controller
     static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
     static ArrayList<Kante> alleKanten = new ArrayList<>();
 
-    static ArrayList<Arrow> allePfeile = new ArrayList<>();
-
-
-    public TextField getEingabeFeld()
-    {
-        return eingabeFeld;
-    }
-
     public Controller()
     {
         queue = new LinkedList<>(); //ALT
@@ -102,6 +94,7 @@ public class Controller
     }
 
 
+    //ALT TEST
     public void handleButtonAction(ActionEvent e)
     {
         TranslateTransition circle1Animation = new TranslateTransition(Duration.seconds(1), knotenA);
@@ -243,7 +236,7 @@ public class Controller
     }
 
 
-    /**Start-Knoten wird ausgewählt und BFS mit Start-Knoten ausführen*/
+    /**Start-Knoten wird ausgewählt und die Suchen aktivert*/
     public void start()
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
@@ -270,8 +263,7 @@ public class Controller
             alleKnoten.get(i).besucht = false;
         }
         dfs(startKnoten);
-        //dfsStack(startKnoten);
-        ausgabe();
+        ausgabe(); //TEST-Ausgabe in Shell
     }
 
     /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
@@ -466,54 +458,11 @@ public class Controller
             {
                 dfs(n);
                 n.besucht = true;
-                //dfs(n);
             }
         }
         zeitStempel++;
         startKnoten.zeitStempelZurück = zeitStempel;
         startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
-    }
-
-
-    // Iterative DFS using stack
-    public  void dfsStack(Knoten startKnoten)
-    {
-        int knotenAnzahl = alleKnoten.size();
-        int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
-
-        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
-        for(int i = 0; i < alleKanten.size(); i++)
-        {
-            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
-        }
-
-        zeitStempel++;
-        startKnoten.zeitStempelHin = zeitStempel;
-//        startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
-
-        Stack stack = new Stack();
-        stack.add(startKnoten);
-        startKnoten.besucht=true;
-        while (!stack.isEmpty())
-        {
-            Knoten element = (Knoten) stack.pop();
-            System.out.print(element.bezeichnung + "\t");
-
-            ArrayList neighbours=findeNachbar(matrix, element);
-            for (int i = 0; i < neighbours.size(); i++)
-            {
-                Knoten n= (Knoten) neighbours.get(i);
-                if(n!=null && !n.besucht)
-                {
-                    stack.add(n);
-                    n.besucht=true;
-                }
-            }
-        }
-
-        zeitStempel++;
-        startKnoten.zeitStempelZurück = zeitStempel;
-//        startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
     }
 
 
@@ -525,6 +474,7 @@ public class Controller
             System.out.print("  TimeStampForward: " + alleKnoten.get(i).zeitStempelHin);
             System.out.print("  TimeStampBack: " + alleKnoten.get(i).zeitStempelZurück);
         }
+        System.out.print("\n");
     }
 
     public void test()
@@ -610,12 +560,6 @@ public class Controller
         löschComboBox.getItems().addAll(zieh.bezeichnung);
 
         //TEST
-
-//        Arrow b = new Arrow();
-//        root.getChildren().add(b);
-//        b.endXProperty().bind(zieh.centerXProperty());
-//        b.endYProperty().bind(zieh.centerYProperty());
-
         //Circle c2 = new Circle(50, 100, 5);
         //Line l1 = new Line(100, 100, 200, 300);
         //root.getChildren().add(l1);
@@ -636,6 +580,8 @@ public class Controller
         if(löschIndex != -1)
         {
             root.getChildren().remove(alleKnoten.get(löschIndex).text);
+            root.getChildren().remove(alleKnoten.get(löschIndex).stempelZurück);
+            root.getChildren().remove(alleKnoten.get(löschIndex).stempelHin);
             root.getChildren().remove(alleKnoten.get(löschIndex));
             alleKnoten.remove(löschIndex);
             updateComboBoxen();
@@ -649,8 +595,8 @@ public class Controller
         if(löschKanteIndex != -1)
         {
             root.getChildren().remove(alleKanten.get(löschKanteIndex));
-            root.getChildren().remove(allePfeile.get(löschKanteIndex));
-            allePfeile.remove(löschKanteIndex);
+            //root.getChildren().remove(allePfeile.get(löschKanteIndex));
+            //allePfeile.remove(löschKanteIndex);
             alleKanten.remove(löschKanteIndex);
             updateComboBoxen();
         }
@@ -697,22 +643,20 @@ public class Controller
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             root.getChildren().remove(alleKnoten.get(i).text);
+            root.getChildren().remove(alleKnoten.get(i).stempelZurück);
+            root.getChildren().remove(alleKnoten.get(i).stempelHin);
             root.getChildren().remove(alleKnoten.get(i));
         }
         for(int i = 0; i < alleKanten.size(); i++)
         {
             root.getChildren().remove(alleKanten.get(i));
         }
-        for(int i = 0; i < allePfeile.size(); i++)
-        {
-            root.getChildren().remove(allePfeile.get(i));
-        }
+
         alleKnoten.clear();
         alleKanten.clear();
-        allePfeile.clear(); //
         updateComboBoxen();
         bfs2.setDisable(true);
-
+        dfs.setDisable(true);
 
         //TEST
 /*        MoveTo start = new MoveTo();
@@ -768,15 +712,6 @@ public class Controller
                 löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
                 /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
-                Arrow pfeil = new Arrow();
-                root.getChildren().add(pfeil);
-                allePfeile.add(pfeil);
-                pfeil.toBack();
-                pfeil.startXProperty().bind(vonKnoten.centerXProperty());
-                pfeil.startYProperty().bind(vonKnoten.centerYProperty());
-                pfeil.endXProperty().bind(zuKnoten.centerXProperty());
-                pfeil.endYProperty().bind(zuKnoten.centerYProperty());
-
                 kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
                 kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
                 kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
@@ -793,16 +728,17 @@ public class Controller
 //            switch (evt.getButton()) {
 //                case PRIMARY:
 //                    // set pos of end with arrow head
-//                    b.setEndX(evt.getX());
-//                    b.setEndY(evt.getY());
+//                    kante.setEndX(evt.getX());
+//                    kante.setEndY(evt.getY());
 //                    break;
 //                case SECONDARY:
 //                    // set pos of end without arrow head
-//                    b.setStartX(evt.getX());
-//                    b.setStartY(evt.getY());
+//                    kante.setStartX(evt.getX());
+//                    kante.setStartY(evt.getY());
 //                    break;
 //            }
 //        });
+
     }
 
     private boolean verbindungVorhanden(int von, int zu)
@@ -826,6 +762,7 @@ public class Controller
         lineTo.xProperty().bind(circle.centerXProperty());
         lineTo.yProperty().bind(circle.centerYProperty());
     }
+
     private static void animate(Circle circle, Duration duration, double dy)
     {
         Timeline animation = new Timeline(
@@ -869,4 +806,5 @@ public class Controller
         bfs_ALT(adjacency_matrix, A); //Matrix und Startknoten mitgeben
         bfs.setDisable(true);
     }
+
 }
