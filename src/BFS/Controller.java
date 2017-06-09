@@ -457,12 +457,12 @@ public class Controller
         zeitStempel++;
         startKnoten.zeitStempelHin = zeitStempel;
         startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
+        startKnoten.hinBesucht = true;
         ArrayList<Knoten> nachbarn = findeNachbar(matrix, startKnoten);
         for (int i = 0; i < nachbarn.size(); i++)
         {
             Knoten n = nachbarn.get(i);
-            n.hinBesucht = true;
-            if(n!=null && !n.besucht && n.zeitStempelHin<zeitStempel) //TODO HIER WAS ÄNDERN
+            if(n!=null && !n.besucht && !n.hinBesucht)
             {
                 dfs(n);
                 n.besucht = true;
