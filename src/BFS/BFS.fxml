@@ -63,5 +63,6 @@
             <ComboBox fx:id="löschComboBoxKanten" layoutX="10.0" layoutY="90.0" prefHeight="25.0" prefWidth="80.0" promptText="Kante" />
          </children>
       </AnchorPane>
+      <Button fx:id="test" layoutX="824.0" layoutY="548.0" mnemonicParsing="false" onAction="#alleKantenAusgeben" text="TEST" />
    </children>
 </AnchorPane>

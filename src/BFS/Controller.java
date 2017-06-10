@@ -50,6 +50,8 @@ public class Controller
     public Button verbinden;
     public Button newKnoten;
 
+    public Button test;
+
     public Line kanteA;
     public Line kanteB;
 
@@ -251,6 +253,11 @@ public class Controller
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
         Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+        for(int i = 0; i < alleKnoten.size(); i++)
+        {
+            alleKnoten.get(i).besucht = false;
+            alleKnoten.get(i).entfernungGesetzt = false;
+        }
         bfs(startKnoten);
     }
 
@@ -261,7 +268,10 @@ public class Controller
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
+            alleKnoten.get(i).hinBesucht = false;
+            alleKnoten.get(i).zurückBesucht = false;
         }
+        zeitStempel = 0;
         dfs(startKnoten);
         ausgabe(); //TEST-Ausgabe in Shell
     }
@@ -307,7 +317,12 @@ public class Controller
         /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+            try
+            {
+                matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+            }catch (Exception e){
+            }
+
         }
         //TESTAUSGABE: Matrix anschauen
         for (int i = 0; i < matrix.length; i++)
@@ -443,7 +458,11 @@ public class Controller
         /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+            try
+            {
+                matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
+            }catch(Exception e){
+            }
         }
 
         zeitStempel++;
@@ -583,10 +602,53 @@ public class Controller
             root.getChildren().remove(alleKnoten.get(löschIndex).stempelZurück);
             root.getChildren().remove(alleKnoten.get(löschIndex).stempelHin);
             root.getChildren().remove(alleKnoten.get(löschIndex));
+
+            Knoten löschen = alleKnoten.get(löschIndex);
+
+            System.out.print("\nVORHER löschen.kantenAnKnoten.size(): " + alleKnoten.get(löschIndex).kantenAnKnoten.size() +"\n");
+
+            //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
+            Iterator<Kante> iterAktuelleKanten = alleKnoten.get(löschIndex).kantenAnKnoten.iterator();
+            while (iterAktuelleKanten.hasNext())
+            {
+                Kante n = iterAktuelleKanten.next();
+                root.getChildren().remove(n);
+                Iterator<Kante> iterAlleKanten = alleKanten.iterator();
+                while (iterAlleKanten.hasNext())
+                {
+                    Kante m = iterAlleKanten.next();
+                    if(n.von == m.von && n.zu == m.zu)
+                    {
+
+                        iterAlleKanten.remove();
+                    }
+                }
+                iterAktuelleKanten.remove();
+            }
+
+            for(int i = 0; i < alleKanten.size(); i++)
+            {
+                System.out.print("\nALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
+            }
+
+            System.out.print("\nNACHER löschen.kantenAnKnoten.size(): " + alleKnoten.get(löschIndex).kantenAnKnoten.size() +"\n");
+
+            //alleKnoten.get(löschIndex).kantenAnKnoten.clear();
             alleKnoten.remove(löschIndex);
             updateComboBoxen();
         }
-        //TODO: Wenn Knoten löschen, dann alle Kanten löschen die dran hängen!
+        //TODO: Kante die in "alleKanten" gelöscht wird, muss auch in der Liste der Kanten von Knoten gelöscht werden!!
+    }
+
+    public void alleKantenAusgeben()
+    {
+        System.out.print("\nALLE KNOTEN GRÖSSE: " + alleKnoten.size());
+        System.out.print("\nALLE KANTEN GRÖSSE: " + alleKanten.size()+"\n");
+        for(int i = 0; i < alleKanten.size(); i++)
+        {
+            System.out.print(" ALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
+            System.out.print(" ALLE KANTEN: VON: " + alleKanten.get(i).von + "  ZU: "+alleKanten.get(i).zu +"\n");
+        }
     }
 
     public void kanteLöschen()
@@ -595,8 +657,6 @@ public class Controller
         if(löschKanteIndex != -1)
         {
             root.getChildren().remove(alleKanten.get(löschKanteIndex));
-            //root.getChildren().remove(allePfeile.get(löschKanteIndex));
-            //allePfeile.remove(löschKanteIndex);
             alleKanten.remove(löschKanteIndex);
             updateComboBoxen();
         }
@@ -710,6 +770,9 @@ public class Controller
                 Knoten vonKnoten = alleKnoten.get(knotenNrVon);
                 Knoten zuKnoten = alleKnoten.get(knotenNrZu);
                 löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
+
+                vonKnoten.kantenAnKnoten.add(kante);
+                zuKnoten.kantenAnKnoten.add(kante);
 
                 /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
                 kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));

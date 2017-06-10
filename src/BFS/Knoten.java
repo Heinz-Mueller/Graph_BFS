@@ -10,6 +10,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+
 /**
  * Created by E.E on 21.05.2017.
  */
@@ -17,6 +19,7 @@ import javafx.scene.text.Text;
 
 class Knoten extends Circle
 {
+    ArrayList<Kante> kantenAnKnoten = new ArrayList<>();
 
     int entfernung = 0;
     boolean entfernungGesetzt;
@@ -48,6 +51,7 @@ class Knoten extends Circle
 
         this.bezeichnung = bezeichnung;
         this.text.setText(bezeichnung);
+        this.kantenAnKnoten.clear();
 
         //text.layoutXProperty().bindBidirectional(centerXProperty());
         //text.layoutYProperty().bindBidirectional(centerYProperty());
