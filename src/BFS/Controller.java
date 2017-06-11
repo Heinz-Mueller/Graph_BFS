@@ -7,10 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -111,12 +108,6 @@ public class Controller
         animation.setCycleCount(2);
         go.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING));
         go.setOnAction(a -> animation.play());
-
-
-        if(e.getSource()== go)
-        {
-            //binden();
-        }
     }
 
     //ALT: Test-Binden
@@ -238,6 +229,7 @@ public class Controller
     }
 
 
+
     /**Start-Knoten wird ausgewählt und die Suchen aktivert*/
     public void start()
     {
@@ -251,8 +243,21 @@ public class Controller
 
     public void bfsAusführen()
     {
-        int start = startKnoten.getSelectionModel().getSelectedIndex();
-        Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+        //int start = startKnoten.getSelectionModel().getSelectedIndex();
+        //Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+
+        Knoten startKnoten = null;
+        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == von)
+            {
+                startKnoten = n;
+                System.out.print("Start-Knoten-Bezeichnung:  "+von+"\t\n");
+            }
+        }
+
+
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
@@ -263,17 +268,30 @@ public class Controller
 
     public void dfsAusführen()
     {
-        int start = startKnoten.getSelectionModel().getSelectedIndex();
-        Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
+        Knoten startKnoten = null;
+        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == von)
+            {
+                startKnoten = n;
+                System.out.print("Start-Knoten-Bezeichnung:  "+von+"\t\n");
+            }
+        }
+
+
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
             alleKnoten.get(i).hinBesucht = false;
             alleKnoten.get(i).zurückBesucht = false;
+            alleKnoten.get(i).stempelHin.setText("hin");
+            alleKnoten.get(i).stempelZurück.setText("zurück");
+
         }
         zeitStempel = 0;
         dfs(startKnoten);
-        ausgabe(); //TEST-Ausgabe in Shell
+        ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
     }
 
     /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
@@ -317,10 +335,11 @@ public class Controller
         /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
+            System.out.print("alleKanten von: "+alleKanten.get(i).von+"   alleKanten zu "+ alleKanten.get(i).zu+ "\n");
             try
             {
                 matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
-            }catch (Exception e){
+            }catch (Exception e) {System.out.print ("Fehler bei Matrix setzen: " + e);
             }
 
         }
@@ -458,11 +477,21 @@ public class Controller
         /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
+            System.out.print("alleKanten von: "+alleKanten.get(i).von+"   alleKanten zu "+ alleKanten.get(i).zu+ "\n");
             try
             {
                 matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
-            }catch(Exception e){
+            }catch (Exception e) {System.out.print ("Fehler bei Matrix setzen: " + e);
             }
+        }
+        //TESTAUSGABE: Matrix anschauen
+        for (int i = 0; i < matrix.length; i++)
+        {
+            for (int j = 0; j < matrix.length; j++)
+            {
+                System.out.print(matrix[i][j] + "\t");
+            }
+            System.out.print("\n");
         }
 
         zeitStempel++;
@@ -533,6 +562,7 @@ public class Controller
         seqT.play();
     }
 
+    int knotenID = 0;
     public void erstelleZiehKnoten()
     {
         //test();
@@ -550,6 +580,8 @@ public class Controller
 
         //Text test = new Text(knotenBezeichnung);
         Knoten zieh = new Knoten(Color.PALEGREEN, startX, startY, knotenBezeichnung);
+        zieh.id = knotenID;
+        knotenID++;
 
         //Neuen Knoten etwas versetzt plazieren
         zieh.setCenterX(100);
@@ -559,7 +591,6 @@ public class Controller
             int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
             zieh.setCenterX(entfernungVomLetzen + 20);
         }
-
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
          *  und Mausklicks auf Bezeichnung ignorieren*/
@@ -573,7 +604,8 @@ public class Controller
         eingabeFeld.setText("");
         alleKnoten.add(zieh);
         /**Knoten-Bezeichnung in die Combo-Boxen packen*/
-        comboBoxVON.getItems().addAll(zieh.bezeichnung);
+        comboBoxVON.getItems().add(zieh.bezeichnung);
+        //comboBoxVON.getItems().addAll(zieh.bezeichnung);
         comboBoxZU.getItems().addAll(zieh.bezeichnung);
         startKnoten.getItems().addAll(zieh.bezeichnung);
         löschComboBox.getItems().addAll(zieh.bezeichnung);
@@ -593,7 +625,7 @@ public class Controller
         //root.getChildren().add(c2);
     }
 
-    public void knotenLöschen()
+    public void knotenLöschen() //TODO
     {
         int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
         if(löschIndex != -1)
@@ -619,7 +651,6 @@ public class Controller
                     Kante m = iterAlleKanten.next();
                     if(n.von == m.von && n.zu == m.zu)
                     {
-
                         iterAlleKanten.remove();
                     }
                 }
@@ -633,8 +664,8 @@ public class Controller
 
             System.out.print("\nNACHER löschen.kantenAnKnoten.size(): " + alleKnoten.get(löschIndex).kantenAnKnoten.size() +"\n");
 
-            //alleKnoten.get(löschIndex).kantenAnKnoten.clear();
-            alleKnoten.remove(löschIndex);
+            //alleKnoten.remove(löschIndex);
+            alleKnoten.get(löschIndex).unsichtbar = true;
             updateComboBoxen();
         }
         //TODO: Kante die in "alleKanten" gelöscht wird, muss auch in der Liste der Kanten von Knoten gelöscht werden!!
@@ -662,18 +693,6 @@ public class Controller
         }
     }
 
-    private void updateAlleKnoten() //Nicht nötig, weil ArrayListen sich selbst updaten?
-    {
-        for(int i = 0; i < alleKnoten.size(); i++)
-        {
-            System.out.print("ALLE: INDEX:  " + alleKnoten.indexOf(i) + " INHALT  " + alleKnoten.get(i).bezeichnung + "\t\n");
-        }
-        ArrayList<Knoten> temp = new ArrayList<>(alleKnoten);
-        for(int i = 0; i < temp.size(); i++)
-        {
-            System.out.print("TEMP: INDEX:  " + temp.get(i) + " INHALT  " + temp.get(i).bezeichnung + "\t\n");
-        }
-    }
 
     private void updateComboBoxen()
     {
@@ -685,10 +704,13 @@ public class Controller
 
         for(int i = 0; i < alleKnoten.size(); i++)
         {
-            löschComboBox.getItems().add(alleKnoten.get(i).bezeichnung);
-            comboBoxVON.getItems().add(alleKnoten.get(i).bezeichnung);
-            comboBoxZU.getItems().add(alleKnoten.get(i).bezeichnung);
-            startKnoten.getItems().add(alleKnoten.get(i).bezeichnung);
+            if(!(alleKnoten.get(i).unsichtbar))
+            {
+                löschComboBox.getItems().add(alleKnoten.get(i).bezeichnung);
+                comboBoxVON.getItems().add(alleKnoten.get(i).bezeichnung);
+                comboBoxZU.getItems().add(alleKnoten.get(i).bezeichnung);
+                startKnoten.getItems().add(alleKnoten.get(i).bezeichnung);
+            }
         }
 
         for(int i = 0; i < alleKanten.size(); i++)
@@ -752,33 +774,69 @@ public class Controller
     {
         int knotenNrVon = comboBoxVON.getSelectionModel().getSelectedIndex();
         int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
+        System.out.print("knotenNrVon:  "+knotenNrVon+"\t");
+        System.out.print("knotenNrZu:  "+knotenNrZu+"\t\n");
         String knotenVonBezeichnung;
         String knotenZuBezeichnung;
 
+        Knoten knotenVon = null;
+        Knoten knotenZu = null;
+
+        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == von)
+            {
+                knotenVon = n;
+                System.out.print("VON_Knoten:  "+von+"\t\n");
+            }
+        }
+        Object zu = comboBoxZU.getSelectionModel().getSelectedItem(); //TODO
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == zu)
+            {
+                knotenZu = n;
+                System.out.print("ZU_Knoten:  "+zu+"\t\n");
+            }
+        }
+
+
         if( (knotenNrVon != -1) && (knotenNrZu != -1) && (knotenNrVon != knotenNrZu) )
         {
-            knotenVonBezeichnung = alleKnoten.get(knotenNrVon).bezeichnung;
-            knotenZuBezeichnung = alleKnoten.get(knotenNrZu).bezeichnung;
-
-            if( !verbindungVorhanden(knotenNrVon, knotenNrZu) )
+            //if( !verbindungVorhanden(knotenNrVon, knotenNrZu) )
+            if( !verbindungVorhanden(knotenVon.id, knotenZu.id) )
             {
                 /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
-                Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
+                //Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
+                Kante kante = new Kante(knotenVon.id, knotenZu.id, knotenVon.bezeichnung, knotenZu.bezeichnung);
                 alleKanten.add(kante);
 
-                System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n");
-                Knoten vonKnoten = alleKnoten.get(knotenNrVon);
-                Knoten zuKnoten = alleKnoten.get(knotenNrZu);
+                System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n"); //TODO: stimmt so
+
                 löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
-                vonKnoten.kantenAnKnoten.add(kante);
-                zuKnoten.kantenAnKnoten.add(kante);
+                knotenVon.kantenAnKnoten.add(kante);
+                knotenZu.kantenAnKnoten.add(kante);
 
                 /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
-                kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
-                kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
-                kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
-                kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
+                kante.startXProperty().bind(knotenVon.centerXProperty().add(knotenVon.translateXProperty()));
+                kante.startYProperty().bind(knotenVon.centerYProperty().add(knotenVon.translateYProperty()));
+                kante.endXProperty().bind(knotenZu.centerXProperty().add(knotenZu.translateXProperty()));
+                kante.endYProperty().bind(knotenZu.centerYProperty().add(knotenZu.translateYProperty()));
+
+//                Knoten vonKnoten = alleKnoten.get(knotenNrVon);
+//                Knoten zuKnoten = alleKnoten.get(knotenNrZu);
+//                löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
+//
+//                vonKnoten.kantenAnKnoten.add(kante);
+//                zuKnoten.kantenAnKnoten.add(kante);
+//
+//                /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
+//                kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
+//                kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
+//                kante.endXProperty().bind(zuKnoten.centerXProperty().add(zuKnoten.translateXProperty()));
+//                kante.endYProperty().bind(zuKnoten.centerYProperty().add(zuKnoten.translateYProperty()));
 
                 root.getChildren().add(kante);
                 kante.toBack();
