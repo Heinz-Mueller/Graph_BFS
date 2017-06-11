@@ -417,6 +417,8 @@ public class Controller
                 flächeÜbergang.setCycleCount(3);
                 flächeÜbergang.setAutoReverse(true);
                 flächeÜbergang.play();
+
+                n.distanz.setText(String.valueOf(entfernung));
             }
             if (n.entfernung == 2)
             {
@@ -431,6 +433,8 @@ public class Controller
 
                 SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
                 sequence.play();
+
+                n.distanz.setText(String.valueOf(entfernung));
             }
             if (n.entfernung == 3)
             {
@@ -445,6 +449,8 @@ public class Controller
 
                 SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
                 sequence.play();
+
+                n.distanz.setText(String.valueOf(entfernung));
             }
             if (n.entfernung == 4)
             {
@@ -460,6 +466,12 @@ public class Controller
 
                 SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
                 sequence.play();
+
+                n.distanz.setText(String.valueOf(entfernung));
+            }
+            if (n.entfernung > 4)
+            {
+                n.distanz.setText(String.valueOf(entfernung));
             }
         }
     }
@@ -591,12 +603,11 @@ public class Controller
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
          *  und Mausklicks auf Bezeichnung ignorieren*/
-        root.getChildren().add(zieh.text); //-------? Muss separat gemacht werden :/----------------------------------
         root.getChildren().add(zieh);
+        root.getChildren().add(zieh.text); //-------? Muss separat gemacht werden :/----------------------------------
         root.getChildren().add(zieh.stempelHin);
         root.getChildren().add(zieh.stempelZurück);
-        zieh.text.toFront();
-        zieh.text.setMouseTransparent(true);
+        root.getChildren().add(zieh.distanz);
 
         eingabeFeld.setText("");
         alleKnoten.add(zieh);
@@ -622,7 +633,7 @@ public class Controller
         //root.getChildren().add(c2);
     }
 
-    public void knotenLöschen() //TODO
+    public void knotenLöschen()
     {
         int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
         if(löschIndex != -1)
@@ -665,7 +676,6 @@ public class Controller
             alleKnoten.get(löschIndex).unsichtbar = true;
             updateComboBoxen();
         }
-        //TODO: Kante die in "alleKanten" gelöscht wird, muss auch in der Liste der Kanten von Knoten gelöscht werden!!
     }
 
     public void alleKantenAusgeben()
@@ -689,7 +699,6 @@ public class Controller
             updateComboBoxen();
         }
     }
-
 
     private void updateComboBoxen()
     {
@@ -715,7 +724,6 @@ public class Controller
             löschComboBoxKanten.getItems().add(alleKanten.get(i).vonKnoten +"->"+ alleKanten.get(i).zuKnoten);
         }
     }
-
 
     public void reset()
     {
@@ -773,35 +781,31 @@ public class Controller
         int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
         System.out.print("knotenNrVon:  "+knotenNrVon+"\t");
         System.out.print("knotenNrZu:  "+knotenNrZu+"\t\n");
-        String knotenVonBezeichnung;
-        String knotenZuBezeichnung;
 
         Knoten knotenVon = null;
         Knoten knotenZu = null;
 
-        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        Object von = comboBoxVON.getSelectionModel().getSelectedItem();
         for(Knoten n : alleKnoten)
         {
             if(n.bezeichnung == von)
             {
                 knotenVon = n;
-                System.out.print("VON_Knoten:  "+von+"\t\n");
+                System.out.print("VON_Knoten:  "+von+"\t");
             }
         }
-        Object zu = comboBoxZU.getSelectionModel().getSelectedItem(); //TODO
+        Object zu = comboBoxZU.getSelectionModel().getSelectedItem();
         for(Knoten n : alleKnoten)
         {
             if(n.bezeichnung == zu)
             {
                 knotenZu = n;
-                System.out.print("ZU_Knoten:  "+zu+"\t\n");
+                System.out.print("ZU_Knoten:  "+zu+"\t\n\n");
             }
         }
 
-
         if( (knotenNrVon != -1) && (knotenNrZu != -1) && (knotenNrVon != knotenNrZu) )
         {
-            //if( !verbindungVorhanden(knotenNrVon, knotenNrZu) )
             if( !verbindungVorhanden(knotenVon.id, knotenZu.id) )
             {
                 /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
@@ -865,11 +869,10 @@ public class Controller
         {
             if( (alleKanten.get(i).von == von) && (alleKanten.get(i).zu == zu) )
             {
-                System.out.print("bool_VON:  "+alleKanten.get(i).von + "\tbool_ZU:  "+alleKanten.get(i).zu + "\t\n"); //TEST
+                System.out.print("Verbindung vorhanden VON:  "+alleKanten.get(i).von + "\tZU:  "+alleKanten.get(i).zu + "\t\n"); //TEST
                 return true;
             }
         }
-        System.out.print("\t\n");
         return false;
     }
 

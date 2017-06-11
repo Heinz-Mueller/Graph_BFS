@@ -24,6 +24,8 @@ class Knoten extends Circle
     boolean unsichtbar;
 
     int entfernung = 0;
+    Text distanz = new Text();
+
     boolean entfernungGesetzt;
     int zeitStempelHin;
     int zeitStempelZurück;
@@ -55,17 +57,10 @@ class Knoten extends Circle
         this.text.setText(bezeichnung);
         this.kantenAnKnoten.clear();
 
-        //text.layoutXProperty().bindBidirectional(centerXProperty());
-        //text.layoutYProperty().bindBidirectional(centerYProperty());
-
-        text.xProperty().bind(this.centerXProperty().subtract(5));
-        text.yProperty().bind(this.centerYProperty());
         //x.bind(centerXProperty());
         //y.bind(centerYProperty());
         enableDrag();
-
-        zeitStempelSetzen();
-        //stempelHin.setVisible(true);
+        texteBinden();
     }
 
     /**Macht den Knoten beweglich durch Mausklick und Ziehen*/
@@ -127,8 +122,16 @@ class Knoten extends Circle
     private class Delta
     { double x, y; }
 
-    public void zeitStempelSetzen()
+    public void texteBinden()
     {
+        text.xProperty().bind(this.centerXProperty().subtract(5));
+        text.yProperty().bind(this.centerYProperty());
+        text.setMouseTransparent(true);
+
+        distanz.xProperty().bind(this.centerXProperty().subtract(5));
+        distanz.yProperty().bind(this.centerYProperty().add(28));
+        distanz.setMouseTransparent(true);
+
         stempelHin.xProperty().bind(this.centerXProperty().subtract(30));
         stempelHin.yProperty().bind(this.centerYProperty().add(35));
         stempelZurück.xProperty().bind(this.centerXProperty().add(20));
