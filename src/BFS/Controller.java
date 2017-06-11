@@ -243,17 +243,14 @@ public class Controller
 
     public void bfsAusführen()
     {
-        //int start = startKnoten.getSelectionModel().getSelectedIndex();
-        //Knoten startKnoten = alleKnoten.get(start); //Index 8 = Knoten 9
-
-        Knoten startKnoten = null;
-        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        Knoten start = null;
+        Object startComBox = startKnoten.getSelectionModel().getSelectedItem();
         for(Knoten n : alleKnoten)
         {
-            if(n.bezeichnung == von)
+            if(n.bezeichnung == startComBox)
             {
-                startKnoten = n;
-                System.out.print("Start-Knoten-Bezeichnung:  "+von+"\t\n");
+                start = n;
+                System.out.print("Start-Knoten-Bezeichnung:  "+startComBox+"\t\n");
             }
         }
 
@@ -262,24 +259,24 @@ public class Controller
         {
             alleKnoten.get(i).besucht = false;
             alleKnoten.get(i).entfernungGesetzt = false;
+            alleKnoten.get(i).entfernung = 0;
+            alleKnoten.get(i).setFill(Color.PALEGREEN);
         }
-        bfs(startKnoten);
+        bfs(start);
     }
 
     public void dfsAusführen()
     {
-        Knoten startKnoten = null;
-        Object von = comboBoxVON.getSelectionModel().getSelectedItem(); //TODO
+        Knoten start = null;
+        Object startComBox = startKnoten.getSelectionModel().getSelectedItem();
         for(Knoten n : alleKnoten)
         {
-            if(n.bezeichnung == von)
+            if(n.bezeichnung == startComBox)
             {
-                startKnoten = n;
-                System.out.print("Start-Knoten-Bezeichnung:  "+von+"\t\n");
+                start = n;
+                System.out.print("Start-Knoten-Bezeichnung:  "+startComBox+"\t\n");
             }
         }
-
-
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
@@ -290,7 +287,7 @@ public class Controller
 
         }
         zeitStempel = 0;
-        dfs(startKnoten);
+        dfs(start);
         ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
     }
 
