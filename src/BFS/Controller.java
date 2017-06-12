@@ -504,6 +504,14 @@ public class Controller
         }
 
         zeitStempel++;
+
+        //TODO: StartKnoten -> seine Kanten -> vonKnotenHinStempel
+        for(Kante n : startKnoten.kantenVonKnoten)
+        {
+            n.vonKnotenHinStempel = zeitStempel;
+        }
+        //TODO Ende
+
         startKnoten.zeitStempelHin = zeitStempel;
         startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
         startKnoten.hinBesucht = true;
@@ -520,6 +528,13 @@ public class Controller
         zeitStempel++;
         startKnoten.zeitStempelZurück = zeitStempel;
         startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
+
+        //TODO: StartKnoten -> seine Kanten -> vonKnotenHinStempel
+        for(Kante n : startKnoten.kantenZuKnoten)
+        {
+            n.zuKnotenZurückStempel = zeitStempel;
+        }
+        //TODO Ende
     }
 
 
@@ -532,6 +547,21 @@ public class Controller
             System.out.print("  TimeStampBack: " + alleKnoten.get(i).zeitStempelZurück);
         }
         System.out.print("\n");
+
+
+        for(int i=0; i<alleKnoten.size(); i++)
+        {
+            Knoten m = alleKnoten.get(i);
+            System.out.print("\nKnoten: " + m.bezeichnung);
+            for(Kante n : m.kantenVonKnoten)
+            {
+                System.out.print("   vonKnotenHinStempel:  " + n.vonKnotenHinStempel + "\t\n");
+            }
+            for(Kante n : m.kantenZuKnoten)
+            {
+                System.out.print("   zuKnotenZurückStempel:  " + n.zuKnotenZurückStempel + "\t\n");
+            }
+        }
     }
 
     public void test()
@@ -641,14 +671,25 @@ public class Controller
             root.getChildren().remove(alleKnoten.get(löschIndex).text);
             root.getChildren().remove(alleKnoten.get(löschIndex).stempelZurück);
             root.getChildren().remove(alleKnoten.get(löschIndex).stempelHin);
+            root.getChildren().remove(alleKnoten.get(löschIndex).entfernung);
             root.getChildren().remove(alleKnoten.get(löschIndex));
 
             Knoten löschen = alleKnoten.get(löschIndex);
 
-            System.out.print("\nVORHER löschen.kantenAnKnoten.size(): " + alleKnoten.get(löschIndex).kantenAnKnoten.size() +"\n");
+            System.out.print("\nVORHER löschen.kantenVonKnoten.size(): " + alleKnoten.get(löschIndex).kantenVonKnoten.size() +"\n");
+            System.out.print("\nNACHER löschen.kantenZuKnoten.size(): " + alleKnoten.get(löschIndex).kantenZuKnoten.size() +"\n");
 
             //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
-            Iterator<Kante> iterAktuelleKanten = alleKnoten.get(löschIndex).kantenAnKnoten.iterator();
+            //Iterator<Kante> iterAktuelleKanten = alleKnoten.get(löschIndex).kantenAnKnoten.iterator(); //ALT
+            Iterator<Kante> iterAktuelleKantenZu = alleKnoten.get(löschIndex).kantenZuKnoten.iterator(); //TODO Testen
+            while (iterAktuelleKantenZu.hasNext())
+            {
+                Kante n = iterAktuelleKantenZu.next();
+                root.getChildren().remove(n);
+                iterAktuelleKantenZu.remove();
+            }
+
+            Iterator<Kante> iterAktuelleKanten = alleKnoten.get(löschIndex).kantenVonKnoten.iterator(); //TODO Testen
             while (iterAktuelleKanten.hasNext())
             {
                 Kante n = iterAktuelleKanten.next();
@@ -670,7 +711,8 @@ public class Controller
                 System.out.print("\nALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
             }
 
-            System.out.print("\nNACHER löschen.kantenAnKnoten.size(): " + alleKnoten.get(löschIndex).kantenAnKnoten.size() +"\n");
+            System.out.print("\nNACHER löschen.kantenVonKnoten.size(): " + alleKnoten.get(löschIndex).kantenVonKnoten.size() +"\n");
+            System.out.print("\nNACHER löschen.kantenZuKnoten.size(): " + alleKnoten.get(löschIndex).kantenZuKnoten.size() +"\n");
 
             //alleKnoten.remove(löschIndex);
             alleKnoten.get(löschIndex).unsichtbar = true;
@@ -817,8 +859,10 @@ public class Controller
 
                 löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
-                knotenVon.kantenAnKnoten.add(kante);
-                knotenZu.kantenAnKnoten.add(kante);
+                //knotenVon.kantenAnKnoten.add(kante); //ALT
+                //knotenZu.kantenAnKnoten.add(kante); //ALT
+                knotenVon.kantenVonKnoten.add(kante);//TODO
+                knotenZu.kantenZuKnoten.add(kante);//TODO
 
                 /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
                 kante.startXProperty().bind(knotenVon.centerXProperty().add(knotenVon.translateXProperty()));
@@ -829,10 +873,7 @@ public class Controller
 //                Knoten vonKnoten = alleKnoten.get(knotenNrVon);
 //                Knoten zuKnoten = alleKnoten.get(knotenNrZu);
 //                löschComboBoxKanten.getItems().add(kante.vonKnoten+ " -> " + kante.zuKnoten);
-//
-//                vonKnoten.kantenAnKnoten.add(kante);
-//                zuKnoten.kantenAnKnoten.add(kante);
-//
+
 //                /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
 //                kante.startXProperty().bind(vonKnoten.centerXProperty().add(vonKnoten.translateXProperty()));
 //                kante.startYProperty().bind(vonKnoten.centerYProperty().add(vonKnoten.translateYProperty()));
@@ -863,6 +904,7 @@ public class Controller
 
     }
 
+    /**Prüft ob zwischen gegeben Knotennr. eine Verbindung bereits besteht*/
     private boolean verbindungVorhanden(int von, int zu)
     {
         for(int i=0; i < alleKanten.size(); i++)

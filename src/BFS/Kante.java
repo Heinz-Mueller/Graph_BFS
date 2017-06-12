@@ -17,6 +17,12 @@ class Kante extends Group
     String vonKnoten;
     String zuKnoten;
 
+    int vonKnotenHinStempel;
+    int vonKnotenZurückStempel;
+
+    int zuKnotenHinStempel;
+    int zuKnotenZurückStempel;
+
     Kante(int von, int zu, String vonKnoten, String zuKnoten)
     {
         this( new Line(), new Line(), new Line() );

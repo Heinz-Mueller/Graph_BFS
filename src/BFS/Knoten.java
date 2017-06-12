@@ -20,6 +20,9 @@ import java.util.ArrayList;
 class Knoten extends Circle
 {
     ArrayList<Kante> kantenAnKnoten = new ArrayList<>();
+    ArrayList<Kante> kantenVonKnoten = new ArrayList<>(); //TODO
+    ArrayList<Kante> kantenZuKnoten = new ArrayList<>(); //TODO
+
     int id;
     boolean unsichtbar;
 
