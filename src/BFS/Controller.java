@@ -8,7 +8,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Lighting;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -308,9 +310,20 @@ public class Controller
                         System.out.print("   zuKnoten!_3\t"+b.zuKnoten+"\n");
                         if(a.zu == b.zu && a.von == b.von)
                         {
-                            if( a.vonKnotenZurückStempel < a.vonKnotenHinStempel & b.vonKnotenZurückStempel < b.vonKnotenHinStempel) //TODO
+                            if( a.vonKnotenHinStempel < b.zuKnotenHinStempel & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel) //TODO
                             {
-                                DropShadow ds = new DropShadow(15, Color.DARKGREEN);
+                                DropShadow ds = new DropShadow(15, Color.GREEN);
+                                ds.setSpread(0.4);
+                                ds.setHeight(10);
+                                ds.setOffsetX(4);
+                                a.setEffect(ds);
+                            }
+                            if( b.zuKnotenHinStempel < a.vonKnotenHinStempel & a.vonKnotenHinStempel < a.vonKnotenZurückStempel & a.vonKnotenZurückStempel < b.zuKnotenZurückStempel) //TODO
+                            {
+                                DropShadow ds = new DropShadow(15, Color.BLUE);
+                                ds.setSpread(0.4);
+                                ds.setHeight(10);
+                                ds.setOffsetX(-4);
                                 a.setEffect(ds);
                             }
                             System.out.print("GEFUNDEN!\t"+"\n");
