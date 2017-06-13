@@ -289,6 +289,37 @@ public class Controller
         zeitStempel = 0;
         dfs(start);
         ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
+        kantenKlassifizieren();
+    }
+
+    private void kantenKlassifizieren()
+    {
+        for(Knoten n : alleKnoten)
+        {
+            System.out.print("n_BEZECIHNUNG:\t"+n.bezeichnung+"\n");
+            for(Kante a : n.kantenVonKnoten)
+            {
+                System.out.print(" vonKnoten!_1\t"+a.vonKnoten+"\n");
+                for(Knoten m : alleKnoten)
+                {
+                    System.out.print("  m_BEZECIHNUNG!\t"+m.bezeichnung+"\n");
+                    for(Kante b : m.kantenZuKnoten)
+                    {
+                        System.out.print("   zuKnoten!_3\t"+b.zuKnoten+"\n");
+                        if(a.zu == b.zu && a.von == b.von)
+                        {
+                            if( a.vonKnotenZurückStempel < a.vonKnotenHinStempel & b.vonKnotenZurückStempel < b.vonKnotenHinStempel) //TODO
+                            {
+                                DropShadow ds = new DropShadow(15, Color.DARKGREEN);
+                                a.setEffect(ds);
+                            }
+                            System.out.print("GEFUNDEN!\t"+"\n");
+                        }
+                    }
+                }
+            }
+            System.out.print("\n");
+        }
     }
 
     /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
@@ -510,6 +541,10 @@ public class Controller
         {
             n.vonKnotenHinStempel = zeitStempel;
         }
+        for(Kante n : startKnoten.kantenZuKnoten)
+        {
+            n.zuKnotenHinStempel = zeitStempel;
+        }
         //TODO Ende
 
         startKnoten.zeitStempelHin = zeitStempel;
@@ -534,6 +569,10 @@ public class Controller
         {
             n.zuKnotenZurückStempel = zeitStempel;
         }
+        for(Kante n : startKnoten.kantenVonKnoten)
+        {
+            n.vonKnotenZurückStempel = zeitStempel;
+        }
         //TODO Ende
     }
 
@@ -555,10 +594,14 @@ public class Controller
             System.out.print("\nKnoten: " + m.bezeichnung);
             for(Kante n : m.kantenVonKnoten)
             {
+                System.out.print("  VON:  " + n.von + "\t"+ "ZU:  " + n.zu + "\n");
                 System.out.print("   vonKnotenHinStempel:  " + n.vonKnotenHinStempel + "\t\n");
+                System.out.print("   vonKnotenZurückStempel:  " + n.vonKnotenZurückStempel + "\t\n");
             }
             for(Kante n : m.kantenZuKnoten)
             {
+                System.out.print("  VON:  " + n.von + "\t" + "ZU:  " + n.zu + "\n");
+                System.out.print("   zuKnotenHinStempel:  " + n.zuKnotenHinStempel + "\t\n");
                 System.out.print("   zuKnotenZurückStempel:  " + n.zuKnotenZurückStempel + "\t\n");
             }
         }
