@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.effect.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
@@ -9,31 +10,7 @@
 
 <AnchorPane fx:id="root" prefHeight="680.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
    <children>
-      <Pane prefHeight="680.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Circle fx:id="knotenA" fill="DODGERBLUE" layoutX="70.0" layoutY="70.0" radius="30.0" stroke="BLACK" strokeType="INSIDE">
-               <effect>
-                  <Bloom />
-               </effect></Circle>
-            <Circle fx:id="knotenB" fill="DODGERBLUE" layoutX="243.0" layoutY="71.0" radius="30.0" stroke="BLACK" strokeType="INSIDE">
-               <effect>
-                  <Bloom threshold="0.25" />
-               </effect></Circle>
-            <Line fx:id="kanteA" endX="250.0" endY="70.0" fill="#ffd600" startX="70.0" startY="70.0" stroke="#a9b200" />
-            <Line fx:id="kanteB" endX="70.0" endY="170.0" startX="70.0" startY="70.0" stroke="RED" />
-            <Button fx:id="go" alignment="CENTER" layoutX="82.0" layoutY="632.0" mnemonicParsing="false" onAction="#handleButtonAction" text="GO!" />
-            <Label fx:id="label" layoutX="55.0" layoutY="40.0" text="A: 10">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="224.0" layoutY="40.0" text="B: 20">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
+      <Pane prefHeight="680.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="0.0" />
       <Pane fx:id="Pane_2" layoutX="700.0" pickOnBounds="false" prefHeight="195.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TextField fx:id="eingabeFeld" layoutX="13.0" layoutY="14.0" onKeyPressed="#addTextLimiter" prefHeight="25.0" prefWidth="154.0" promptText="Knoten-Bezeichnung" />
@@ -46,15 +23,55 @@
             <Button fx:id="dfs" disable="true" layoutX="200.0" layoutY="156.0" mnemonicParsing="false" onAction="#dfsAusführen" prefHeight="25.0" prefWidth="80.0" text="DFS" />
          </children>
       </Pane>
-      <AnchorPane layoutX="707.0" layoutY="231.0" prefHeight="173.0" prefWidth="301.0" AnchorPane.rightAnchor="0.0">
+      <AnchorPane layoutX="707.0" layoutY="193.0" prefHeight="88.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0">
          <children>
-            <Button fx:id="löschButton" layoutX="193.0" layoutY="56.0" mnemonicParsing="false" onAction="#knotenLöschen" text="Lösche Knoten" />
-            <ComboBox fx:id="löschComboBox" layoutX="10.0" layoutY="56.0" promptText="Knoten" />
-            <Button fx:id="reset" layoutX="31.0" layoutY="131.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
-            <Button fx:id="löschButtonKante" layoutX="193.0" layoutY="90.0" mnemonicParsing="false" onAction="#kanteLöschen" prefHeight="25.0" prefWidth="94.0" text="Lösche Kante" />
-            <ComboBox fx:id="löschComboBoxKanten" layoutX="10.0" layoutY="90.0" prefHeight="25.0" prefWidth="80.0" promptText="Kante" />
+            <Button fx:id="löschButton" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#knotenLöschen" text="Lösche Knoten" />
+            <ComboBox fx:id="löschComboBox" layoutX="14.0" layoutY="50.0" prefHeight="25.0" prefWidth="94.0" promptText="Knoten" />
+            <Button fx:id="reset" layoutX="128.0" layoutY="8.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
+            <Button fx:id="löschButtonKante" layoutX="187.0" layoutY="8.0" mnemonicParsing="false" onAction="#kanteLöschen" prefHeight="25.0" prefWidth="94.0" text="Lösche Kante" />
+            <ComboBox fx:id="löschComboBoxKanten" layoutX="187.0" layoutY="50.0" prefHeight="25.0" prefWidth="94.0" promptText="Kante" />
          </children>
       </AnchorPane>
-      <Button fx:id="test" layoutX="824.0" layoutY="548.0" mnemonicParsing="false" onAction="#alleKantenAusgeben" text="TEST" />
+      <AnchorPane layoutX="695.0" layoutY="480.0" prefHeight="200.0" prefWidth="308.0" style="-fx-background-color: #dcdcdc;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="57.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="113.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="222.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="274.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="168.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text layoutX="39.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="97.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="151.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="207.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="256.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;4">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Line endX="50.0" layoutX="123.0" layoutY="90.0" startX="-100.0" stroke="#009026" strokeLineCap="ROUND" />
+            <Line endX="50.0" layoutX="123.0" layoutY="130.0" startX="-100.0" stroke="#0707dd" strokeLineCap="ROUND" />
+            <Line endX="50.0" layoutX="123.0" layoutY="170.0" startX="-100.0" stroke="#ff7700" strokeLineCap="ROUND" />
+            <Text layoutX="211.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Baumkante" />
+            <Text layoutX="207.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rückwärtskante" />
+            <Text layoutX="212.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Querkante" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="test" layoutX="914.0" layoutY="425.0" mnemonicParsing="false" onAction="#alleKantenAusgeben" text="TEST" />
    </children>
 </AnchorPane>
