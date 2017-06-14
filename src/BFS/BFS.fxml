@@ -19,11 +19,9 @@
                <effect>
                   <Bloom threshold="0.25" />
                </effect></Circle>
-            <Circle fx:id="knotenC" fill="DODGERBLUE" layoutX="70.0" layoutY="170.0" radius="30.0" stroke="BLACK" strokeType="INSIDE" />
             <Line fx:id="kanteA" endX="250.0" endY="70.0" fill="#ffd600" startX="70.0" startY="70.0" stroke="#a9b200" />
             <Line fx:id="kanteB" endX="70.0" endY="170.0" startX="70.0" startY="70.0" stroke="RED" />
             <Button fx:id="go" alignment="CENTER" layoutX="82.0" layoutY="632.0" mnemonicParsing="false" onAction="#handleButtonAction" text="GO!" />
-            <Button fx:id="bind" layoutX="29.0" layoutY="630.0" mnemonicParsing="false" onAction="#binden" text="Bind" />
             <Label fx:id="label" layoutX="55.0" layoutY="40.0" text="A: 10">
                <font>
                   <Font size="18.0" />
@@ -34,12 +32,6 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label layoutX="49.0" layoutY="157.0" text="C: 30">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Button fx:id="bfs" layoutX="131.0" layoutY="630.0" mnemonicParsing="false" onAction="#knotenAnlegen" text="BFS" />
          </children>
       </Pane>
       <Pane fx:id="Pane_2" layoutX="700.0" pickOnBounds="false" prefHeight="195.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

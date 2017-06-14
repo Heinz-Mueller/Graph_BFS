@@ -53,8 +53,8 @@ class Kante extends Group
         //Pfeil-Eigenschaften
         pfeil1.setSmooth(true);
         pfeil2.setSmooth(true);
-        pfeil1.setStroke(Color.GREY.deriveColor(1,1,1, 0.7));
-        pfeil2.setStroke(Color.GREY.deriveColor(1,1,1, 0.7));
+        pfeil1.setStroke(Color.GREY.deriveColor(1,1,0.5, 1));
+        pfeil2.setStroke(Color.GREY.deriveColor(1,1,0.5, 1));
         pfeil1.getStrokeDashArray().addAll(20.0, 32.0);
         pfeil2.getStrokeDashArray().addAll(20.0, 32.0);
         pfeil1.setStrokeWidth(1.5);
