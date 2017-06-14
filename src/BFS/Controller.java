@@ -735,7 +735,7 @@ public class Controller
 
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            löschComboBoxKanten.getItems().add(alleKanten.get(i).vonKnoten +"->"+ alleKanten.get(i).zuKnoten);
+            löschComboBoxKanten.getItems().addAll(alleKanten.get(i).vonKnoten +"->"+ alleKanten.get(i).zuKnoten);
         }
     }
 
