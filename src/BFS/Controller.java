@@ -357,14 +357,12 @@ public class Controller
                 knoten.setMouseTransparent(false);
             });
         }
-        //knoten.setMouseTransparent(false);
         PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer*2)); //TODO
         pause.play();
         pause.setOnFinished((ActionEvent event) -> {
             knoten.setMouseTransparent(false);
         });
     }
-
 
     FillTransition knotenEinfärben(Knoten knoten, int dauer)
     {
