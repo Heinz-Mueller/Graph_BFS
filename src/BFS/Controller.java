@@ -317,6 +317,19 @@ public class Controller
         einfärben();
     }
 
+    FillTransition knotenEinfärben(Knoten a, int distanz, int dauer)
+    {
+        PauseTransition pause = new PauseTransition(Duration.millis(dauer));
+        FillTransition flächeÜbergang = new FillTransition(); //Fläche
+        flächeÜbergang.setShape(a);
+        flächeÜbergang.setDuration(new Duration(1200));
+        flächeÜbergang.setCycleCount(3);
+        flächeÜbergang.setAutoReverse(true);
+        SequentialTransition sequence = new SequentialTransition (a, pause, flächeÜbergang);
+        sequence.play();
+        a.distanz.setText(String.valueOf(distanz));
+        return flächeÜbergang;
+    }
 
     public void einfärben()
     {
@@ -325,85 +338,54 @@ public class Controller
         leuchten.setWidth(55);
         leuchten.setHeight(15);
 
+
+
         for (int i = 0; i < alleKnoten.size(); i++)
         {
             Knoten n = alleKnoten.get(i);
             String name = alleKnoten.get(i).bezeichnung;
             int entfernung = alleKnoten.get(i).entfernung;
+            int dauer = 0;
 
             //TESTAUSGABE
             System.out.print("BEZEICHNUNG:\t"+name+"   ENTFERNUNG\t"+entfernung+"\n");
 
-            if (n.entfernung == 0)
+            switch(n.entfernung)
             {
-                //n.setFill(Color.WHITE.deriveColor(1,1,1, 0.99));
-            }
-            if (n.entfernung == 1)
-            {
-                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+                case 0:
+                    //n.setFill(Color.WHITE.deriveColor(1,1,1, 0.99));
+                    break;
 
-                flächeÜbergang.setShape(n);
-                flächeÜbergang.setDuration(new Duration(1200));
-                flächeÜbergang.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
-                //flächeÜbergang.setCycleCount(Timeline.INDEFINITE);
-                flächeÜbergang.setCycleCount(3);
-                flächeÜbergang.setAutoReverse(true);
-                flächeÜbergang.play();
+                case 1:
+                    dauer = 1200;
+                    FillTransition flächeÜbergang1 = knotenEinfärben(n, entfernung, dauer);
+                    flächeÜbergang1.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
+                    break;
 
-                n.distanz.setText(String.valueOf(entfernung));
-            }
-            if (n.entfernung == 2)
-            {
-                PauseTransition pause = new PauseTransition(Duration.millis(3600));
-                FillTransition flächeÜbergang = new FillTransition(); //Fläche
+                case 2:
+                    dauer = 3600;
+                    FillTransition flächeÜbergang2 = knotenEinfärben(n, entfernung, dauer);
+                    flächeÜbergang2.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
+                    break;
 
-                flächeÜbergang.setShape(n);
-                flächeÜbergang.setDuration(new Duration(1200));
-                flächeÜbergang.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
-                flächeÜbergang.setCycleCount(3);
-                flächeÜbergang.setAutoReverse(true);
+                case 3:
+                    dauer = 7200;
+                    FillTransition flächeÜbergang3 = knotenEinfärben(n, entfernung, dauer);
+                    flächeÜbergang3.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
+                    break;
 
-                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
-                sequence.play();
+                case 4:
+                    dauer = 10800;
+                    FillTransition flächeÜbergang4 = knotenEinfärben(n, entfernung, dauer);
+                    flächeÜbergang4.setToValue(Color.RED.deriveColor(1,1,1, 1));
+                    break;
 
-                n.distanz.setText(String.valueOf(entfernung));
-            }
-            if (n.entfernung == 3)
-            {
-                PauseTransition pause = new PauseTransition(Duration.millis(7200));
-                FillTransition flächeÜbergang = new FillTransition(); //Fläche
-
-                flächeÜbergang.setShape(n);
-                flächeÜbergang.setDuration(new Duration(1200));
-                flächeÜbergang.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
-                flächeÜbergang.setCycleCount(3);
-                flächeÜbergang.setAutoReverse(true);
-
-                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
-                sequence.play();
-
-                n.distanz.setText(String.valueOf(entfernung));
-            }
-            if (n.entfernung == 4)
-            {
-                //n.setFill(Color.AZURE);
-                PauseTransition pause = new PauseTransition(Duration.millis(10800));
-                FillTransition flächeÜbergang = new FillTransition(); //Fläche
-
-                flächeÜbergang.setShape(n);
-                flächeÜbergang.setDuration(new Duration(1200));
-                flächeÜbergang.setToValue(Color.AZURE.deriveColor(1,1,1, 1));
-                flächeÜbergang.setCycleCount(3);
-                flächeÜbergang.setAutoReverse(true);
-
-                SequentialTransition sequence = new SequentialTransition (n, pause, flächeÜbergang);
-                sequence.play();
-
-                n.distanz.setText(String.valueOf(entfernung));
-            }
-            if (n.entfernung > 4)
-            {
-                n.distanz.setText(String.valueOf(entfernung));
+                default:
+                    dauer = 10800 + n.entfernung*300;
+                    FillTransition flächeÜbergangRest = knotenEinfärben(n, entfernung, dauer);
+                    flächeÜbergangRest.setToValue(Color.LIGHTGREY.deriveColor(1,1,1, 1));
+                    n.distanz.setText(String.valueOf(entfernung));
+                    break;
             }
         }
     }
