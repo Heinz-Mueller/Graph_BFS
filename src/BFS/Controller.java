@@ -676,6 +676,8 @@ public class Controller
             updateComboBoxen();
             zeitStempel = 0;
             //knotenID = 0; //NEIN!!!!
+            bfs2.setDisable(true);
+            dfs.setDisable(true);
         }
     }
 
@@ -710,7 +712,10 @@ public class Controller
             root.getChildren().remove(löschKante);
             alleKanten.remove(löschKante);
             updateComboBoxen();
+            bfs2.setDisable(true);
+            dfs.setDisable(true);
         }
+
     }
 
 
