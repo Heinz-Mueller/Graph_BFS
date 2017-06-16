@@ -699,9 +699,10 @@ public class Controller
         for(Kante n : alleKanten)
         {
             //gewählten Kante suchen
-            Object suchKante = n.vonKnoten +" -> " + n.zuKnoten;
+            Object suchKante = n.vonKnoten + " -> " + n.zuKnoten;
             if(suchKante.equals(löschKanteComBox))
             {
+                //System.out.print("\tGEFUNDEN: " + löschKanteComBox +"\n");
                 löschKante = n;
             }
         }
@@ -709,6 +710,7 @@ public class Controller
         int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
         if(löschKanteIndex != -1)
         {
+            //System.out.print("\tlöschKanteComBox -1: " + löschKanteComBox +"\n");
             root.getChildren().remove(löschKante);
             alleKanten.remove(löschKante);
             updateComboBoxen();
@@ -740,7 +742,7 @@ public class Controller
 
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            löschComboBoxKanten.getItems().addAll(alleKanten.get(i).vonKnoten +"->"+ alleKanten.get(i).zuKnoten);
+            löschComboBoxKanten.getItems().addAll(alleKanten.get(i).vonKnoten + " -> " + alleKanten.get(i).zuKnoten);
         }
     }
 
