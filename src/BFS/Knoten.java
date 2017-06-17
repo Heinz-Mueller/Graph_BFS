@@ -44,6 +44,8 @@ class Knoten extends Circle
     boolean hinBesucht;
     boolean zurückBesucht;
 
+    boolean startKnoten;
+
     DoubleProperty X;
     DoubleProperty Y;
 

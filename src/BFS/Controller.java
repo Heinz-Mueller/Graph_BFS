@@ -68,6 +68,8 @@ public class Controller
     static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
     static ArrayList<Kante> alleKanten = new ArrayList<>();
 
+    static int[][] globaleMatrix;
+
     public Controller()
     {
         queue = new LinkedList<>(); //ALT
@@ -140,7 +142,10 @@ public class Controller
             alleKnoten.get(i).entfernungGesetzt = false;
             alleKnoten.get(i).entfernung = 0;
             alleKnoten.get(i).setFill(Color.WHITESMOKE);
+            alleKnoten.get(i).startKnoten = false;
+            alleKnoten.get(i).distanz.setText("");
         }
+        start.startKnoten = true;
         bfs(start);
     }
 
@@ -163,7 +168,6 @@ public class Controller
             alleKnoten.get(i).zurückBesucht = false;
             alleKnoten.get(i).stempelHin.setText("hin");
             alleKnoten.get(i).stempelZurück.setText("zurück");
-
         }
         zeitStempel = 0;
         dfs(start);
@@ -313,49 +317,70 @@ public class Controller
             }
             System.out.print("\n");
         }
-        //Knoten nach Entfernung einfärben
+
+        //TEST
+        globaleMatrix = matrix;
+        //TEST Ende
+
+        //Drag bei allen Knoten deaktivieren.
         for(Knoten n : alleKnoten)
         {
             n.setMouseTransparent(true);
         }
+        //Knoten nach Entfernung einfärben
         einfärben();
-
     }
+
 
     private void animationAblaufen(Knoten knoten, int pausenDauer)
     {
-        for(Kante kante : knoten.kantenVonKnoten)
+        ArrayList<Knoten> nachbarn = findeNachbar(globaleMatrix, knoten);
+        for(Knoten nachbar : nachbarn)
         {
-            Circle circle = new Circle();
-            circle.setRadius(10);
-            circle.setFill(Color.YELLOW);
-            circle.setStroke(Color.BLUE);
-            root.getChildren().add(circle);
-            circle.toBack();
-
-            PathElement[] path =
+            if(nachbar.entfernung > knoten.entfernung)
+            {
+                //Suche Kante
+                for(Kante k : alleKanten)
+                {
+                    if(k.von == knoten.id && k.zu == nachbar.id)
                     {
-                            new MoveTo(kante.getStartX(), kante.getStartY()),
-                            new LineTo(kante.getEndX(), kante.getEndY())
-                    };
+                        System.out.print("  k.von:\t"+k.von+"\t" + "k.zu:\t" +k.zu+ "\n");
+                        System.out.print("  k.vonKnoten:\t"+k.vonKnoten+"\t" + "k.zuKnoten:\t" +k.zuKnoten+ "\n");
 
-            Path weg = new Path();
-            weg.getElements().addAll(path);
 
-            PathTransition animation = new PathTransition();
-            animation.setInterpolator(Interpolator.LINEAR);
-            animation.setDuration(new Duration(3600));
-            animation.setNode(circle);
-            animation.setPath(weg);
+                        Circle circle = new Circle();
+                        circle.setRadius(10);
+                        circle.setFill(Color.YELLOW);
+                        circle.setStroke(Color.BLUE);
+                        root.getChildren().add(circle);
+                        circle.toBack();
 
-            PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer));
-            SequentialTransition sequence = new SequentialTransition (knoten, pause, animation);
-            sequence.play();
+                        PathElement[] path =
+                                {
+                                        new MoveTo(k.getStartX(), k.getStartY()),
+                                        new LineTo(k.getEndX(), k.getEndY())
+                                };
 
-            sequence.setOnFinished((ActionEvent event) -> {
-                root.getChildren().remove(animation.getNode());
-                knoten.setMouseTransparent(false);
-            });
+                        Path weg = new Path();
+                        weg.getElements().addAll(path);
+
+                        PathTransition animation = new PathTransition();
+                        animation.setInterpolator(Interpolator.LINEAR);
+                        animation.setDuration(new Duration(3600));
+                        animation.setNode(circle);
+                        animation.setPath(weg);
+
+                        PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer));
+                        SequentialTransition sequence = new SequentialTransition (knoten, pause, animation);
+                        sequence.play();
+
+                        sequence.setOnFinished((ActionEvent event) -> {
+                            root.getChildren().remove(animation.getNode());
+                            knoten.setMouseTransparent(false);
+                        });
+                    }
+                }
+            }
         }
         PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer*2)); //TODO
         pause.play();
@@ -374,10 +399,8 @@ public class Controller
         flächeÜbergang.setAutoReverse(true);
         SequentialTransition sequence = new SequentialTransition (knoten, pause, flächeÜbergang);
         sequence.play();
-//        sequence.setOnFinished((ActionEvent event) -> {
-//            knoten.setMouseTransparent(false);
-//        });
-        knoten.distanz.setText(String.valueOf(knoten.entfernung));
+        sequence.setOnFinished( (ActionEvent event) -> { knoten.distanz.setText(String.valueOf(knoten.entfernung));}
+        );
         return flächeÜbergang;
     }
 
@@ -403,7 +426,10 @@ public class Controller
             {
                 case 0:
                     pausenDauer = 0;
-                    animationAblaufen(n, pausenDauer);
+                    if(n.startKnoten)
+                    {
+                        animationAblaufen(n, pausenDauer);
+                    }
                     FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer);
                     break;
 
@@ -657,16 +683,13 @@ public class Controller
             root.getChildren().remove(löschKnoten.distanz);
             root.getChildren().remove(löschKnoten);
 
-            //Knoten löschen = alleKnoten.get(löschIndex);
 
             System.out.print("\nVORHER löschKnoten.kantenVonKnoten.size(): " + löschKnoten.kantenVonKnoten.size() +"\n");
             System.out.print("VORHER löschKnoten.kantenZuKnoten.size(): " + löschKnoten.kantenZuKnoten.size() +"\n");
 
             //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
-            //Iterator<Kante> iterAktuelleKanten = alleKnoten.get(löschIndex).kantenAnKnoten.iterator(); //ALT
-
             //Alle Kanten die vom gewählten Knoten weggehen löschen
-            Iterator<Kante> iterAktuelleKanten = löschKnoten.kantenVonKnoten.iterator(); //TODO Testen
+            Iterator<Kante> iterAktuelleKanten = löschKnoten.kantenVonKnoten.iterator();
             while (iterAktuelleKanten.hasNext())
             {
                 Kante n = iterAktuelleKanten.next();
@@ -685,10 +708,9 @@ public class Controller
             }
 
             //Alle Kanten die zu gewählten Knoten zugehen löschen
-            Iterator<Kante> iterAktuelleKantenZu = löschKnoten.kantenZuKnoten.iterator(); //TODO Testen noch Fehler!
+            Iterator<Kante> iterAktuelleKantenZu = löschKnoten.kantenZuKnoten.iterator();
             while (iterAktuelleKantenZu.hasNext())
             {
-                //TODO
                 Kante n = iterAktuelleKantenZu.next();
                 root.getChildren().remove(n);
                 //die Kanten auch aus "alleKanten" löschen
@@ -714,11 +736,9 @@ public class Controller
             System.out.print("\nNACHER löschKnoten.kantenVonKnoten.size(): " + löschKnoten.kantenVonKnoten.size() +"\n");
             System.out.print("NACHER löschKnoten.kantenZuKnoten.size(): " + löschKnoten.kantenZuKnoten.size() +"\n");
 
-            //alleKnoten.remove(löschIndex);
             löschKnoten.unsichtbar = true;
             updateComboBoxen();
             zeitStempel = 0;
-            //knotenID = 0; //NEIN!!!!
             bfs2.setDisable(true);
             dfs.setDisable(true);
         }
@@ -733,6 +753,21 @@ public class Controller
             System.out.print(" ALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
             System.out.print(" ALLE KANTEN: VON: " + alleKanten.get(i).von + "  ZU: "+alleKanten.get(i).zu +"\n");
         }
+
+        //TESTAUSGABE: globaleMatrix anschauen
+        System.out.print("  globaleMatrix:  " + "\n");
+        try
+        {
+            for (int i = 0; i < globaleMatrix.length; i++)
+            {
+                for (int j = 0; j < globaleMatrix.length; j++)
+                {
+                    System.out.print(globaleMatrix[i][j] + "\t");
+                }
+                System.out.print("\n");
+            }
+        }catch (Exception e) {System.out.print ("Fehler bei globalerMatrix: " + e);
+        }
     }
 
     public void kanteLöschen()
@@ -745,7 +780,6 @@ public class Controller
             Object suchKante = n.vonKnoten + " -> " + n.zuKnoten;
             if(suchKante.equals(löschKanteComBox))
             {
-                //System.out.print("\tGEFUNDEN: " + löschKanteComBox +"\n");
                 löschKante = n;
             }
         }
@@ -753,7 +787,6 @@ public class Controller
         int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
         if(löschKanteIndex != -1)
         {
-            //System.out.print("\tlöschKanteComBox -1: " + löschKanteComBox +"\n");
             root.getChildren().remove(löschKante);
             alleKanten.remove(löschKante);
             updateComboBoxen();
