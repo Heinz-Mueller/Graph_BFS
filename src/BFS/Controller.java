@@ -23,7 +23,6 @@ import java.util.*;
  * Created by E.E on 06.05.2017.
  */
 
-
 public class Controller
 {
     @FXML
@@ -49,18 +48,6 @@ public class Controller
 
     public Button test;
 
-    public Line kanteA;
-    public Line kanteB;
-
-    public Circle knotenA;
-    public Circle knotenB;
-
-    public Label label;
-
-
-    private Queue<Knoten_ALT> queue;
-    private ArrayList<Knoten_ALT> nodes = new ArrayList<>();
-
     /**Warteschlange für die Knoten*/
     private Queue<Knoten> warteschlange;
     /**Listen für alle angelegten Knoten und Kanten*/
@@ -72,7 +59,6 @@ public class Controller
 
     public Controller()
     {
-        queue = new LinkedList<>(); //ALT
         warteschlange = new LinkedList<>();
     }
 
@@ -135,7 +121,7 @@ public class Controller
             }
         }
 
-
+        //TODO Reset Funktion einbauen
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
@@ -144,6 +130,10 @@ public class Controller
             alleKnoten.get(i).setFill(Color.WHITESMOKE);
             alleKnoten.get(i).startKnoten = false;
             alleKnoten.get(i).distanz.setText("");
+        }
+        for(Knoten n : alleKnoten)
+        {
+            n.setEffect(null);
         }
         start.startKnoten = true;
         bfs(start);
@@ -158,7 +148,6 @@ public class Controller
             if(n.bezeichnung == startComBox)
             {
                 start = n;
-                System.out.print("Start-Knoten-Bezeichnung:  "+startComBox+"\t\n");
             }
         }
         for(int i = 0; i < alleKnoten.size(); i++)
@@ -175,20 +164,17 @@ public class Controller
         kantenKlassifizieren();
     }
 
+    /**Kanten nach DFS Ablauf klassifizieren.*/
     private void kantenKlassifizieren()
     {
         for(Knoten n : alleKnoten)
         {
-            System.out.print("n_BEZECIHNUNG:\t"+n.bezeichnung+"\n");
             for(Kante a : n.kantenVonKnoten)
             {
-                System.out.print(" vonKnoten!_1\t"+a.vonKnoten+"\n");
                 for(Knoten m : alleKnoten)
                 {
-                    System.out.print("  m_BEZECIHNUNG!\t"+m.bezeichnung+"\n");
                     for(Kante b : m.kantenZuKnoten)
                     {
-                        System.out.print("   zuKnoten!_3\t"+b.zuKnoten+"\n");
                         if(a.zu == b.zu && a.von == b.von)
                         {
                             //Vorwärts-/Baumkante
@@ -223,7 +209,6 @@ public class Controller
                     }
                 }
             }
-            System.out.print("\n");
         }
     }
 
@@ -268,7 +253,6 @@ public class Controller
         /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            System.out.print("alleKanten von: "+alleKanten.get(i).von+"   alleKanten zu "+ alleKanten.get(i).zu+ "\n");
             try
             {
                 matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
@@ -276,7 +260,7 @@ public class Controller
             }
 
         }
-        //TESTAUSGABE: Matrix anschauen
+        //TESTAUSGABE: Matrix anschauen  //TODO löschen
         for (int i = 0; i < matrix.length; i++)
         {
             for (int j = 0; j < matrix.length; j++)
@@ -318,9 +302,8 @@ public class Controller
             System.out.print("\n");
         }
 
-        //TEST
+        //Matrix kopieren für animationAblaufen
         globaleMatrix = matrix;
-        //TEST Ende
 
         //Drag bei allen Knoten deaktivieren.
         for(Knoten n : alleKnoten)
@@ -346,7 +329,6 @@ public class Controller
                     {
                         System.out.print("  k.von:\t"+k.von+"\t" + "k.zu:\t" +k.zu+ "\n");
                         System.out.print("  k.vonKnoten:\t"+k.vonKnoten+"\t" + "k.zuKnoten:\t" +k.zuKnoten+ "\n");
-
 
                         Circle circle = new Circle();
                         circle.setRadius(10);
@@ -382,15 +364,25 @@ public class Controller
                 }
             }
         }
-        PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer*2)); //TODO
+        PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer*2)); //TODO gewisse Zeit abwarten und Knoten aktivieren
         pause.play();
         pause.setOnFinished((ActionEvent event) -> {
             knoten.setMouseTransparent(false);
         });
     }
 
-    FillTransition knotenEinfärben(Knoten knoten, int dauer)
+    FillTransition knotenEinfärben(Knoten knoten, int dauer, Color farbe)
     {
+        DropShadow ds = new DropShadow();
+        ds.setSpread(0.9);
+        ds.setColor(Color.ANTIQUEWHITE);
+        knoten.distanz.setEffect(ds);
+
+        DropShadow leuchten = new DropShadow();
+        leuchten.setWidth(55);
+        leuchten.setHeight(15);
+        leuchten.setColor(farbe);
+
         PauseTransition pause = new PauseTransition(Duration.millis(dauer));
         FillTransition flächeÜbergang = new FillTransition(); //Fläche
         flächeÜbergang.setShape(knoten);
@@ -399,7 +391,10 @@ public class Controller
         flächeÜbergang.setAutoReverse(true);
         SequentialTransition sequence = new SequentialTransition (knoten, pause, flächeÜbergang);
         sequence.play();
-        sequence.setOnFinished( (ActionEvent event) -> { knoten.distanz.setText(String.valueOf(knoten.entfernung));}
+        sequence.setOnFinished( (ActionEvent event) -> {
+            knoten.distanz.setText(String.valueOf(knoten.entfernung));
+            knoten.setEffect(leuchten);
+                }
         );
         return flächeÜbergang;
     }
@@ -407,10 +402,7 @@ public class Controller
 
     public void einfärben()
     {
-        StrokeTransition übergang = new StrokeTransition(); //Linie
-        DropShadow leuchten = new DropShadow();
-        leuchten.setWidth(55);
-        leuchten.setHeight(15);
+        //StrokeTransition übergang = new StrokeTransition(); //Linie
 
         int dauer = 0;
         int pausenDauer = 0;
@@ -425,52 +417,58 @@ public class Controller
             switch(n.entfernung)
             {
                 case 0:
+                    Color farbe = Color.WHITESMOKE.deriveColor(1,1,1, 1);
                     pausenDauer = 0;
                     if(n.startKnoten)
                     {
                         animationAblaufen(n, pausenDauer);
                     }
-                    FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer);
+                    FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer, farbe);
                     break;
 
                 case 1:
+                    Color farbe1 = Color.YELLOW.deriveColor(1,1,1, 1);
                     dauer = 0;
                     pausenDauer = 3600;
                     animationAblaufen(n, pausenDauer);
-                    FillTransition flächeÜbergang1 = knotenEinfärben(n, dauer);
-                    flächeÜbergang1.setToValue(Color.GOLD.deriveColor(1,1,1, 1));
+                    FillTransition flächeÜbergang1 = knotenEinfärben(n, dauer, farbe1);
+                    flächeÜbergang1.setToValue(Color.YELLOW.deriveColor(1,1,1, 1));
                     break;
 
                 case 2:
+                    Color farbe2 = Color.ORANGE.deriveColor(1,1,1, 1);
                     dauer = 3600;
                     pausenDauer = 7200;
                     animationAblaufen(n, pausenDauer);
-                    FillTransition flächeÜbergang2 = knotenEinfärben(n, dauer);
-                    flächeÜbergang2.setToValue(Color.AQUA.deriveColor(1,1,1, 1));
+                    FillTransition flächeÜbergang2 = knotenEinfärben(n, dauer, farbe2);
+                    flächeÜbergang2.setToValue(Color.ORANGE.deriveColor(1,1,1, 1));
                     break;
 
                 case 3:
+                    Color farbe3 = Color.ORANGERED.deriveColor(1,1,1, 1);
                     dauer = 7200;
                     pausenDauer = 10800;
                     animationAblaufen(n, pausenDauer);
-                    FillTransition flächeÜbergang3 = knotenEinfärben(n, dauer);
-                    flächeÜbergang3.setToValue(Color.CHOCOLATE.deriveColor(1,1,1, 1));
+                    FillTransition flächeÜbergang3 = knotenEinfärben(n, dauer, farbe3);
+                    flächeÜbergang3.setToValue(Color.ORANGERED.deriveColor(1,1,1, 1));
                     break;
 
                 case 4:
+                    Color farbe4 = Color.DEEPPINK.deriveColor(1,1,1, 1);
                     dauer = 10800;
                     pausenDauer = 10800 + n.entfernung*300;
                     animationAblaufen(n, pausenDauer);
-                    FillTransition flächeÜbergang4 = knotenEinfärben(n, dauer);
-                    flächeÜbergang4.setToValue(Color.RED.deriveColor(1,1,1, 1));
+                    FillTransition flächeÜbergang4 = knotenEinfärben(n, dauer, farbe4);
+                    flächeÜbergang4.setToValue(Color.DEEPPINK.deriveColor(1,1,1, 1));
                     break;
 
                 default:
+                    Color farbeRest = Color.DARKVIOLET.deriveColor(1,1,1, 1);
                     dauer = 10800 + n.entfernung*300;
                     pausenDauer = 10800 + n.entfernung*500; //TODO
                     animationAblaufen(n, pausenDauer);
-                    FillTransition flächeÜbergangRest = knotenEinfärben(n, dauer);
-                    flächeÜbergangRest.setToValue(Color.LIGHTGREY.deriveColor(1,1,1, 1));
+                    FillTransition flächeÜbergangRest = knotenEinfärben(n, dauer, farbeRest);
+                    flächeÜbergangRest.setToValue(Color.DARKVIOLET.deriveColor(1,1,1, 1));
                     break;
             }
         }
@@ -616,16 +614,27 @@ public class Controller
     int knotenID = 0;
     public void erstelleZiehKnoten()
     {
-        //test();
         DoubleProperty startX = new SimpleDoubleProperty(200);
         DoubleProperty startY = new SimpleDoubleProperty(200);
         String knotenBezeichnung;
         knotenBezeichnung = eingabeFeld.getText().trim();
+
+        //Gleiche Bezeichnungen vermeiden
         if(knotenBezeichnung.equals(""))
         {
             Random r = new Random();
             char c = (char)(r.nextInt(26) + 'a');
             knotenBezeichnung = String.valueOf(c).toUpperCase();
+            if(knotenBezeichnungVorhaden(knotenBezeichnung))
+            {
+                r = new Random();
+                char d = (char)(r.nextInt(26) + 'a');
+                knotenBezeichnung = String.valueOf(c).toUpperCase()+String.valueOf(d);
+            }
+        }
+        else if(knotenBezeichnungVorhaden(knotenBezeichnung))
+        {
+            knotenBezeichnung = knotenBezeichnung+knotenID;
         }
 
         //Text test = new Text(knotenBezeichnung);
@@ -658,6 +667,19 @@ public class Controller
         comboBoxZU.getItems().addAll(zieh.bezeichnung);
         startKnoten.getItems().addAll(zieh.bezeichnung);
         löschComboBox.getItems().addAll(zieh.bezeichnung);
+    }
+
+    /**Schauen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
+    private boolean knotenBezeichnungVorhaden(String knotenBezeichnung)
+    {
+        for(Knoten n : alleKnoten)
+        {
+            if(knotenBezeichnung.equals(n.bezeichnung))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void knotenLöschen()
@@ -727,7 +749,6 @@ public class Controller
                 iterAktuelleKantenZu.remove();
             }
 
-
             for(int i = 0; i < alleKanten.size(); i++)
             {
                 System.out.print("ALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
@@ -744,6 +765,7 @@ public class Controller
         }
     }
 
+    //TESTAUSGABE
     public void alleKantenAusgeben()
     {
         System.out.print("\nALLE KNOTEN GRÖSSE: " + alleKnoten.size());

@@ -129,7 +129,7 @@ class Knoten extends Circle
 
     public void texteBinden()
     {
-        text.xProperty().bind(this.centerXProperty().subtract(5));
+        text.xProperty().bind(this.centerXProperty().subtract(7));
         text.yProperty().bind(this.centerYProperty());
         text.setMouseTransparent(true);
 
