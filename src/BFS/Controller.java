@@ -48,6 +48,8 @@ public class Controller
 
     public Button test;
 
+    int warteZeit;
+
     /**Warteschlange für die Knoten*/
     private Queue<Knoten> warteschlange;
     /**Listen für alle angelegten Knoten und Kanten*/
@@ -158,8 +160,15 @@ public class Controller
         zeitStempel = 0;
         dfs(start);
         ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
-        kantenKlassifizieren();
+
         kantenAnimation();
+
+        PauseTransition pause = new PauseTransition(Duration.millis(warteZeit));
+        pause.play();
+        //erst die Stempel Animation abwarten, dann die Kanten färben
+        pause.setOnFinished((ActionEvent event) -> {
+            kantenKlassifizieren();
+        });
     }
 
     private void dfsReset()
@@ -234,12 +243,11 @@ public class Controller
                         knoten.stempelZurück.setText(Integer.toString(knoten.zeitStempelZurück));
                         knoten.stempelZurück.setEffect(dsZurück);
                     });
-
                 }
-
             }
             warten = warten + 2000;
         }
+        warteZeit = warten;
     }
 
     /**Kanten nach DFS Ablauf klassifizieren.*/
