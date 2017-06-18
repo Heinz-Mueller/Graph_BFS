@@ -23,6 +23,7 @@ class Kante extends Group
     int zuKnotenHinStempel;
     int zuKnotenZurückStempel;
 
+
     Kante(int von, int zu, String vonKnoten, String zuKnoten)
     {
         this( new Line(), new Line(), new Line() );
@@ -33,7 +34,9 @@ class Kante extends Group
     }
 
     //-------------------------------------------
-    private final Line linie;
+    public final Line linie;
+    public final Line pfeil1;
+    public final Line pfeil2;
     private static final double arrowLength = 50;
     private static final double arrowWidth = 4.5;
 
@@ -42,6 +45,8 @@ class Kante extends Group
     {
         super(linie, pfeil1, pfeil2);
         this.linie = linie;
+        this.pfeil1 = pfeil1;
+        this.pfeil2 = pfeil2;
 
         //Linie-Eigenschaften
         linie.setSmooth(true);

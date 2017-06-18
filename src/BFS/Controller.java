@@ -266,29 +266,41 @@ public class Controller
                             //Vorwärts-/Baumkante
                             if( a.vonKnotenHinStempel < b.zuKnotenHinStempel & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel) //TODO
                             {
-                                DropShadow ds = new DropShadow(15, Color.GREEN);
-                                ds.setSpread(0.4);
-                                ds.setHeight(10);
-                                ds.setOffsetX(4);
+                                DropShadow ds = new DropShadow(10, Color.GREEN);
+                                ds.setSpread(0.1);
+                                //ds.setHeight(10);
+                                //ds.setOffsetX(4);
                                 a.setEffect(ds);
+//                                a.linie.setStrokeWidth(2);
+//                                a.linie.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+//                                a.pfeil1.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+//                                a.pfeil2.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
                             }
                             //Rückwärtskante
                             if( b.zuKnotenHinStempel < a.vonKnotenHinStempel & a.vonKnotenHinStempel < a.vonKnotenZurückStempel & a.vonKnotenZurückStempel < b.zuKnotenZurückStempel) //TODO
                             {
-                                DropShadow ds = new DropShadow(15, Color.BLUE);
-                                ds.setSpread(0.4);
-                                ds.setHeight(10);
-                                ds.setOffsetX(-4);
+                                DropShadow ds = new DropShadow(10, Color.BLUE);
+                                ds.setSpread(0.1);
+                                //ds.setHeight(10);
+                                //ds.setOffsetX(-4);
                                 a.setEffect(ds);
+//                                a.linie.setStrokeWidth(2);
+//                                a.linie.setStroke(Color.BLUE.deriveColor(1,1,1, 1));
+//                                a.pfeil1.setStroke(Color.BLUE.deriveColor(1,1,1, 1));
+//                                a.pfeil2.setStroke(Color.BLUE.deriveColor(1,1,1, 1));
                             }
                             //Querkante
                             if( b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenHinStempel & a.vonKnotenHinStempel < a.vonKnotenZurückStempel) //TODO
                             {
-                                DropShadow ds = new DropShadow(15, Color.ORANGE);
-                                ds.setSpread(0.4);
-                                ds.setHeight(10);
-                                ds.setOffsetX(4);
+                                DropShadow ds = new DropShadow(10, Color.ORANGE);
+                                ds.setSpread(0.1);
+                                //ds.setHeight(10);
+                                //ds.setOffsetX(4);
                                 a.setEffect(ds);
+                                a.linie.setStrokeWidth(2);
+                                a.linie.setStroke(Color.ORANGE.deriveColor(1,1,1, 1));
+                                a.pfeil1.setStroke(Color.ORANGE.deriveColor(1,1,1, 1));
+                                a.pfeil2.setStroke(Color.ORANGE.deriveColor(1,1,1, 1));
                             }
                             System.out.print("GEFUNDEN!\t"+"\n");
                         }
