@@ -120,8 +120,14 @@ public class Controller
                 System.out.print("Start-Knoten-Bezeichnung:  "+startComBox+"\t\n");
             }
         }
+        bfsReset();
+        start.startKnoten = true;
+        bfs(start);
+    }
 
-        //TODO Reset Funktion einbauen
+
+    public void bfsReset()
+    {
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
@@ -135,8 +141,6 @@ public class Controller
         {
             n.setEffect(null);
         }
-        start.startKnoten = true;
-        bfs(start);
     }
 
     public void dfsAusführen()
@@ -150,6 +154,16 @@ public class Controller
                 start = n;
             }
         }
+        dfsReset();
+        zeitStempel = 0;
+        dfs(start);
+        ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
+        kantenKlassifizieren();
+        kantenAnimation();
+    }
+
+    private void dfsReset()
+    {
         for(int i = 0; i < alleKnoten.size(); i++)
         {
             alleKnoten.get(i).besucht = false;
@@ -157,11 +171,75 @@ public class Controller
             alleKnoten.get(i).zurückBesucht = false;
             alleKnoten.get(i).stempelHin.setText("hin");
             alleKnoten.get(i).stempelZurück.setText("zurück");
+            alleKnoten.get(i).zeitStempelHin = 0;
+            alleKnoten.get(i).zeitStempelZurück = 0;
+            alleKnoten.get(i).stempelHin.setEffect(null);
+            alleKnoten.get(i).stempelZurück.setEffect(null);
         }
-        zeitStempel = 0;
-        dfs(start);
-        ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
-        kantenKlassifizieren();
+        for(Knoten n : alleKnoten)
+        {
+            for(Kante m : n.kantenZuKnoten)
+            {
+                m.setEffect(null);
+            }
+            for(Kante i : n.kantenVonKnoten)
+            {
+                i.setEffect(null);
+            }
+            for(Kante j : n.kantenAnKnoten)
+            {
+                j.setEffect(null);
+            }
+        }
+        for(Kante m : alleKanten)
+        {
+            m.setEffect(null);
+        }
+    }
+
+    private void kantenAnimation()
+    {
+        DropShadow dsHin = new DropShadow(15, Color.RED);
+        dsHin.setSpread(0.6);
+
+        DropShadow dsZurück = new DropShadow(15, Color.BLUE);
+        dsZurück.setSpread(0.6);
+
+        int warten = 10;
+        for(int i = 1; i <= alleKnoten.size()*2; i++)
+        {
+            for(Knoten knoten : alleKnoten)
+            {
+                if(i == knoten.zeitStempelHin)
+                {
+                    System.out.print("  I:\t"+i+"\n");
+                    System.out.print("  knoten.zeitStempelHin :\t"+knoten.zeitStempelHin +"\n");
+
+                    PauseTransition pause = new PauseTransition(Duration.millis(warten)); //TODO gewisse Zeit abwarten und Knoten aktivieren
+                    pause.play();
+                    pause.setOnFinished((ActionEvent event) -> {
+                        knoten.stempelHin.setText(Integer.toString(knoten.zeitStempelHin));
+                        knoten.stempelHin.setEffect(dsHin);
+                    });
+
+                }
+                else if(i == knoten.zeitStempelZurück)
+                {
+                    System.out.print("  I:\t"+i+"\n");
+                    System.out.print("  knoten.zeitStempelZurück :\t"+knoten.zeitStempelZurück +"\n");
+
+                    PauseTransition pause = new PauseTransition(Duration.millis(warten)); //TODO gewisse Zeit abwarten und Knoten aktivieren
+                    pause.play();
+                    pause.setOnFinished((ActionEvent event) -> {
+                        knoten.stempelZurück.setText(Integer.toString(knoten.zeitStempelZurück));
+                        knoten.stempelZurück.setEffect(dsZurück);
+                    });
+
+                }
+
+            }
+            warten = warten + 2000;
+        }
     }
 
     /**Kanten nach DFS Ablauf klassifizieren.*/
@@ -515,9 +593,9 @@ public class Controller
         }
 
         startKnoten.zeitStempelHin = zeitStempel;
-        startKnoten.stempelHin.setText(Integer.toString(zeitStempel));
         startKnoten.hinBesucht = true;
         ArrayList<Knoten> nachbarn = findeNachbar(matrix, startKnoten);
+
         for (int i = 0; i < nachbarn.size(); i++)
         {
             Knoten n = nachbarn.get(i);
@@ -529,7 +607,6 @@ public class Controller
         }
         zeitStempel++;
         startKnoten.zeitStempelZurück = zeitStempel;
-        startKnoten.stempelZurück.setText(Integer.toString(zeitStempel));
 
         //Zeitstempel für den Hinweg in beide Listen eintragen.
         for(Kante n : startKnoten.kantenZuKnoten)
@@ -540,6 +617,7 @@ public class Controller
         {
             n.vonKnotenZurückStempel = zeitStempel;
         }
+
     }
 
 
@@ -625,14 +703,12 @@ public class Controller
             Random r = new Random();
             char c = (char)(r.nextInt(26) + 'a');
             knotenBezeichnung = String.valueOf(c).toUpperCase();
-            if(knotenBezeichnungVorhaden(knotenBezeichnung))
+            if(knotenBezeichnungVorhanden(knotenBezeichnung))
             {
-                r = new Random();
-                char d = (char)(r.nextInt(26) + 'a');
-                knotenBezeichnung = String.valueOf(c).toUpperCase()+String.valueOf(d);
+                knotenBezeichnung = knotenBezeichnung+knotenID;
             }
         }
-        else if(knotenBezeichnungVorhaden(knotenBezeichnung))
+        else if(knotenBezeichnungVorhanden(knotenBezeichnung))
         {
             knotenBezeichnung = knotenBezeichnung+knotenID;
         }
@@ -648,7 +724,7 @@ public class Controller
         if(groesse != 0)
         {
             int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
-            zieh.setCenterX(entfernungVomLetzen + 20);
+            zieh.setCenterX(entfernungVomLetzen + 30);
         }
 
         /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
@@ -670,7 +746,7 @@ public class Controller
     }
 
     /**Schauen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
-    private boolean knotenBezeichnungVorhaden(String knotenBezeichnung)
+    private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
     {
         for(Knoten n : alleKnoten)
         {
@@ -942,7 +1018,7 @@ public class Controller
 
                 löschComboBoxKanten.getItems().addAll(kante.vonKnoten+ " -> " + kante.zuKnoten);
 
-                knotenVon.kantenVonKnoten.add(kante);//TODO
+                knotenVon.kantenVonKnoten.add(kante);// TODO wenn MAtrix überarbeiter wird
                 knotenZu.kantenZuKnoten.add(kante);//TODO
 
                 /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
