@@ -36,7 +36,6 @@ public class Controller
     public ComboBox löschComboBox;
     public ComboBox löschComboBoxKanten;
 
-    public Button go;
     public Button bfs2;
     public Button löschButton;
     public Button löschButtonKante;
@@ -95,8 +94,8 @@ public class Controller
 
         animation.setAutoReverse(true);
         animation.setCycleCount(2);
-        go.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING));
-        go.setOnAction(a -> animation.play());
+        test.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING)); //TODO evtl. später so machen
+        test.setOnAction(a -> animation.play()); //TODO evtl. später so machen
     }
 
     /**Start-Knoten wird ausgewählt und die Suchen aktivert*/
@@ -119,7 +118,6 @@ public class Controller
             if(n.bezeichnung == startComBox)
             {
                 start = n;
-                System.out.print("Start-Knoten-Bezeichnung:  "+startComBox+"\t\n");
             }
         }
         bfsReset();
@@ -221,10 +219,8 @@ public class Controller
             {
                 if(i == knoten.zeitStempelHin)
                 {
-                    System.out.print("  I:\t"+i+"\n");
-                    System.out.print("  knoten.zeitStempelHin :\t"+knoten.zeitStempelHin +"\n");
-
-                    PauseTransition pause = new PauseTransition(Duration.millis(warten)); //TODO gewisse Zeit abwarten und Knoten aktivieren
+                    //gewisse Zeit abwarten und "hin"-Stempel eintragen
+                    PauseTransition pause = new PauseTransition(Duration.millis(warten));
                     pause.play();
                     pause.setOnFinished((ActionEvent event) -> {
                         knoten.stempelHin.setText(Integer.toString(knoten.zeitStempelHin));
@@ -234,10 +230,8 @@ public class Controller
                 }
                 else if(i == knoten.zeitStempelZurück)
                 {
-                    System.out.print("  I:\t"+i+"\n");
-                    System.out.print("  knoten.zeitStempelZurück :\t"+knoten.zeitStempelZurück +"\n");
-
-                    PauseTransition pause = new PauseTransition(Duration.millis(warten)); //TODO gewisse Zeit abwarten und Knoten aktivieren
+                    //gewisse Zeit abwarten und "zurück"-Stempel eintragen
+                    PauseTransition pause = new PauseTransition(Duration.millis(warten));
                     pause.play();
                     pause.setOnFinished((ActionEvent event) -> {
                         knoten.stempelZurück.setText(Integer.toString(knoten.zeitStempelZurück));
@@ -245,7 +239,7 @@ public class Controller
                     });
                 }
             }
-            warten = warten + 2000;
+            warten = warten + 1000;
         }
         warteZeit = warten;
     }
@@ -413,7 +407,7 @@ public class Controller
     }
 
 
-    private void animationAblaufen(Knoten knoten, int pausenDauer)
+    private void animationAblaufen(Knoten knoten, int pausenDauer, Color farbe)
     {
         ArrayList<Knoten> nachbarn = findeNachbar(globaleMatrix, knoten);
         for(Knoten nachbar : nachbarn)
@@ -430,7 +424,7 @@ public class Controller
 
                         Circle circle = new Circle();
                         circle.setRadius(10);
-                        circle.setFill(Color.YELLOW);
+                        circle.setFill(farbe);
                         circle.setStroke(Color.BLUE);
                         root.getChildren().add(circle);
                         circle.toBack();
@@ -454,18 +448,26 @@ public class Controller
                         SequentialTransition sequence = new SequentialTransition (knoten, pause, animation);
                         sequence.play();
 
+                        //Animation nach Ablauf entfernen
                         sequence.setOnFinished((ActionEvent event) -> {
                             root.getChildren().remove(animation.getNode());
-                            knoten.setMouseTransparent(false);
                         });
                     }
                 }
             }
         }
-        PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer*2)); //TODO gewisse Zeit abwarten und Knoten aktivieren
+        //Warten bis die Animation abgelaufen ist, dann Knoten wieder "dragbar" machen
+        PauseTransition pause = new PauseTransition(Duration.millis(pausenDauer+3600));
         pause.play();
         pause.setOnFinished((ActionEvent event) -> {
             knoten.setMouseTransparent(false);
+            for(Knoten n : alleKnoten)
+            {
+                if(n.entfernung == 0)
+                {
+                    n.setMouseTransparent(false);
+                }
+            }
         });
     }
 
@@ -501,70 +503,67 @@ public class Controller
     public void einfärben()
     {
         //StrokeTransition übergang = new StrokeTransition(); //Linie
-
-        int dauer = 0;
+        int dauer = 0;  //Nach welcher Dauer das Blinken beginnen soll, Blinkdauer immer 3600!
         int pausenDauer = 0;
 
         for (int i = 0; i < alleKnoten.size(); i++)
         {
             Knoten n = alleKnoten.get(i);
 
-            //TESTAUSGABE
-            System.out.print("BEZEICHNUNG:\t"+n.bezeichnung+"   ENTFERNUNG\t"+n.entfernung+"\n");
-
             switch(n.entfernung)
             {
                 case 0:
-                    Color farbe = Color.WHITESMOKE.deriveColor(1,1,1, 1);
-                    pausenDauer = 0;
+                    Color farbe = Color.LIGHTYELLOW.deriveColor(1,1,1, 1);
+                    //pausenDauer = 0;
                     if(n.startKnoten)
                     {
-                        animationAblaufen(n, pausenDauer);
+                        animationAblaufen(n, pausenDauer, farbe);  //hier werden die Farbkugeln abgeschoßen
+                        FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer, farbe);
+                        flächeÜbergang0.setToValue(Color.LIGHTYELLOW.deriveColor(1,1,1, 1));
                     }
-                    FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer, farbe);
                     break;
 
                 case 1:
                     Color farbe1 = Color.YELLOW.deriveColor(1,1,1, 1);
                     dauer = 0;
                     pausenDauer = 3600;
-                    animationAblaufen(n, pausenDauer);
+                    animationAblaufen(n, pausenDauer, farbe1);
                     FillTransition flächeÜbergang1 = knotenEinfärben(n, dauer, farbe1);
                     flächeÜbergang1.setToValue(Color.YELLOW.deriveColor(1,1,1, 1));
                     break;
 
                 case 2:
                     Color farbe2 = Color.ORANGE.deriveColor(1,1,1, 1);
-                    dauer = 3600;
-                    pausenDauer = 7200;
-                    animationAblaufen(n, pausenDauer);
+                    pausenDauer = 3600 * n.entfernung;
+                    dauer = pausenDauer - 3600;
+                    animationAblaufen(n, pausenDauer, farbe2);
                     FillTransition flächeÜbergang2 = knotenEinfärben(n, dauer, farbe2);
                     flächeÜbergang2.setToValue(Color.ORANGE.deriveColor(1,1,1, 1));
                     break;
 
                 case 3:
                     Color farbe3 = Color.ORANGERED.deriveColor(1,1,1, 1);
-                    dauer = 7200;
-                    pausenDauer = 10800;
-                    animationAblaufen(n, pausenDauer);
+                    pausenDauer = 3600 * n.entfernung;
+                    dauer = pausenDauer - 3600;
+                    animationAblaufen(n, pausenDauer, farbe3);
                     FillTransition flächeÜbergang3 = knotenEinfärben(n, dauer, farbe3);
                     flächeÜbergang3.setToValue(Color.ORANGERED.deriveColor(1,1,1, 1));
                     break;
 
                 case 4:
                     Color farbe4 = Color.DEEPPINK.deriveColor(1,1,1, 1);
-                    dauer = 10800;
-                    pausenDauer = 10800 + n.entfernung*300;
-                    animationAblaufen(n, pausenDauer);
+                    pausenDauer = 3600 * n.entfernung;
+                    dauer = pausenDauer - 3600;
+                    animationAblaufen(n, pausenDauer, farbe4);
                     FillTransition flächeÜbergang4 = knotenEinfärben(n, dauer, farbe4);
                     flächeÜbergang4.setToValue(Color.DEEPPINK.deriveColor(1,1,1, 1));
                     break;
 
                 default:
                     Color farbeRest = Color.DARKVIOLET.deriveColor(1,1,1, 1);
-                    dauer = 10800 + n.entfernung*300;
-                    pausenDauer = 10800 + n.entfernung*500; //TODO
-                    animationAblaufen(n, pausenDauer);
+                    pausenDauer = 3600 * n.entfernung;
+                    dauer = pausenDauer - 3600;
+                    animationAblaufen(n, pausenDauer, farbeRest);
                     FillTransition flächeÜbergangRest = knotenEinfärben(n, dauer, farbeRest);
                     flächeÜbergangRest.setToValue(Color.DARKVIOLET.deriveColor(1,1,1, 1));
                     break;
