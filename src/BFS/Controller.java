@@ -8,9 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Lighting;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -128,14 +126,14 @@ public class Controller
     /**Zurücksetzen einer Breitensuche*/
     public void bfsReset()
     {
-        for(int i = 0; i < alleKnoten.size(); i++)
+        for (Knoten n : alleKnoten)
         {
-            alleKnoten.get(i).besucht = false;
-            alleKnoten.get(i).entfernungGesetzt = false;
-            alleKnoten.get(i).entfernung = 0;
-            alleKnoten.get(i).setFill(Color.WHITESMOKE);
-            alleKnoten.get(i).startKnoten = false;
-            alleKnoten.get(i).distanz.setText("");
+            n.besucht = false;
+            n.entfernungGesetzt = false;
+            n.entfernung = 0;
+            n.setFill(Color.WHITESMOKE);
+            n.startKnoten = false;
+            n.distanz.setText("");
         }
         for(Knoten n : alleKnoten)
         {
@@ -171,20 +169,17 @@ public class Controller
     /**Zurücksetzen einer Tiefensuche*/
     private void dfsReset()
     {
-        for(int i = 0; i < alleKnoten.size(); i++)
-        {
-            alleKnoten.get(i).besucht = false;
-            alleKnoten.get(i).hinBesucht = false;
-            alleKnoten.get(i).zurückBesucht = false;
-            alleKnoten.get(i).stempelHin.setText("hin");
-            alleKnoten.get(i).stempelZurück.setText("zurück");
-            alleKnoten.get(i).zeitStempelHin = 0;
-            alleKnoten.get(i).zeitStempelZurück = 0;
-            alleKnoten.get(i).stempelHin.setEffect(null);
-            alleKnoten.get(i).stempelZurück.setEffect(null);
-        }
         for(Knoten n : alleKnoten)
         {
+            n.besucht = false;
+            n.hinBesucht = false;
+            n.zurückBesucht = false;
+            n.stempelHin.setText("hin");
+            n.stempelZurück.setText("zurück");
+            n.zeitStempelHin = 0;
+            n.zeitStempelZurück = 0;
+            n.stempelHin.setEffect(null);
+            n.stempelZurück.setEffect(null);
             for(Kante zu : n.kantenZuKnoten)
             {
                 zu.setEffect(null);
@@ -259,7 +254,7 @@ public class Controller
     }
 
     /**Kanten nach DFS Ablauf klassifizieren.*/
-    private void kantenKlassifizieren()
+    private void kantenKlassifizieren()  //TODO: Das ganze mit Matrix machen
     {
         for(Knoten n : alleKnoten)
         {
@@ -345,15 +340,10 @@ public class Controller
     /**Breitensuche mit Start-Knoten*/
     public void bfs(Knoten startKnoten)
     {
-        for(int i = 0; i < alleKnoten.size(); i++)
-        {
-            alleKnoten.get(i).besucht = false;
-        }
-
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
 
-        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
+        //Alle Kanten durchlaufen und Verbindugen in Matrix setzen
         for(int i = 0; i < alleKanten.size(); i++)
         {
             try
@@ -363,15 +353,17 @@ public class Controller
             }
 
         }
+
         //TESTAUSGABE: Matrix anschauen  //TODO löschen
-        for (int i = 0; i < matrix.length; i++)
+        for (int[] eineMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
             {
-                System.out.print(matrix[i][j] + "\t");
+                System.out.print(eineMatrix[j] + "\t");
             }
             System.out.print("\n");
         }
+
 
         warteschlange.add(startKnoten);
         startKnoten.besucht = true;
@@ -385,24 +377,23 @@ public class Controller
             {
                 Knoten n = nachbarn.get(i);
 
-                /**Wenn Knoten noch nicht besucht wurde und seine Entfernung noch nicht eingetragen ist
-                 * Entfernung vom Nachbarn nehmen und einen Schritt dazu addieren*/
+                //Wenn Knoten noch nicht besucht wurde und seine Entfernung noch nicht eingetragen ist
+                //Entfernung vom Nachbarn nehmen und einen Schritt dazu addieren
                 if(!nachbarn.get(i).entfernungGesetzt && !n.besucht)
                 {
                     nachbarn.get(i).entfernung = element.entfernung + 1;
                     nachbarn.get(i).entfernungGesetzt = true;
                 }
 
-                //knotenZumFärben.add(n);
+                //knotenZumFärben.add(n); //TODO LÖSCHEN
 
-                /**Knoten in die Warteschlange packen und als besucht markieren*/
+                //Knoten in die Warteschlange packen und als besucht markieren
                 if(n != null && !n.besucht)
                 {
                     warteschlange.add(n);
                     n.besucht = true;
                 }
             }
-            System.out.print("\n");
         }
 
         //Matrix kopieren für animationAblaufen
@@ -417,7 +408,7 @@ public class Controller
         einfärben();
     }
 
-
+    /**Animation bei der Breitensuche*/
     private void animationAblaufen(Knoten knoten, int pausenDauer, Color farbe)
     {
         ArrayList<Knoten> nachbarn = findeNachbar(globaleMatrix, knoten);
@@ -430,9 +421,6 @@ public class Controller
                 {
                     if(k.von == knoten.id && k.zu == nachbar.id)
                     {
-                        System.out.print("  k.von:\t"+k.von+"\t" + "k.zu:\t" +k.zu+ "\n");
-                        System.out.print("  k.vonKnoten:\t"+k.vonKnoten+"\t" + "k.zuKnoten:\t" +k.zuKnoten+ "\n");
-
                         Circle circle = new Circle();
                         circle.setRadius(10);
                         circle.setFill(farbe);
@@ -460,9 +448,7 @@ public class Controller
                         sequence.play();
 
                         //Animation nach Ablauf entfernen
-                        sequence.setOnFinished((ActionEvent event) -> {
-                            root.getChildren().remove(animation.getNode());
-                        });
+                        sequence.setOnFinished((ActionEvent event) -> root.getChildren().remove(animation.getNode()));
                     }
                 }
             }
@@ -482,7 +468,9 @@ public class Controller
         });
     }
 
-    FillTransition knotenEinfärben(Knoten knoten, int dauer, Color farbe)
+
+    /**Knoten nehmen, blinken lassen und einfärben*/
+    private FillTransition knotenEinfärben(Knoten knoten, int dauer, Color farbe)
     {
         DropShadow ds = new DropShadow();
         ds.setSpread(0.9);
@@ -495,7 +483,7 @@ public class Controller
         leuchten.setColor(farbe);
 
         PauseTransition pause = new PauseTransition(Duration.millis(dauer));
-        FillTransition flächeÜbergang = new FillTransition(); //Fläche
+        FillTransition flächeÜbergang = new FillTransition();
         flächeÜbergang.setShape(knoten);
         flächeÜbergang.setDuration(new Duration(1200));
         flächeÜbergang.setCycleCount(3);
@@ -504,108 +492,106 @@ public class Controller
         sequence.play();
         sequence.setOnFinished( (ActionEvent event) -> {
             knoten.distanz.setText(String.valueOf(knoten.entfernung));
-            knoten.setEffect(leuchten);
-                }
+            knoten.setEffect(leuchten);}
         );
         return flächeÜbergang;
     }
 
 
-    public void einfärben()
+    /**Alle Knoten ablaufen und nach Entfernung einfärben*/
+    private void einfärben()
     {
         //StrokeTransition übergang = new StrokeTransition(); //Linie
         int dauer = 0;  //Nach welcher Dauer das Blinken beginnen soll, Blinkdauer immer 3600!
         int pausenDauer = 0;
 
-        for (int i = 0; i < alleKnoten.size(); i++)
+        for (Knoten n : alleKnoten)
         {
-            Knoten n = alleKnoten.get(i);
-
-            switch(n.entfernung)
+            switch (n.entfernung)
             {
                 case 0:
-                    Color farbe = Color.LIGHTYELLOW.deriveColor(1,1,1, 1);
+                    Color farbe = Color.LIGHTYELLOW.deriveColor(1, 1, 1, 1);
                     //pausenDauer = 0;
-                    if(n.startKnoten)
+                    if (n.startKnoten)
                     {
                         animationAblaufen(n, pausenDauer, farbe);  //hier werden die Farbkugeln abgeschoßen
                         FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer, farbe);
-                        flächeÜbergang0.setToValue(Color.LIGHTYELLOW.deriveColor(1,1,1, 1));
+                        flächeÜbergang0.setToValue(Color.LIGHTYELLOW.deriveColor(1, 1, 1, 1));
                     }
                     break;
 
                 case 1:
-                    Color farbe1 = Color.YELLOW.deriveColor(1,1,1, 1);
+                    Color farbe1 = Color.YELLOW.deriveColor(1, 1, 1, 1);
                     dauer = 0;
                     pausenDauer = 3600;
                     animationAblaufen(n, pausenDauer, farbe1);
                     FillTransition flächeÜbergang1 = knotenEinfärben(n, dauer, farbe1);
-                    flächeÜbergang1.setToValue(Color.YELLOW.deriveColor(1,1,1, 1));
+                    flächeÜbergang1.setToValue(Color.YELLOW.deriveColor(1, 1, 1, 1));
                     break;
 
                 case 2:
-                    Color farbe2 = Color.ORANGE.deriveColor(1,1,1, 1);
+                    Color farbe2 = Color.ORANGE.deriveColor(1, 1, 1, 1);
                     pausenDauer = 3600 * n.entfernung;
                     dauer = pausenDauer - 3600;
                     animationAblaufen(n, pausenDauer, farbe2);
                     FillTransition flächeÜbergang2 = knotenEinfärben(n, dauer, farbe2);
-                    flächeÜbergang2.setToValue(Color.ORANGE.deriveColor(1,1,1, 1));
+                    flächeÜbergang2.setToValue(Color.ORANGE.deriveColor(1, 1, 1, 1));
                     break;
 
                 case 3:
-                    Color farbe3 = Color.ORANGERED.deriveColor(1,1,1, 1);
+                    Color farbe3 = Color.ORANGERED.deriveColor(1, 1, 1, 1);
                     pausenDauer = 3600 * n.entfernung;
                     dauer = pausenDauer - 3600;
                     animationAblaufen(n, pausenDauer, farbe3);
                     FillTransition flächeÜbergang3 = knotenEinfärben(n, dauer, farbe3);
-                    flächeÜbergang3.setToValue(Color.ORANGERED.deriveColor(1,1,1, 1));
+                    flächeÜbergang3.setToValue(Color.ORANGERED.deriveColor(1, 1, 1, 1));
                     break;
 
                 case 4:
-                    Color farbe4 = Color.DEEPPINK.deriveColor(1,1,1, 1);
+                    Color farbe4 = Color.DEEPPINK.deriveColor(1, 1, 1, 1);
                     pausenDauer = 3600 * n.entfernung;
                     dauer = pausenDauer - 3600;
                     animationAblaufen(n, pausenDauer, farbe4);
                     FillTransition flächeÜbergang4 = knotenEinfärben(n, dauer, farbe4);
-                    flächeÜbergang4.setToValue(Color.DEEPPINK.deriveColor(1,1,1, 1));
+                    flächeÜbergang4.setToValue(Color.DEEPPINK.deriveColor(1, 1, 1, 1));
                     break;
 
                 default:
-                    Color farbeRest = Color.DARKVIOLET.deriveColor(1,1,1, 1);
+                    Color farbeRest = Color.DARKVIOLET.deriveColor(1, 1, 1, 1);
                     pausenDauer = 3600 * n.entfernung;
                     dauer = pausenDauer - 3600;
                     animationAblaufen(n, pausenDauer, farbeRest);
                     FillTransition flächeÜbergangRest = knotenEinfärben(n, dauer, farbeRest);
-                    flächeÜbergangRest.setToValue(Color.DARKVIOLET.deriveColor(1,1,1, 1));
+                    flächeÜbergangRest.setToValue(Color.DARKVIOLET.deriveColor(1, 1, 1, 1));
                     break;
             }
         }
     }
 
 
-    int zeitStempel;
+    private int zeitStempel;
     /**Tiefensuche*/
     public void dfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
 
-        /**Alle Kanten durchlaufen und Verbindugen in Matrix setzen*/
+        //Alle Kanten durchlaufen und Verbindugen in Matrix setzen
         for(int i = 0; i < alleKanten.size(); i++)
         {
-            System.out.print("alleKanten von: "+alleKanten.get(i).von+"   alleKanten zu "+ alleKanten.get(i).zu+ "\n");
             try
             {
                 matrix[alleKanten.get(i).von][alleKanten.get(i).zu] = 1;
             }catch (Exception e) {System.out.print ("Fehler bei Matrix setzen: " + e);
             }
         }
-        //TESTAUSGABE: Matrix anschauen
-        for (int i = 0; i < matrix.length; i++)
+
+        //TESTAUSGABE: Matrix anschauen //TODO: löschen
+        for (int[] aMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
             {
-                System.out.print(matrix[i][j] + "\t");
+                System.out.print(aMatrix[j] + "\t");
             }
             System.out.print("\n");
         }
@@ -652,7 +638,7 @@ public class Controller
 
 
     //TESTAUSGABE
-    public static void ausgabe()
+    private static void ausgabe()
     {
         for (int i = 0; i<alleKnoten.size(); i++)
         {
@@ -681,7 +667,7 @@ public class Controller
         }
     }
 
-    public void test()
+    public void test() //Versuche für Animation, Rotation, usw.
     {
         Rectangle rect = new Rectangle (100, 40, 100, 100);
         rect.setArcHeight(50);
@@ -757,8 +743,8 @@ public class Controller
             zieh.setCenterX(entfernungVomLetzen + 30);
         }
 
-        /**Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
-         *  und Mausklicks auf Bezeichnung ignorieren*/
+        //Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
+        //  und Mausklicks auf Bezeichnung ignorieren*/
         root.getChildren().add(zieh);
         root.getChildren().add(zieh.text); //-------? Muss separat gemacht werden :/----------------------------------
         root.getChildren().add(zieh.stempelHin);
@@ -767,7 +753,7 @@ public class Controller
 
         eingabeFeld.setText("");
         alleKnoten.add(zieh);
-        /**Knoten-Bezeichnung in die Combo-Boxen packen*/
+        //Knoten-Bezeichnung in die Combo-Boxen packen
         comboBoxVON.getItems().add(zieh.bezeichnung);
         //comboBoxVON.getItems().addAll(zieh.bezeichnung);
         comboBoxZU.getItems().addAll(zieh.bezeichnung);
@@ -775,7 +761,7 @@ public class Controller
         löschComboBox.getItems().addAll(zieh.bezeichnung);
     }
 
-    /**Schauen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
+    /**Prüfen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
     private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
     {
         for(Knoten n : alleKnoten)
@@ -788,6 +774,7 @@ public class Controller
         return false;
     }
 
+    /**Den gewählten Knoten löschen und alle Kanten die am Knoten hängen*/
     public void knotenLöschen()
     {
         Knoten löschKnoten = null;
@@ -798,7 +785,6 @@ public class Controller
             if(n.bezeichnung == löschComBox)
             {
                 löschKnoten = n;
-                System.out.print("löschKnoten-Bezeichnung:  "+löschComBox+"\t\n");
             }
         }
 
@@ -811,9 +797,9 @@ public class Controller
             root.getChildren().remove(löschKnoten.distanz);
             root.getChildren().remove(löschKnoten);
 
-
             System.out.print("\nVORHER löschKnoten.kantenVonKnoten.size(): " + löschKnoten.kantenVonKnoten.size() +"\n");
             System.out.print("VORHER löschKnoten.kantenZuKnoten.size(): " + löschKnoten.kantenZuKnoten.size() +"\n");
+
 
             //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
             //Alle Kanten die vom gewählten Knoten weggehen löschen
@@ -871,6 +857,7 @@ public class Controller
         }
     }
 
+
     //TESTAUSGABE
     public void alleKantenAusgeben()
     {
@@ -898,6 +885,7 @@ public class Controller
         }
     }
 
+    /**Gewählte Kante löschen*/
     public void kanteLöschen()
     {
         Kante löschKante = null;
@@ -921,7 +909,6 @@ public class Controller
             bfs2.setDisable(true);
             dfs.setDisable(true);
         }
-
     }
 
 
