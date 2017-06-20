@@ -52,11 +52,11 @@ public class Controller
     /**Warteschlange für die Knoten*/
     private Queue<Knoten> warteschlange;
     /**Listen für alle angelegten Knoten und Kanten*/
-    static ArrayList<Knoten> alleKnoten = new ArrayList<>();
-    static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
-    static ArrayList<Kante> alleKanten = new ArrayList<>();
+    private static ArrayList<Knoten> alleKnoten = new ArrayList<>();
+    //private static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
+    private static ArrayList<Kante> alleKanten = new ArrayList<>();
 
-    static int[][] globaleMatrix;
+    private static int[][] globaleMatrix;
 
     public Controller()
     {
@@ -66,20 +66,19 @@ public class Controller
     /**Limitiert die Texteingabe bei Knoten-Bezeichnung*/
     public void addTextLimiter()
     {
-        final int maxLength = 4;
+        final int maxLänge = 4;
         eingabeFeld.textProperty().addListener(new ChangeListener<String>()
         {
             @Override
             public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue)
             {
-                if (eingabeFeld.getText().length() > maxLength) {
-                    String s = eingabeFeld.getText().substring(0, maxLength);
+                if (eingabeFeld.getText().length() > maxLänge) {
+                    String s = eingabeFeld.getText().substring(0, maxLänge);
                     eingabeFeld.setText(s);
                 }
             }
         });
     }
-
 
     //ALT TEST-Animation
     public void handleButtonAction(ActionEvent e)
@@ -98,7 +97,7 @@ public class Controller
         test.setOnAction(a -> animation.play()); //TODO evtl. später so machen
     }
 
-    /**Start-Knoten wird ausgewählt und die Suchen aktivert*/
+    /**Prüfe ob die Knoten-Wahl gültig ist und aktiviere die Buttons*/
     public void start()
     {
         int start = startKnoten.getSelectionModel().getSelectedIndex();
@@ -109,23 +108,24 @@ public class Controller
         }
     }
 
+    /**Gewählter Knoten wird als Start-Knoten markiert und die Breitensuche gestartet*/
     public void bfsAusführen()
     {
         Knoten start = null;
         Object startComBox = startKnoten.getSelectionModel().getSelectedItem();
+        bfsReset();
         for(Knoten n : alleKnoten)
         {
             if(n.bezeichnung == startComBox)
             {
                 start = n;
+                start.startKnoten = true;
             }
         }
-        bfsReset();
-        start.startKnoten = true;
         bfs(start);
     }
 
-
+    /**Zurücksetzen einer Breitensuche*/
     public void bfsReset()
     {
         for(int i = 0; i < alleKnoten.size(); i++)
@@ -143,6 +143,7 @@ public class Controller
         }
     }
 
+    /**Gewählter Knoten wird als Start-Knoten markiert und die Tiefensuche gestartet*/
     public void dfsAusführen()
     {
         Knoten start = null;
@@ -159,16 +160,15 @@ public class Controller
         dfs(start);
         ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
 
+        //Animation für die Zeitstempel ablaufen lassen
         kantenAnimation();
-
+        //erst die Stempel Animation abwarten, dann die Kanten färben
         PauseTransition pause = new PauseTransition(Duration.millis(warteZeit));
         pause.play();
-        //erst die Stempel Animation abwarten, dann die Kanten färben
-        pause.setOnFinished((ActionEvent event) -> {
-            kantenKlassifizieren();
-        });
+        pause.setOnFinished((ActionEvent event) -> kantenKlassifizieren());
     }
 
+    /**Zurücksetzen einer Tiefensuche*/
     private void dfsReset()
     {
         for(int i = 0; i < alleKnoten.size(); i++)
@@ -217,6 +217,7 @@ public class Controller
         }
     }
 
+    /**Die Zeitstempel nach der Tiefensuche eintragen*/
     private void kantenAnimation()
     {
         DropShadow dsHin = new DropShadow(15, Color.RED);
@@ -392,7 +393,7 @@ public class Controller
                     nachbarn.get(i).entfernungGesetzt = true;
                 }
 
-                knotenZumFärben.add(n);
+                //knotenZumFärben.add(n);
 
                 /**Knoten in die Warteschlange packen und als besucht markieren*/
                 if(n != null && !n.besucht)
@@ -435,7 +436,7 @@ public class Controller
                         Circle circle = new Circle();
                         circle.setRadius(10);
                         circle.setFill(farbe);
-                        circle.setStroke(Color.BLUE);
+                        circle.setStroke(Color.GRAY);
                         root.getChildren().add(circle);
                         circle.toBack();
 
