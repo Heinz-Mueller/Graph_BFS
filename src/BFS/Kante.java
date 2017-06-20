@@ -52,7 +52,7 @@ class Kante extends Group
         linie.setSmooth(true);
         linie.setStrokeWidth(1.2);
         linie.setStrokeLineCap(StrokeLineCap.ROUND);
-        linie.getStrokeDashArray().addAll(20.0, 10.0);
+        linie.getStrokeDashArray().addAll(20.0, 20.0);
         linie.setStroke(Color.GRAY.deriveColor(1,1,0.5, 1));
 
         //Pfeil-Eigenschaften
