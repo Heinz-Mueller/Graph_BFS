@@ -493,7 +493,7 @@ public class Controller
             {
                 case 0:
                     Color farbe = Color.LIGHTYELLOW.deriveColor(1, 1, 1, 1);
-                    //pausenDauer = 0;
+                    pausenDauer = 0;
                     if (n.startKnoten)
                     {
                         animationAblaufen(n, pausenDauer, farbe);  //hier werden die Farbkugeln abgeschoßen
@@ -787,7 +787,6 @@ public class Controller
             dfs.setDisable(true);
         }
     }
-
 
     /**Die Combo-Boxen neu einlesen*/
     private void updateComboBoxen()
