@@ -13,7 +13,7 @@ public class Main extends Application
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("BFS.fxml"));
         primaryStage.setTitle("BFS und DFS");
-        primaryStage.setScene(new Scene(root, 1200, 800));
+        primaryStage.setScene(new Scene(root, 1200, 700));
         primaryStage.show();
     }
 

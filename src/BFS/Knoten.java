@@ -72,7 +72,7 @@ class Knoten extends Circle
             {
                 @Override public void handle(MouseEvent mouseEvent)
                 {
-                    // delta-Distanzen für Drag und Drop
+                    // delta-Distanzen für Drag
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
@@ -91,7 +91,8 @@ class Knoten extends Circle
                 {
                     double newX = mouseEvent.getX() + dragDelta.x;
                     //if (newX > 0 && newX < getScene().getWidth())
-                    if (newX > 0 && newX < getScene().getWidth()-320)
+                    //Drag einschränken, damit man Knoten nicht ins Menü ziehen kann
+                    if (newX > 0 && newX < getScene().getWidth()-400)
                     {
                         setCenterX(newX);
                     }

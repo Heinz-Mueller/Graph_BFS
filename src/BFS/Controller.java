@@ -249,8 +249,8 @@ public class Controller
                     {
                         if(a.zu == b.zu && a.von == b.von)
                         {
-                            //Vorwärts-/Baumkante
-                            if( a.vonKnotenHinStempel < b.zuKnotenHinStempel & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel) //TODO Baum und Vor unterschediden
+                            //Baumkante
+                            if( a.vonKnotenHinStempel < b.zuKnotenHinStempel &(b.zuKnotenHinStempel==a.vonKnotenHinStempel+1) & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel) //TODO Baum und Vor unterschediden, schöner!
                             {
                                 DropShadow ds = new DropShadow(10, Color.GREEN);
                                 ds.setSpread(0.5);
@@ -260,6 +260,29 @@ public class Controller
                                 a.linie.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
                                 a.pfeil1.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
                                 a.pfeil2.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+                            }
+                            else if( a.vonKnotenHinStempel < b.zuKnotenHinStempel & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel & (a.vonKnotenZurückStempel==b.zuKnotenZurückStempel+1))
+                            {
+                                DropShadow ds = new DropShadow(10, Color.GREEN);
+                                ds.setSpread(0.5);
+                                a.linie.setStrokeWidth(2);
+                                a.pfeil1.setEffect(ds);
+                                a.pfeil2.setEffect(ds);
+                                a.linie.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+                                a.pfeil1.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+                                a.pfeil2.setStroke(Color.GREEN.deriveColor(1,1,1, 1));
+                            }
+                            //Vorwärtskante
+                            else if( a.vonKnotenHinStempel < b.zuKnotenHinStempel & b.zuKnotenHinStempel < b.zuKnotenZurückStempel & b.zuKnotenZurückStempel < a.vonKnotenZurückStempel)
+                            {
+                                DropShadow ds = new DropShadow(10, Color.DEEPPINK);
+                                ds.setSpread(0.5);
+                                a.linie.setStrokeWidth(2);
+                                a.pfeil1.setEffect(ds);
+                                a.pfeil2.setEffect(ds);
+                                a.linie.setStroke(Color.DEEPPINK.deriveColor(1,1,1, 1));
+                                a.pfeil1.setStroke(Color.DEEPPINK.deriveColor(1,1,1, 1));
+                                a.pfeil2.setStroke(Color.DEEPPINK.deriveColor(1,1,1, 1));
                             }
                             //Rückwärtskante
                             if( b.zuKnotenHinStempel < a.vonKnotenHinStempel & a.vonKnotenHinStempel < a.vonKnotenZurückStempel & a.vonKnotenZurückStempel < b.zuKnotenZurückStempel)

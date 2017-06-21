@@ -8,70 +8,80 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="root" prefHeight="680.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
+<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BFS.Controller">
    <children>
-      <Pane prefHeight="680.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="0.0" />
-      <Pane fx:id="Pane_2" layoutX="700.0" pickOnBounds="false" prefHeight="195.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane layoutX="-12.0" prefHeight="700.0" prefWidth="850.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="350.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TextField fx:id="eingabeFeld" layoutX="13.0" layoutY="14.0" onKeyPressed="#addTextLimiter" prefHeight="25.0" prefWidth="154.0" promptText="Knoten-Bezeichnung" />
-            <Button fx:id="newKnoten" layoutX="183.0" layoutY="14.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" prefHeight="25.0" prefWidth="101.0" text="New Knoten" />
-            <ComboBox fx:id="comboBoxVON" layoutX="14.0" layoutY="71.0" prefWidth="80.0" promptText="VON" />
-            <ComboBox fx:id="comboBoxZU" layoutX="105.0" layoutY="71.0" prefWidth="80.0" promptText="ZU" />
-            <Button fx:id="verbinden" layoutX="200.0" layoutY="71.0" mnemonicParsing="false" onAction="#knotenVerbinden" prefHeight="25.0" prefWidth="80.0" text="Verbinden" />
-            <Button fx:id="bfs2" disable="true" layoutX="200.0" layoutY="120.0" mnemonicParsing="false" onAction="#bfsAusführen" prefHeight="25.0" prefWidth="80.0" text="BFS" />
-            <ComboBox fx:id="startKnoten" layoutX="13.0" layoutY="120.0" onAction="#start" prefHeight="25.0" prefWidth="173.0" promptText="Start-Knoten" />
-            <Button fx:id="dfs" disable="true" layoutX="200.0" layoutY="156.0" mnemonicParsing="false" onAction="#dfsAusführen" prefHeight="25.0" prefWidth="80.0" text="DFS" />
+            <Button fx:id="test" layoutX="767.0" layoutY="640.0" mnemonicParsing="false" onAction="#alleKantenAusgeben" text="TEST" />
          </children>
       </Pane>
-      <AnchorPane layoutX="707.0" layoutY="193.0" prefHeight="88.0" prefWidth="301.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0">
+      <Pane fx:id="Pane_2" layoutX="700.0" pickOnBounds="false" prefHeight="195.0" prefWidth="340.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="löschButton" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#knotenLöschen" text="Lösche Knoten" />
-            <ComboBox fx:id="löschComboBox" layoutX="14.0" layoutY="50.0" prefHeight="25.0" prefWidth="94.0" promptText="Knoten" />
-            <Button fx:id="reset" layoutX="128.0" layoutY="8.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
-            <Button fx:id="löschButtonKante" layoutX="187.0" layoutY="8.0" mnemonicParsing="false" onAction="#kanteLöschen" prefHeight="25.0" prefWidth="94.0" text="Lösche Kante" />
-            <ComboBox fx:id="löschComboBoxKanten" layoutX="187.0" layoutY="50.0" prefHeight="25.0" prefWidth="94.0" promptText="Kante" />
+            <TextField fx:id="eingabeFeld" layoutX="13.0" layoutY="14.0" onKeyPressed="#addTextLimiter" prefHeight="25.0" prefWidth="173.0" promptText="Knoten-Bezeichnung" />
+            <Button fx:id="newKnoten" layoutX="212.0" layoutY="14.0" mnemonicParsing="false" onAction="#erstelleZiehKnoten" prefHeight="25.0" prefWidth="101.0" text="New Knoten" />
+            <ComboBox fx:id="comboBoxVON" layoutX="14.0" layoutY="71.0" prefWidth="80.0" promptText="VON" />
+            <ComboBox fx:id="comboBoxZU" layoutX="105.0" layoutY="71.0" prefWidth="80.0" promptText="ZU" />
+            <Button fx:id="verbinden" layoutX="212.0" layoutY="71.0" mnemonicParsing="false" onAction="#knotenVerbinden" prefHeight="25.0" prefWidth="101.0" text="Verbinden" />
+            <Button fx:id="bfs2" disable="true" layoutX="212.0" layoutY="120.0" mnemonicParsing="false" onAction="#bfsAusführen" prefHeight="25.0" prefWidth="101.0" text="Breitensuche" />
+            <ComboBox fx:id="startKnoten" layoutX="13.0" layoutY="120.0" onAction="#start" prefHeight="25.0" prefWidth="173.0" promptText="Start-Knoten" />
+            <Button fx:id="dfs" disable="true" layoutX="212.0" layoutY="156.0" mnemonicParsing="false" onAction="#dfsAusführen" prefHeight="25.0" prefWidth="101.0" text="Tiefensuche" />
+         </children>
+      </Pane>
+      <AnchorPane layoutX="707.0" layoutY="193.0" prefHeight="308.0" prefWidth="340.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.bottomAnchor="199.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="193.0">
+         <children>
+            <Button fx:id="löschButton" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#knotenLöschen" prefHeight="25.0" prefWidth="101.0" text="Lösche Knoten" />
+            <ComboBox fx:id="löschComboBox" layoutX="14.0" layoutY="50.0" prefHeight="25.0" prefWidth="101.0" promptText="Knoten" />
+            <Button fx:id="reset" layoutX="141.0" layoutY="8.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
+            <Button fx:id="löschButtonKante" layoutX="211.0" layoutY="8.0" mnemonicParsing="false" onAction="#kanteLöschen" prefHeight="25.0" prefWidth="101.0" text="Lösche Kante" />
+            <ComboBox fx:id="löschComboBoxKanten" layoutX="208.0" layoutY="50.0" prefHeight="25.0" prefWidth="101.0" promptText="Kante" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="695.0" layoutY="480.0" prefHeight="200.0" prefWidth="308.0" style="-fx-background-color: #dcdcdc;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <AnchorPane layoutX="860.0" layoutY="500.0" prefHeight="200.0" prefWidth="340.0" style="-fx-background-color: #dcdcdc; -fx-border-color: #696969;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="57.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="113.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="222.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="274.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="20.0" layoutX="168.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
-            <Text layoutX="39.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fbff00" height="20.0" layoutX="124.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffa900" height="20.0" layoutX="167.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1492" height="20.0" layoutX="257.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9200d1" height="20.0" layoutX="303.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff4900" height="20.0" layoutX="215.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+            <Text layoutX="113.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Text layoutX="97.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+            <Text layoutX="156.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Text layoutX="151.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+            <Text layoutX="203.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Text layoutX="207.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+            <Text layoutX="247.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Text layoutX="256.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;4">
+            <Text layoutX="285.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;4">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Line endX="50.0" layoutX="123.0" layoutY="90.0" startX="-100.0" stroke="#009026" strokeLineCap="ROUND" />
-            <Line endX="50.0" layoutX="123.0" layoutY="130.0" startX="-100.0" stroke="#0707dd" strokeLineCap="ROUND" />
-            <Line endX="50.0" layoutX="123.0" layoutY="170.0" startX="-100.0" stroke="#ff7700" strokeLineCap="ROUND" />
-            <Text layoutX="211.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Baumkante" />
-            <Text layoutX="207.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rückwärtskante" />
-            <Text layoutX="212.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Querkante" />
+            <Line endX="50.0" layoutX="120.0" layoutY="140.0" startX="-100.0" stroke="#009026" strokeLineCap="ROUND" />
+            <Line endX="50.0" layoutX="120.0" layoutY="162.0" startX="-100.0" stroke="#0707dd" strokeLineCap="ROUND" />
+            <Line endX="50.0" layoutX="120.0" layoutY="185.0" startX="-100.0" stroke="#ff7700" strokeLineCap="ROUND" />
+            <Line endX="50.0" layoutX="120.0" layoutY="117.0" startX="-100.0" stroke="#ff1495" strokeLineCap="ROUND" />
+            <Text layoutX="204.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Baumkante" />
+            <Text layoutX="204.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rückwärtskante" />
+            <Text layoutX="204.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Querkante" />
+            <Text layoutX="6.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Entfernungen:">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="204.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vorwärtskante" />
          </children>
       </AnchorPane>
-      <Button fx:id="test" layoutX="914.0" layoutY="425.0" mnemonicParsing="false" onAction="#alleKantenAusgeben" text="TEST" />
    </children>
 </AnchorPane>
