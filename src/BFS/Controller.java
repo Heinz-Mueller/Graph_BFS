@@ -118,10 +118,8 @@ public class Controller
             n.setFill(Color.WHITESMOKE);
             n.startKnoten = false;
             n.distanz.setText("");
-        }
-        for(Knoten n : alleKnoten)
-        {
             n.setEffect(null);
+            n.setStroke(Color.GRAY);
         }
     }
 
@@ -496,6 +494,7 @@ public class Controller
                     pausenDauer = 0;
                     if (n.startKnoten)
                     {
+                        n.setStroke(Color.BLUE);
                         animationAblaufen(n, pausenDauer, farbe);  //hier werden die Farbkugeln abgeschoßen
                         FillTransition flächeÜbergang0 = knotenEinfärben(n, dauer, farbe);
                         flächeÜbergang0.setToValue(Color.LIGHTYELLOW.deriveColor(1, 1, 1, 1));
