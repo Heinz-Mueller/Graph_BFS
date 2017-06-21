@@ -9,6 +9,7 @@ import javafx.scene.shape.StrokeLineCap;
 
 /**
  * Created by E.E on 21.05.2017.
+ * Kante mit Attributen für Verbindung zwischen den Knoten und Zeitstempel für Tiefensuche.
  */
 class Kante extends Group
 {
@@ -82,7 +83,7 @@ class Kante extends Group
 
             if (ex == sx && ey == sy)
             {
-                // arrow parts of length 0
+                // Pfeile von Länge 0
                 pfeil1.setStartX(ex);
                 pfeil1.setStartY(ey);
                 pfeil2.setStartX(ex);
@@ -91,11 +92,11 @@ class Kante extends Group
                 double factor = arrowLength / Math.hypot(sx-ex, sy-ey);
                 double factorO = arrowWidth / Math.hypot(sx-ex, sy-ey);
 
-                // part in direction of main line
+                // part in in Richtung Hauptlinie
                 double dx = (sx - ex) * factor;
                 double dy = (sy - ey) * factor;
 
-                // part ortogonal to main line
+                // part ortogonal zu Haupftlinie
                 double ox = (sx - ex) * factorO;
                 double oy = (sy - ey) * factorO;
 
@@ -106,16 +107,15 @@ class Kante extends Group
             }
         };
 
-        // add updater to properties
+        //properties Updater
         startXProperty().addListener(updater);
         startYProperty().addListener(updater);
         endXProperty().addListener(updater);
         endYProperty().addListener(updater);
         updater.invalidated(null);
-        //--------------------------------------
     }
 
-    // start/end properties
+    // start/end properties, werden nicht alle benutzt
     public final void setStartX(double value) { linie.setStartX(value); }
 
     public final double getStartX() {

@@ -19,6 +19,7 @@ import java.util.*;
 
 /**
  * Created by E.E on 06.05.2017.
+ * Tiefen- und Breitensuche Visualisierung
  */
 
 public class Controller
@@ -45,20 +46,20 @@ public class Controller
 
     public Button test;
 
-    int warteZeit;
+    private int warteZeit;
+    private static int[][] globaleMatrix; //Wird für Animation benutzt
 
     /**Warteschlange für die Knoten*/
     private Queue<Knoten> warteschlange;
     /**Listen für alle angelegten Knoten und Kanten*/
-    private static ArrayList<Knoten> alleKnoten = new ArrayList<>();
-    //private static ArrayList<Knoten> knotenZumFärben = new ArrayList<>();
-    private static ArrayList<Kante> alleKanten = new ArrayList<>();
-
-    private static int[][] globaleMatrix;
+    private static ArrayList<Knoten> alleKnoten; // = new ArrayList<>();
+    private static ArrayList<Kante> alleKanten; // = new ArrayList<>();
 
     public Controller()
     {
         warteschlange = new LinkedList<>();
+        alleKnoten = new ArrayList<>();
+        alleKanten = new ArrayList<>();
     }
 
     /**Limitiert die Texteingabe bei Knoten-Bezeichnung*/
@@ -76,23 +77,6 @@ public class Controller
                 }
             }
         });
-    }
-
-    //ALT TEST-Animation
-    public void handleButtonAction(ActionEvent e)
-    {
-        TranslateTransition circle1Animation = new TranslateTransition(Duration.seconds(1), alleKnoten.get(0));
-        circle1Animation.setByY(150);
-
-        TranslateTransition circle2Animation = new TranslateTransition(Duration.seconds(1), alleKnoten.get(1));
-        circle2Animation.setByX(150);
-
-        ParallelTransition animation = new ParallelTransition(circle1Animation, circle2Animation);
-
-        animation.setAutoReverse(true);
-        animation.setCycleCount(2);
-        test.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING)); //TODO evtl. später so machen
-        test.setOnAction(a -> animation.play()); //TODO evtl. später so machen
     }
 
     /**Prüfe ob die Knoten-Wahl gültig ist und aktiviere die Buttons*/
@@ -124,7 +108,7 @@ public class Controller
     }
 
     /**Zurücksetzen einer Breitensuche*/
-    public void bfsReset()
+    private void bfsReset()
     {
         for (Knoten n : alleKnoten)
         {
@@ -253,8 +237,9 @@ public class Controller
         warteZeit = warten;
     }
 
-    /**Kanten nach DFS Ablauf klassifizieren.*/
-    private void kantenKlassifizieren()  //TODO: Das ganze mit Matrix machen
+
+    /**Kanten nach DFS Ablauf klassifizieren, dazu alle Knoten durchlaufen und Verbindungen der Knoten suchen*/
+    private void kantenKlassifizieren()  //TODO: Wäre viel simpler mit Matrix relisierbar gewessen, zu spät bemerkt
     {
         for(Knoten n : alleKnoten)
         {
@@ -311,7 +296,7 @@ public class Controller
     }
 
     /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
-    public ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
+    private ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
     {
         int nodeIndex = -1;
 
@@ -338,7 +323,7 @@ public class Controller
     }
 
     /**Breitensuche mit Start-Knoten*/
-    public void bfs(Knoten startKnoten)
+    private void bfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
@@ -354,7 +339,7 @@ public class Controller
 
         }
 
-        //TESTAUSGABE: Matrix anschauen  //TODO löschen
+        //TESTAUSGABE: Matrix anschauen
         for (int[] eineMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
@@ -363,7 +348,6 @@ public class Controller
             }
             System.out.print("\n");
         }
-
 
         warteschlange.add(startKnoten);
         startKnoten.besucht = true;
@@ -384,8 +368,6 @@ public class Controller
                     nachbarn.get(i).entfernung = element.entfernung + 1;
                     nachbarn.get(i).entfernungGesetzt = true;
                 }
-
-                //knotenZumFärben.add(n); //TODO LÖSCHEN
 
                 //Knoten in die Warteschlange packen und als besucht markieren
                 if(n != null && !n.besucht)
@@ -571,7 +553,7 @@ public class Controller
 
     private int zeitStempel;
     /**Tiefensuche*/
-    public void dfs(Knoten startKnoten)
+    private void dfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
         int matrix[][] = new int[knotenAnzahl][knotenAnzahl];
@@ -636,6 +618,293 @@ public class Controller
 
     }
 
+    private int knotenID = 0;
+    /**Erstellt einen Knoten*/
+    public void erstelleZiehKnoten()
+    {
+        DoubleProperty startX = new SimpleDoubleProperty(200);
+        DoubleProperty startY = new SimpleDoubleProperty(200);
+        String knotenBezeichnung;
+        knotenBezeichnung = eingabeFeld.getText().trim();
+
+        //Gleiche Bezeichnungen vermeiden und wenn keine Bezeichnung angegeben wurde, eine Bezeichnung generieren
+        if(knotenBezeichnung.equals(""))
+        {
+            Random r = new Random();
+            char c = (char)(r.nextInt(26) + 'a');
+            knotenBezeichnung = String.valueOf(c).toUpperCase();
+            if(knotenBezeichnungVorhanden(knotenBezeichnung))
+            {
+                knotenBezeichnung = knotenBezeichnung+knotenID;
+            }
+        }
+        else if(knotenBezeichnungVorhanden(knotenBezeichnung))
+        {
+            knotenBezeichnung = knotenBezeichnung+knotenID;
+        }
+
+        //Text test = new Text(knotenBezeichnung);
+        Knoten zieh = new Knoten(Color.WHITESMOKE, startX, startY, knotenBezeichnung);
+        zieh.id = knotenID;
+        knotenID++;
+
+        //Neuen Knoten etwas versetzt plazieren
+        zieh.setCenterX(100);
+        int groesse = alleKnoten.size();
+        if(groesse != 0)
+        {
+            int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
+            zieh.setCenterX(entfernungVomLetzen + 50);
+        }
+
+        //Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
+        //  und Mausklicks auf Bezeichnung ignorieren
+        root.getChildren().add(zieh);
+        root.getChildren().add(zieh.text);
+        root.getChildren().add(zieh.stempelHin);
+        root.getChildren().add(zieh.stempelZurück);
+        root.getChildren().add(zieh.distanz);
+
+        eingabeFeld.setText("");
+        alleKnoten.add(zieh);
+        //Knoten-Bezeichnung in die Combo-Boxen packen
+        comboBoxVON.getItems().add(zieh.bezeichnung);
+        comboBoxZU.getItems().addAll(zieh.bezeichnung);
+        startKnoten.getItems().addAll(zieh.bezeichnung);
+        löschComboBox.getItems().addAll(zieh.bezeichnung);
+    }
+
+
+    /**Prüfen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
+    private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
+    {
+        for(Knoten n : alleKnoten)
+        {
+            if(knotenBezeichnung.equals(n.bezeichnung))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**Den gewählten Knoten löschen und alle Kanten die am Knoten hängen*/
+    public void knotenLöschen()
+    {
+        Knoten löschKnoten = null;
+        Object löschComBox = löschComboBox.getSelectionModel().getSelectedItem();
+        for(Knoten n : alleKnoten)
+        {
+            //gewählten Knoten suchen
+            if(n.bezeichnung == löschComBox)
+            {
+                löschKnoten = n;
+            }
+        }
+
+        int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
+        if(löschIndex != -1)
+        {
+            root.getChildren().remove(löschKnoten.text);
+            root.getChildren().remove(löschKnoten.stempelZurück);
+            root.getChildren().remove(löschKnoten.stempelHin);
+            root.getChildren().remove(löschKnoten.distanz);
+            root.getChildren().remove(löschKnoten);
+
+            //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
+            //Alle Kanten die vom gewählten Knoten weggehen löschen
+            Iterator<Kante> iterAktuelleKanten = löschKnoten.kantenVonKnoten.iterator();
+            while (iterAktuelleKanten.hasNext())
+            {
+                Kante n = iterAktuelleKanten.next();
+                root.getChildren().remove(n);
+                //die Kanten auch aus "alleKanten" löschen
+                Iterator<Kante> iterAlleKanten = alleKanten.iterator();
+                while (iterAlleKanten.hasNext())
+                {
+                    Kante m = iterAlleKanten.next();
+                    if(n.von == m.von && n.zu == m.zu)
+                    {
+                        iterAlleKanten.remove();
+                    }
+                }
+                iterAktuelleKanten.remove();
+            }
+
+            //Alle Kanten die zu gewählten Knoten zugehen löschen
+            Iterator<Kante> iterAktuelleKantenZu = löschKnoten.kantenZuKnoten.iterator();
+            while (iterAktuelleKantenZu.hasNext())
+            {
+                Kante n = iterAktuelleKantenZu.next();
+                root.getChildren().remove(n);
+                //die Kanten auch aus "alleKanten" löschen
+                Iterator<Kante> iterAlleKanten = alleKanten.iterator();
+                while (iterAlleKanten.hasNext())
+                {
+                    Kante m = iterAlleKanten.next();
+                    if(n.von == m.von && n.zu == m.zu)
+                    {
+                        iterAlleKanten.remove();
+                    }
+                }
+
+                iterAktuelleKantenZu.remove();
+            }
+
+            löschKnoten.unsichtbar = true;
+            updateComboBoxen();
+            zeitStempel = 0;
+            bfs2.setDisable(true);
+            dfs.setDisable(true);
+        }
+    }
+
+
+    /**Gewählte Kante löschen*/
+    public void kanteLöschen()
+    {
+        Kante löschKante = null;
+        Object löschKanteComBox = löschComboBoxKanten.getSelectionModel().getSelectedItem();
+        for(Kante n : alleKanten)
+        {
+            //gewählten Kante suchen
+            Object suchKante = n.vonKnoten + " -> " + n.zuKnoten;
+            if(suchKante.equals(löschKanteComBox))
+            {
+                löschKante = n;
+            }
+        }
+
+        //Wenn die Wahl gültig war, lösche die Kante aus der Liste und root
+        int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
+        if(löschKanteIndex != -1)
+        {
+            root.getChildren().remove(löschKante);
+            alleKanten.remove(löschKante);
+            updateComboBoxen();
+            bfs2.setDisable(true);
+            dfs.setDisable(true);
+        }
+    }
+
+
+    /**Die Combo-Boxen neu einlesen*/
+    private void updateComboBoxen()
+    {
+        löschComboBox.getItems().clear();
+        comboBoxVON.getItems().clear();
+        comboBoxZU.getItems().clear();
+        startKnoten.getItems().clear();
+        löschComboBoxKanten.getItems().clear();
+
+        for (Knoten knoten : alleKnoten)
+        {
+            if (!(knoten.unsichtbar))
+            {
+                löschComboBox.getItems().add(knoten.bezeichnung);
+                comboBoxVON.getItems().add(knoten.bezeichnung);
+                comboBoxZU.getItems().add(knoten.bezeichnung);
+                startKnoten.getItems().add(knoten.bezeichnung);
+            }
+        }
+
+        for (Kante kante : alleKanten)
+        {
+            löschComboBoxKanten.getItems().addAll(kante.vonKnoten + " -> " + kante.zuKnoten);
+        }
+    }
+
+    /**Alles zurücksetzen, d.h. alle Kanten und Knoten löschen*/
+    public void reset()
+    {
+        for (Knoten knoten : alleKnoten)
+        {
+            root.getChildren().remove(knoten.text);
+            root.getChildren().remove(knoten.distanz);
+            root.getChildren().remove(knoten.stempelZurück);
+            root.getChildren().remove(knoten.stempelHin);
+            root.getChildren().remove(knoten);
+        }
+        for (Kante kante : alleKanten)
+        {
+            root.getChildren().remove(kante);
+        }
+
+        alleKnoten.clear();
+        alleKanten.clear();
+        updateComboBoxen();
+        bfs2.setDisable(true);
+        dfs.setDisable(true);
+
+        zeitStempel = 0;
+        knotenID = 0;
+    }
+
+    /**Verbindet zwei gewählte Knoten*/
+    public void knotenVerbinden()
+    {
+        int knotenNrVon = comboBoxVON.getSelectionModel().getSelectedIndex();
+        int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
+
+        Knoten knotenVon = null;
+        Knoten knotenZu = null;
+
+        //Suche den Knoten in der Liste "alleKnoten"
+        Object von = comboBoxVON.getSelectionModel().getSelectedItem();
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == von)
+            {
+                knotenVon = n;
+            }
+        }
+        Object zu = comboBoxZU.getSelectionModel().getSelectedItem();
+        for(Knoten n : alleKnoten)
+        {
+            if(n.bezeichnung == zu)
+            {
+                knotenZu = n;
+            }
+        }
+        //Prüft ob eine gültige Wahl getroffen wurde
+        if( (knotenNrVon != -1) && (knotenNrZu != -1) && (knotenNrVon != knotenNrZu) )
+        {
+            if (knotenZu != null && knotenVon != null && !verbindungVorhanden(knotenVon.id, knotenZu.id))
+            {
+                //Kante mit VON und ZU Informationen erstellen und in Liste packen
+                Kante kante = new Kante(knotenVon.id, knotenZu.id, knotenVon.bezeichnung, knotenZu.bezeichnung);
+                alleKanten.add(kante);
+
+                löschComboBoxKanten.getItems().addAll(kante.vonKnoten + " -> " + kante.zuKnoten);
+
+                knotenVon.kantenVonKnoten.add(kante);// TODO wenn Matrix überarbeiter wird
+                knotenZu.kantenZuKnoten.add(kante);//TODO wenn Matrix überarbeiter wird
+
+                //Ausgewählte Knoten mit Kante fest verbinden (bind)
+                kante.startXProperty().bind(knotenVon.centerXProperty().add(knotenVon.translateXProperty()));
+                kante.startYProperty().bind(knotenVon.centerYProperty().add(knotenVon.translateYProperty()));
+                kante.endXProperty().bind(knotenZu.centerXProperty().add(knotenZu.translateXProperty()));
+                kante.endYProperty().bind(knotenZu.centerYProperty().add(knotenZu.translateYProperty()));
+
+                root.getChildren().add(kante);
+                kante.toBack();
+            }
+        }
+    }
+
+    /**Prüft ob zwischen gegebenen Knotennr. eine Verbindung bereits besteht*/
+    private boolean verbindungVorhanden(int von, int zu)
+    {
+        for (Kante kante : alleKanten)
+        {
+            if ((kante.von == von) && (kante.zu == zu))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     //TESTAUSGABE
     private static void ausgabe()
@@ -704,160 +973,6 @@ public class Controller
         seqT.play();
     }
 
-
-    int knotenID = 0;
-    public void erstelleZiehKnoten()
-    {
-        DoubleProperty startX = new SimpleDoubleProperty(200);
-        DoubleProperty startY = new SimpleDoubleProperty(200);
-        String knotenBezeichnung;
-        knotenBezeichnung = eingabeFeld.getText().trim();
-
-        //Gleiche Bezeichnungen vermeiden
-        if(knotenBezeichnung.equals(""))
-        {
-            Random r = new Random();
-            char c = (char)(r.nextInt(26) + 'a');
-            knotenBezeichnung = String.valueOf(c).toUpperCase();
-            if(knotenBezeichnungVorhanden(knotenBezeichnung))
-            {
-                knotenBezeichnung = knotenBezeichnung+knotenID;
-            }
-        }
-        else if(knotenBezeichnungVorhanden(knotenBezeichnung))
-        {
-            knotenBezeichnung = knotenBezeichnung+knotenID;
-        }
-
-        //Text test = new Text(knotenBezeichnung);
-        Knoten zieh = new Knoten(Color.WHITESMOKE, startX, startY, knotenBezeichnung);
-        zieh.id = knotenID;
-        knotenID++;
-
-        //Neuen Knoten etwas versetzt plazieren
-        zieh.setCenterX(100);
-        int groesse = alleKnoten.size();
-        if(groesse != 0)
-        {
-            int entfernungVomLetzen = (int) alleKnoten.get(groesse-1).getCenterX();
-            zieh.setCenterX(entfernungVomLetzen + 30);
-        }
-
-        //Kreis und Bezeichnung sichbar machen, Bezeichnung über den Kreis packen
-        //  und Mausklicks auf Bezeichnung ignorieren*/
-        root.getChildren().add(zieh);
-        root.getChildren().add(zieh.text); //-------? Muss separat gemacht werden :/----------------------------------
-        root.getChildren().add(zieh.stempelHin);
-        root.getChildren().add(zieh.stempelZurück);
-        root.getChildren().add(zieh.distanz);
-
-        eingabeFeld.setText("");
-        alleKnoten.add(zieh);
-        //Knoten-Bezeichnung in die Combo-Boxen packen
-        comboBoxVON.getItems().add(zieh.bezeichnung);
-        //comboBoxVON.getItems().addAll(zieh.bezeichnung);
-        comboBoxZU.getItems().addAll(zieh.bezeichnung);
-        startKnoten.getItems().addAll(zieh.bezeichnung);
-        löschComboBox.getItems().addAll(zieh.bezeichnung);
-    }
-
-    /**Prüfen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
-    private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
-    {
-        for(Knoten n : alleKnoten)
-        {
-            if(knotenBezeichnung.equals(n.bezeichnung))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**Den gewählten Knoten löschen und alle Kanten die am Knoten hängen*/
-    public void knotenLöschen()
-    {
-        Knoten löschKnoten = null;
-        Object löschComBox = löschComboBox.getSelectionModel().getSelectedItem();
-        for(Knoten n : alleKnoten)
-        {
-            //gewählten Knoten suchen
-            if(n.bezeichnung == löschComBox)
-            {
-                löschKnoten = n;
-            }
-        }
-
-        int löschIndex = löschComboBox.getSelectionModel().getSelectedIndex();
-        if(löschIndex != -1)
-        {
-            root.getChildren().remove(löschKnoten.text);
-            root.getChildren().remove(löschKnoten.stempelZurück);
-            root.getChildren().remove(löschKnoten.stempelHin);
-            root.getChildren().remove(löschKnoten.distanz);
-            root.getChildren().remove(löschKnoten);
-
-            System.out.print("\nVORHER löschKnoten.kantenVonKnoten.size(): " + löschKnoten.kantenVonKnoten.size() +"\n");
-            System.out.print("VORHER löschKnoten.kantenZuKnoten.size(): " + löschKnoten.kantenZuKnoten.size() +"\n");
-
-
-            //Suche die Kante beim gewählten Knoten und lösche falls übereinstimmt in der Gesamtliste und gewählten Knoten.
-            //Alle Kanten die vom gewählten Knoten weggehen löschen
-            Iterator<Kante> iterAktuelleKanten = löschKnoten.kantenVonKnoten.iterator();
-            while (iterAktuelleKanten.hasNext())
-            {
-                Kante n = iterAktuelleKanten.next();
-                root.getChildren().remove(n);
-                //die Kanten auch aus "alleKanten" löschen
-                Iterator<Kante> iterAlleKanten = alleKanten.iterator();
-                while (iterAlleKanten.hasNext())
-                {
-                    Kante m = iterAlleKanten.next();
-                    if(n.von == m.von && n.zu == m.zu)
-                    {
-                        iterAlleKanten.remove();
-                    }
-                }
-                iterAktuelleKanten.remove();
-            }
-
-            //Alle Kanten die zu gewählten Knoten zugehen löschen
-            Iterator<Kante> iterAktuelleKantenZu = löschKnoten.kantenZuKnoten.iterator();
-            while (iterAktuelleKantenZu.hasNext())
-            {
-                Kante n = iterAktuelleKantenZu.next();
-                root.getChildren().remove(n);
-                //die Kanten auch aus "alleKanten" löschen
-                Iterator<Kante> iterAlleKanten = alleKanten.iterator();
-                while (iterAlleKanten.hasNext())
-                {
-                    Kante m = iterAlleKanten.next();
-                    if(n.von == m.von && n.zu == m.zu)
-                    {
-                        iterAlleKanten.remove();
-                    }
-                }
-
-                iterAktuelleKantenZu.remove();
-            }
-
-            for(int i = 0; i < alleKanten.size(); i++)
-            {
-                System.out.print("ALLE KANTEN: VON: " + alleKanten.get(i).vonKnoten + "  ZU: "+alleKanten.get(i).zuKnoten +"\n");
-            }
-
-            System.out.print("\nNACHER löschKnoten.kantenVonKnoten.size(): " + löschKnoten.kantenVonKnoten.size() +"\n");
-            System.out.print("NACHER löschKnoten.kantenZuKnoten.size(): " + löschKnoten.kantenZuKnoten.size() +"\n");
-
-            löschKnoten.unsichtbar = true;
-            updateComboBoxen();
-            zeitStempel = 0;
-            bfs2.setDisable(true);
-            dfs.setDisable(true);
-        }
-    }
-
-
     //TESTAUSGABE
     public void alleKantenAusgeben()
     {
@@ -883,172 +998,6 @@ public class Controller
             }
         }catch (Exception e) {System.out.print ("Fehler bei globalerMatrix: " + e);
         }
-    }
-
-    /**Gewählte Kante löschen*/
-    public void kanteLöschen()
-    {
-        Kante löschKante = null;
-        Object löschKanteComBox = löschComboBoxKanten.getSelectionModel().getSelectedItem();
-        for(Kante n : alleKanten)
-        {
-            //gewählten Kante suchen
-            Object suchKante = n.vonKnoten + " -> " + n.zuKnoten;
-            if(suchKante.equals(löschKanteComBox))
-            {
-                löschKante = n;
-            }
-        }
-
-        int löschKanteIndex = löschComboBoxKanten.getSelectionModel().getSelectedIndex();
-        if(löschKanteIndex != -1)
-        {
-            root.getChildren().remove(löschKante);
-            alleKanten.remove(löschKante);
-            updateComboBoxen();
-            bfs2.setDisable(true);
-            dfs.setDisable(true);
-        }
-    }
-
-
-    private void updateComboBoxen()
-    {
-        löschComboBox.getItems().clear();
-        comboBoxVON.getItems().clear();
-        comboBoxZU.getItems().clear();
-        startKnoten.getItems().clear();
-        löschComboBoxKanten.getItems().clear();
-
-        for(int i = 0; i < alleKnoten.size(); i++)
-        {
-            if(!(alleKnoten.get(i).unsichtbar))
-            {
-                löschComboBox.getItems().add(alleKnoten.get(i).bezeichnung);
-                comboBoxVON.getItems().add(alleKnoten.get(i).bezeichnung);
-                comboBoxZU.getItems().add(alleKnoten.get(i).bezeichnung);
-                startKnoten.getItems().add(alleKnoten.get(i).bezeichnung);
-            }
-        }
-
-        for(int i = 0; i < alleKanten.size(); i++)
-        {
-            löschComboBoxKanten.getItems().addAll(alleKanten.get(i).vonKnoten + " -> " + alleKanten.get(i).zuKnoten);
-        }
-    }
-
-    public void reset()
-    {
-        for(int i = 0; i < alleKnoten.size(); i++)
-        {
-            root.getChildren().remove(alleKnoten.get(i).text);
-            root.getChildren().remove(alleKnoten.get(i).distanz);
-            root.getChildren().remove(alleKnoten.get(i).stempelZurück);
-            root.getChildren().remove(alleKnoten.get(i).stempelHin);
-            root.getChildren().remove(alleKnoten.get(i));
-        }
-        for(int i = 0; i < alleKanten.size(); i++)
-        {
-            root.getChildren().remove(alleKanten.get(i));
-        }
-
-        alleKnoten.clear();
-        alleKanten.clear();
-        updateComboBoxen();
-        bfs2.setDisable(true);
-        dfs.setDisable(true);
-
-        zeitStempel = 0;
-        knotenID = 0;
-
-        //TEST
-        /*
-        MoveTo start = new MoveTo();
-        LineTo line1 = new LineTo();
-        LineTo line2 = new LineTo();
-
-        Circle c1 = new Circle(10, 100, 5);
-        Circle c2 = new Circle(50, 100, 5);
-        Circle c3 = new Circle(100, 100, 5);
-
-        c1.setFill(Color.RED);
-        c2.setFill(Color.RED);
-        c3.setFill(Color.RED);
-
-        start.xProperty().bind(c1.centerXProperty());
-        start.yProperty().bind(c1.centerYProperty());
-        bindLinePosTo(c2, line1);
-        bindLinePosTo(c3, line2);
-
-        Path path = new Path(start, line1, line2);
-
-        root.getChildren().add(path);
-        root.getChildren().add(c1);
-        root.getChildren().add(c2);
-        root.getChildren().add(c3);
-
-        animate(c1, Duration.seconds(1), 100);
-        animate(c2, Duration.seconds(2), 50);
-        animate(c3, Duration.seconds(0.5), 150); */
-
-    }
-
-    public void knotenVerbinden()
-    {
-        int knotenNrVon = comboBoxVON.getSelectionModel().getSelectedIndex();
-        int knotenNrZu = comboBoxZU.getSelectionModel().getSelectedIndex();
-        System.out.print("knotenNrVon:  "+knotenNrVon+"\t");
-        System.out.print("knotenNrZu:  "+knotenNrZu+"\t\n");
-
-        Knoten knotenVon = null;
-        Knoten knotenZu = null;
-
-        Object von = comboBoxVON.getSelectionModel().getSelectedItem();
-        for(Knoten n : alleKnoten)
-        {
-            if(n.bezeichnung == von)
-            {
-                knotenVon = n;
-                System.out.print("VON_Knoten:  "+von+"\t");
-            }
-        }
-        Object zu = comboBoxZU.getSelectionModel().getSelectedItem();
-        for(Knoten n : alleKnoten)
-        {
-            if(n.bezeichnung == zu)
-            {
-                knotenZu = n;
-                System.out.print("ZU_Knoten:  "+zu+"\t\n\n");
-            }
-        }
-
-        if( (knotenNrVon != -1) && (knotenNrZu != -1) && (knotenNrVon != knotenNrZu) )
-        {
-            if( !verbindungVorhanden(knotenVon.id, knotenZu.id) )
-            {
-                /**Kante mit VON und ZU Informationen erstellen und in Liste packen*/
-                //Kante kante = new Kante(knotenNrVon, knotenNrZu, knotenVonBezeichnung, knotenZuBezeichnung);
-                Kante kante = new Kante(knotenVon.id, knotenZu.id, knotenVon.bezeichnung, knotenZu.bezeichnung);
-                alleKanten.add(kante);
-
-                System.out.print("VON:  "+kante.von + "\tZU:  "+kante.zu + "\t\n"); //TODO: stimmt so
-
-                löschComboBoxKanten.getItems().addAll(kante.vonKnoten+ " -> " + kante.zuKnoten);
-
-                knotenVon.kantenVonKnoten.add(kante);// TODO wenn MAtrix überarbeiter wird
-                knotenZu.kantenZuKnoten.add(kante);//TODO
-
-                /**Ausgewählte Knoten mit Kante fest verbinden (bind) */
-                kante.startXProperty().bind(knotenVon.centerXProperty().add(knotenVon.translateXProperty()));
-                kante.startYProperty().bind(knotenVon.centerYProperty().add(knotenVon.translateYProperty()));
-                kante.endXProperty().bind(knotenZu.centerXProperty().add(knotenZu.translateXProperty()));
-                kante.endYProperty().bind(knotenZu.centerYProperty().add(knotenZu.translateYProperty()));
-
-                root.getChildren().add(kante);
-                kante.toBack();
-            }
-
-        }
 
         //Mit Mausklick Pfeil auf Punkt
 //        root.setOnMouseClicked(evt -> {
@@ -1065,29 +1014,30 @@ public class Controller
 //                    break;
 //            }
 //        });
-
     }
 
-    /**Prüft ob zwischen gegeben Knotennr. eine Verbindung bereits besteht*/
-    private boolean verbindungVorhanden(int von, int zu)
-    {
-        for(int i=0; i < alleKanten.size(); i++)
-        {
-            if( (alleKanten.get(i).von == von) && (alleKanten.get(i).zu == zu) )
-            {
-                System.out.print("Verbindung vorhanden VON:  "+alleKanten.get(i).von + "\tZU:  "+alleKanten.get(i).zu + "\t\n"); //TEST
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    //TEST
+    //TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private static void bindLinePosTo(Circle circle, LineTo lineTo)
     {
         lineTo.xProperty().bind(circle.centerXProperty());
         lineTo.yProperty().bind(circle.centerYProperty());
+    }
+
+    //ALT TEST-Animation
+    public void handleButtonAction(ActionEvent e)
+    {
+        TranslateTransition circle1Animation = new TranslateTransition(Duration.seconds(1), alleKnoten.get(0));
+        circle1Animation.setByY(150);
+
+        TranslateTransition circle2Animation = new TranslateTransition(Duration.seconds(1), alleKnoten.get(1));
+        circle2Animation.setByX(150);
+
+        ParallelTransition animation = new ParallelTransition(circle1Animation, circle2Animation);
+
+        animation.setAutoReverse(true);
+        animation.setCycleCount(2);
+        test.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING)); //TODO evtl. später so machen
+        test.setOnAction(a -> animation.play());
     }
 
     //TEST

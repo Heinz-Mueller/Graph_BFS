@@ -3,7 +3,6 @@ package BFS;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -14,14 +13,15 @@ import java.util.ArrayList;
 
 /**
  * Created by E.E on 21.05.2017.
+ * Knoten mit mehreren Listen. Besteht aus einem Kreis und mehreren Texten die an den Kreis gebunden werden
  */
 
 
 class Knoten extends Circle
 {
     ArrayList<Kante> kantenAnKnoten = new ArrayList<>();
-    ArrayList<Kante> kantenVonKnoten = new ArrayList<>(); //TODO
-    ArrayList<Kante> kantenZuKnoten = new ArrayList<>(); //TODO
+    ArrayList<Kante> kantenVonKnoten = new ArrayList<>();
+    ArrayList<Kante> kantenZuKnoten = new ArrayList<>();
 
     int id;
     boolean unsichtbar;
@@ -33,9 +33,8 @@ class Knoten extends Circle
     int zeitStempelHin;
     int zeitStempelZurück;
 
-    //Brauche es einmal als String und einmal als "Text", cast toString ging irgendwo nicht :/
     String bezeichnung;
-    Text text = new Text("");
+    Text text = new Text();
 
     Text stempelHin = new Text("hin");
     Text stempelZurück = new Text("zurück");
@@ -43,7 +42,6 @@ class Knoten extends Circle
     boolean besucht;
     boolean hinBesucht;
     boolean zurückBesucht;
-
     boolean startKnoten;
 
     DoubleProperty X;
@@ -54,7 +52,7 @@ class Knoten extends Circle
         super(x.get(), y.get(), 30);
         setFill(color.deriveColor(1, 1, 1, 1));
         //Ränder um den Kreis setzen und so Sachen
-        setStroke(color.GRAY);
+        setStroke(Color.GRAY);
         setStrokeWidth(2);
         setStrokeType(StrokeType.OUTSIDE);
 
@@ -62,8 +60,6 @@ class Knoten extends Circle
         this.text.setText(bezeichnung);
         this.kantenAnKnoten.clear();
 
-        //x.bind(centerXProperty());
-        //y.bind(centerYProperty());
         enableDrag();
         texteBinden();
     }
@@ -76,7 +72,7 @@ class Knoten extends Circle
             {
                 @Override public void handle(MouseEvent mouseEvent)
                 {
-                    // record a delta distance for the drag and drop operation.
+                    // delta-Distanzen für Drag und Drop
                     dragDelta.x = getCenterX() - mouseEvent.getX();
                     dragDelta.y = getCenterY() - mouseEvent.getY();
                     getScene().setCursor(Cursor.MOVE);
@@ -127,7 +123,8 @@ class Knoten extends Circle
     private class Delta
     { double x, y; }
 
-    public void texteBinden()
+
+    private void texteBinden()
     {
         text.xProperty().bind(this.centerXProperty().subtract(7));
         text.yProperty().bind(this.centerYProperty());
