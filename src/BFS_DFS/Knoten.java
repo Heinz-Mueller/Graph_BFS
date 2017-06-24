@@ -44,8 +44,8 @@ class Knoten extends Circle
     boolean zurückBesucht;
     boolean startKnoten;
 
-    DoubleProperty X;
-    DoubleProperty Y;
+    //DoubleProperty X;
+    //DoubleProperty Y;
 
     Knoten(Color color, DoubleProperty x, DoubleProperty y, String bezeichnung)
     {

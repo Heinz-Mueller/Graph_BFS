@@ -933,8 +933,8 @@ public class Controller
         for (int i = 0; i<alleKnoten.size(); i++)
         {
             System.out.print("\nKnoten: " + alleKnoten.get(i).bezeichnung);
-            System.out.print("  TimeStampForward: " + alleKnoten.get(i).zeitStempelHin);
-            System.out.print("  TimeStampBack: " + alleKnoten.get(i).zeitStempelZurück);
+            System.out.print("  TimeStampHin: " + alleKnoten.get(i).zeitStempelHin);
+            System.out.print("  TimeStampZurück: " + alleKnoten.get(i).zeitStempelZurück);
         }
         System.out.print("\n");
 
@@ -955,43 +955,6 @@ public class Controller
                 System.out.print("   zuKnotenZurückStempel:  " + n.zuKnotenZurückStempel + "\t\n");
             }
         }
-    }
-
-    public void test() //Versuche für Animation, Rotation, usw.
-    {
-        Rectangle rect = new Rectangle (100, 40, 100, 100);
-        rect.setArcHeight(50);
-        rect.setArcWidth(50);
-        rect.setFill(Color.VIOLET);
-
-        root.getChildren().add(rect);
-
-        final Duration SEC_2 = Duration.millis(2000);
-        final Duration SEC_3 = Duration.millis(3000);
-
-        PauseTransition pt = new PauseTransition(Duration.millis(1000));
-        FadeTransition ft = new FadeTransition(SEC_3);
-        ft.setFromValue(1.0f);
-        ft.setToValue(0.3f);
-        ft.setCycleCount(2);
-        ft.setAutoReverse(true);
-        TranslateTransition tt = new TranslateTransition(SEC_2);
-        tt.setFromX(-100f);
-        tt.setToX(100f);
-        tt.setCycleCount(2);
-        tt.setAutoReverse(true);
-        RotateTransition rt = new RotateTransition(SEC_3);
-        rt.setByAngle(180f);
-        rt.setCycleCount(4);
-        rt.setAutoReverse(true);
-        ScaleTransition st = new ScaleTransition(SEC_2);
-        st.setByX(1.5f);
-        st.setByY(1.5f);
-        st.setCycleCount(2);
-        st.setAutoReverse(true);
-
-        SequentialTransition seqT = new SequentialTransition (rect, pt, ft, tt, rt, st);
-        seqT.play();
     }
 
     //TESTAUSGABE
@@ -1037,14 +1000,59 @@ public class Controller
 //        });
     }
 
+
+
     //TEST ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
+    public void test() //Versuche für Animation, Rotation, usw.
+    {
+        Rectangle rect = new Rectangle (100, 40, 100, 100);
+        rect.setArcHeight(50);
+        rect.setArcWidth(50);
+        rect.setFill(Color.VIOLET);
+
+        root.getChildren().add(rect);
+
+        final Duration SEC_2 = Duration.millis(2000);
+        final Duration SEC_3 = Duration.millis(3000);
+
+        PauseTransition pt = new PauseTransition(Duration.millis(1000));
+        FadeTransition ft = new FadeTransition(SEC_3);
+        ft.setFromValue(1.0f);
+        ft.setToValue(0.3f);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        TranslateTransition tt = new TranslateTransition(SEC_2);
+        tt.setFromX(-100f);
+        tt.setToX(100f);
+        tt.setCycleCount(2);
+        tt.setAutoReverse(true);
+        RotateTransition rt = new RotateTransition(SEC_3);
+        rt.setByAngle(180f);
+        rt.setCycleCount(4);
+        rt.setAutoReverse(true);
+        ScaleTransition st = new ScaleTransition(SEC_2);
+        st.setByX(1.5f);
+        st.setByY(1.5f);
+        st.setCycleCount(2);
+        st.setAutoReverse(true);
+
+        SequentialTransition seqT = new SequentialTransition (rect, pt, ft, tt, rt, st);
+        seqT.play();
+    }
+    */
+
+
+    /*
     private static void bindLinePosTo(Circle circle, LineTo lineTo)
     {
         lineTo.xProperty().bind(circle.centerXProperty());
         lineTo.yProperty().bind(circle.centerYProperty());
     }
+    */
 
     //ALT TEST-Animation
+    /*
     public void handleButtonAction(ActionEvent e)
     {
         TranslateTransition circle1Animation = new TranslateTransition(Duration.seconds(1), alleKnoten.get(0));
@@ -1057,11 +1065,13 @@ public class Controller
 
         animation.setAutoReverse(true);
         animation.setCycleCount(2);
-        test.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING)); //TODO evtl. später so machen
+        test.disableProperty().bind(animation.statusProperty().isEqualTo(Animation.Status.RUNNING));
         test.setOnAction(a -> animation.play());
     }
+    */
 
     //TEST
+    /*
     private static void animate(Circle circle, Duration duration, double dy)
     {
         Timeline animation = new Timeline(
@@ -1071,5 +1081,6 @@ public class Controller
         animation.setCycleCount(Animation.INDEFINITE);
         animation.play();
     }
+    */
 
 }
