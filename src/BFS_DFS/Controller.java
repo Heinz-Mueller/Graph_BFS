@@ -51,9 +51,10 @@ public class Controller
 
     /**Warteschlange für die Knoten*/
     private Queue<Knoten> warteschlange;
-    /**Listen für alle angelegten Knoten und Kanten*/
-    private static ArrayList<Knoten> alleKnoten; // = new ArrayList<>();
-    private static ArrayList<Kante> alleKanten; // = new ArrayList<>();
+    /**Liste für alle angelegten Knoten*/
+    private static ArrayList<Knoten> alleKnoten;
+    /**Liste für alle angelegten Kanten*/
+    private static ArrayList<Kante> alleKanten;
 
     public Controller()
     {
@@ -308,7 +309,6 @@ public class Controller
                                 a.pfeil1.setStroke(Color.ORANGE.deriveColor(1,1,1, 1));
                                 a.pfeil2.setStroke(Color.ORANGE.deriveColor(1,1,1, 1));
                             }
-                            System.out.print("GEFUNDEN!\t"+"\n");
                         }
                     }
                 }
@@ -316,7 +316,10 @@ public class Controller
         }
     }
 
-    /**Nimmt die Adjazenzmatrix und liefert alle Nachbarn von Knoten x*/
+    /**Nimmt
+     * @param adjazenzmatrix und
+     * @param x Knoten
+     * @return eine Liste der Nachbsrn von Knoten x*/
     private ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
     {
         int nodeIndex = -1;
@@ -343,7 +346,8 @@ public class Controller
         return nachbar;
     }
 
-    /**Breitensuche mit Start-Knoten*/
+    /**Breitensuche mit
+     @param startKnoten durchführen*/
     private void bfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
@@ -411,7 +415,11 @@ public class Controller
         einfärben();
     }
 
-    /**Animation bei der Breitensuche*/
+    /**Animation bei der Breitensuche
+     * @param knoten aktueller Knoten
+     * @param pausenDauer wird abgewartet
+     * @param farbe die die Farbkugel annimmt
+     * */
     private void animationAblaufen(Knoten knoten, int pausenDauer, Color farbe)
     {
         ArrayList<Knoten> nachbarn = findeNachbar(globaleMatrix, knoten);
@@ -472,7 +480,12 @@ public class Controller
     }
 
 
-    /**Knoten nehmen, blinken lassen und einfärben*/
+    /**Knoten nehmen, blinken lassen und einfärben
+     * @param knoten zum einfärben
+     * @param dauer für die Pause vom dem "Blinken"
+     * @param farbe Farbe die der Knoten annimmt
+     * @return Farbübergang
+     * */
     private FillTransition knotenEinfärben(Knoten knoten, int dauer, Color farbe)
     {
         DropShadow ds = new DropShadow();
@@ -574,7 +587,8 @@ public class Controller
 
 
     private int zeitStempel;
-    /**Tiefensuche*/
+    /**Tiefensuche
+     * @param startKnoten Start-Knoten*/
     private void dfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
@@ -590,7 +604,7 @@ public class Controller
             }
         }
 
-        //TESTAUSGABE: Matrix anschauen //TODO: löschen
+        //TESTAUSGABE: Matrix anschauen
         for (int[] aMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
@@ -697,7 +711,10 @@ public class Controller
     }
 
 
-    /**Prüfen ob die gegeben Bezeichnung schon mal vergeben wurde.*/
+    /**Prüfen ob die gegeben
+     * @param knotenBezeichnung schon vergeben wurde.
+     * @return true, wenn Bezeichnung schon vergeben wurde.
+     * */
     private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
     {
         for(Knoten n : alleKnoten)
@@ -914,7 +931,11 @@ public class Controller
         }
     }
 
-    /**Prüft ob zwischen gegebenen Knotennr. eine Verbindung bereits besteht*/
+    /**Prüft ob zwischen
+     * @param von Knotennr. "von"
+     * @param zu Knotennr. "zu"
+     * eine Verbindung bereits besteht
+     * @return true, wenn Verbindung schon vorhanden ist*/
     private boolean verbindungVorhanden(int von, int zu)
     {
         for (Kante kante : alleKanten)
