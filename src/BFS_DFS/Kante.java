@@ -1,4 +1,4 @@
-package BFS;
+package BFS_DFS;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.DoubleProperty;

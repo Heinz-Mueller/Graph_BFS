@@ -1,4 +1,4 @@
-package BFS;
+package BFS_DFS;
 
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
@@ -1037,7 +1037,7 @@ public class Controller
 //        });
     }
 
-    //TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //TEST ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private static void bindLinePosTo(Circle circle, LineTo lineTo)
     {
         lineTo.xProperty().bind(circle.centerXProperty());
