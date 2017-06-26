@@ -36,8 +36,8 @@ class Knoten extends Circle
     String bezeichnung;
     Text text = new Text();
 
-    Text stempelHin = new Text("hin");
-    Text stempelZurück = new Text("zurück");
+    Text stempelHin = new Text();
+    Text stempelZurück = new Text();
 
     boolean besucht;
     boolean hinBesucht;

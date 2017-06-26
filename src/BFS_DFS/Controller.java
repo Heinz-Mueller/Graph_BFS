@@ -6,9 +6,12 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -75,6 +78,20 @@ public class Controller
                 if (eingabeFeld.getText().length() > maxLänge) {
                     String s = eingabeFeld.getText().substring(0, maxLänge);
                     eingabeFeld.setText(s);
+                }
+            }
+        });
+    }
+
+    /**Knoten auch mit ENTER erstellbar*/
+    public void onEnter()
+    {
+        eingabeFeld.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ENTER)
+                {
+                    erstelleZiehKnoten();
                 }
             }
         });
@@ -157,8 +174,10 @@ public class Controller
             n.besucht = false;
             n.hinBesucht = false;
             n.zurückBesucht = false;
-            n.stempelHin.setText("hin");
-            n.stempelZurück.setText("zurück");
+            //n.stempelHin.setText("hin");
+            //n.stempelZurück.setText("zurück");
+            n.stempelHin.setText("");
+            n.stempelZurück.setText("");
             n.zeitStempelHin = 0;
             n.zeitStempelZurück = 0;
             n.stempelHin.setEffect(null);
@@ -166,7 +185,6 @@ public class Controller
             for(Kante zu : n.kantenZuKnoten)
             {
                 zu.setEffect(null);
-
                 zu.linie.setStrokeWidth(1.2);
                 zu.pfeil1.setEffect(null);
                 zu.pfeil2.setEffect(null);
@@ -174,7 +192,6 @@ public class Controller
             for(Kante von : n.kantenVonKnoten)
             {
                 von.setEffect(null);
-
                 von.linie.setStrokeWidth(1.2);
                 von.linie.setStroke(Color.GRAY.deriveColor(1,1,0.5, 1));
                 von.pfeil1.setStroke(Color.GRAY.deriveColor(1,1,0.5, 1));
@@ -183,7 +200,6 @@ public class Controller
             for(Kante an : n.kantenAnKnoten)
             {
                 an.setEffect(null);
-
                 an.linie.setStrokeWidth(1.2);
                 an.pfeil1.setEffect(null);
                 an.pfeil2.setEffect(null);
