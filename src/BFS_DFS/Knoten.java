@@ -124,7 +124,6 @@ class Knoten extends Circle
     private class Delta
     { double x, y; }
 
-
     private void texteBinden()
     {
         text.xProperty().bind(this.centerXProperty().subtract(7));

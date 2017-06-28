@@ -166,6 +166,7 @@ public class Controller
         pause.setOnFinished((ActionEvent event) -> kantenKlassifizieren());
     }
 
+
     /**Zurücksetzen einer Tiefensuche*/
     private void dfsReset()
     {
