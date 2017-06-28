@@ -9,7 +9,7 @@ import javafx.scene.shape.StrokeLineCap;
 
 /**
  * Created by E.E on 21.05.2017.
- * Kante mit Attributen für Verbindung zwischen den Knoten und Zeitstempel für Tiefensuche.
+ * Kante mit Attributen für Verbindung zwischen den Knoten, Zeitstempel für Tiefensuche.
  */
 class Kante extends Group
 {
@@ -24,7 +24,6 @@ class Kante extends Group
     int zuKnotenHinStempel;
     int zuKnotenZurückStempel;
 
-
     Kante(int von, int zu, String vonKnoten, String zuKnoten)
     {
         this( new Line(), new Line(), new Line() );
@@ -34,7 +33,7 @@ class Kante extends Group
         this.zuKnoten = zuKnoten;
     }
 
-    //-------------------------------------------
+    //Müssen public sein, da manche Effekte nur auf die Pfeilspitze angewendet werden.
     public final Line linie;
     public final Line pfeil1;
     public final Line pfeil2;
@@ -68,7 +67,6 @@ class Kante extends Group
         pfeil1.setStrokeLineCap(StrokeLineCap.ROUND);
         pfeil2.setStrokeLineCap(StrokeLineCap.ROUND);
 
-
         InvalidationListener updater = o -> {
             double ex = getEndX();
             double ey = getEndY();
@@ -79,7 +77,6 @@ class Kante extends Group
             pfeil1.setEndY(ey);
             pfeil2.setEndX(ex);
             pfeil2.setEndY(ey);
-
 
             if (ex == sx && ey == sy)
             {
@@ -92,11 +89,11 @@ class Kante extends Group
                 double factor = arrowLength / Math.hypot(sx-ex, sy-ey);
                 double factorO = arrowWidth / Math.hypot(sx-ex, sy-ey);
 
-                // part in in Richtung Hauptlinie
+                // Part in Richtung Hauptlinie
                 double dx = (sx - ex) * factor;
                 double dy = (sy - ey) * factor;
 
-                // part ortogonal zu Haupftlinie
+                // Part ortogonal zu Hauptlinie
                 double ox = (sx - ex) * factorO;
                 double oy = (sy - ey) * factorO;
 
@@ -107,7 +104,7 @@ class Kante extends Group
             }
         };
 
-        //properties Updater
+        //Properties Updater
         startXProperty().addListener(updater);
         startYProperty().addListener(updater);
         endXProperty().addListener(updater);
@@ -115,7 +112,7 @@ class Kante extends Group
         updater.invalidated(null);
     }
 
-    // start/end properties, werden nicht alle benutzt
+    // start/end Properties. Werden nicht alle benutzt
     public final void setStartX(double value) { linie.setStartX(value); }
 
     public final double getStartX() {

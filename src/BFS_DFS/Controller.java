@@ -156,7 +156,7 @@ public class Controller
         dfsReset();
         zeitStempel = 0;
         dfs(start);
-        ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
+        //ausgabe(); //Zeitstempel TEST-Ausgabe in Shell
 
         //Animation für die Zeitstempel ablaufen lassen
         kantenAnimation();
@@ -165,7 +165,6 @@ public class Controller
         pause.play();
         pause.setOnFinished((ActionEvent event) -> kantenKlassifizieren());
     }
-
 
     /**Zurücksetzen einer Tiefensuche*/
     private void dfsReset()
@@ -333,8 +332,8 @@ public class Controller
         }
     }
 
-    /**Nimmt
-     * @param adjazenzmatrix und
+    /**Findet die Nachbarn eines Knotens
+     * @param adjazenzmatrix in der Verbindungen erkennbar sind
      * @param x Knoten
      * @return eine Liste der Nachbsrn von Knoten x*/
     private ArrayList<Knoten> findeNachbar(int[][] adjazenzmatrix, Knoten x)
@@ -363,8 +362,8 @@ public class Controller
         return nachbar;
     }
 
-    /**Breitensuche mit
-     @param startKnoten durchführen*/
+    /**Breitensuche durchführen
+     @param startKnoten Knoten der als Start-Knoten dient*/
     private void bfs(Knoten startKnoten)
     {
         int knotenAnzahl = alleKnoten.size();
@@ -382,14 +381,14 @@ public class Controller
         }
 
         //TESTAUSGABE: Matrix anschauen
-        for (int[] eineMatrix : matrix)
+        /*for (int[] eineMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
             {
                 System.out.print(eineMatrix[j] + "\t");
             }
             System.out.print("\n");
-        }
+        }*/
 
         warteschlange.add(startKnoten);
         startKnoten.besucht = true;
@@ -420,7 +419,7 @@ public class Controller
             }
         }
 
-        //Matrix kopieren für animationAblaufen
+        //Matrix kopieren für "animationAblaufen"
         globaleMatrix = matrix;
 
         //Drag bei allen Knoten deaktivieren.
@@ -434,8 +433,8 @@ public class Controller
 
     /**Animation bei der Breitensuche
      * @param knoten aktueller Knoten
-     * @param pausenDauer wird abgewartet
-     * @param farbe die die Farbkugel annimmt
+     * @param pausenDauer die Zeit die abgewartet wird
+     * @param farbe Farbe, die die Farbkugel annimmt
      * */
     private void animationAblaufen(Knoten knoten, int pausenDauer, Color farbe)
     {
@@ -498,8 +497,8 @@ public class Controller
 
 
     /**Knoten nehmen, blinken lassen und einfärben
-     * @param knoten zum einfärben
-     * @param dauer für die Pause vom dem "Blinken"
+     * @param knoten Knoten zum einfärben
+     * @param dauer Nach dieser Dauert wird "geblinkt"
      * @param farbe Farbe die der Knoten annimmt
      * @return Farbübergang
      * */
@@ -536,7 +535,7 @@ public class Controller
     {
         //StrokeTransition übergang = new StrokeTransition(); //Linie
         int dauer = 0;  //Nach welcher Dauer das Blinken beginnen soll, Blinkdauer immer 3600!
-        int pausenDauer = 0;
+        int pausenDauer;
 
         for (Knoten n : alleKnoten)
         {
@@ -604,7 +603,7 @@ public class Controller
 
 
     private int zeitStempel;
-    /**Tiefensuche
+    /**Tiefensuche, wird rekursiv durchgeführt
      * @param startKnoten Start-Knoten*/
     private void dfs(Knoten startKnoten)
     {
@@ -622,14 +621,14 @@ public class Controller
         }
 
         //TESTAUSGABE: Matrix anschauen
-        for (int[] aMatrix : matrix)
+        /*for (int[] aMatrix : matrix)
         {
             for (int j = 0; j < matrix.length; j++)
             {
                 System.out.print(aMatrix[j] + "\t");
             }
             System.out.print("\n");
-        }
+        }*/
 
         zeitStempel++;
 
@@ -696,7 +695,6 @@ public class Controller
             knotenBezeichnung = knotenBezeichnung+knotenID;
         }
 
-        //Text test = new Text(knotenBezeichnung);
         Knoten zieh = new Knoten(Color.WHITESMOKE, startX, startY, knotenBezeichnung);
         zieh.id = knotenID;
         knotenID++;
@@ -728,8 +726,8 @@ public class Controller
     }
 
 
-    /**Prüfen ob die gegeben
-     * @param knotenBezeichnung schon vergeben wurde.
+    /**Prüfen ob Knotenbezeichnung schon vergeben wurde
+     * @param knotenBezeichnung die zu prüfende Bezeichnung
      * @return true, wenn Bezeichnung schon vergeben wurde.
      * */
     private boolean knotenBezeichnungVorhanden(String knotenBezeichnung)
@@ -933,8 +931,8 @@ public class Controller
 
                 löschComboBoxKanten.getItems().addAll(kante.vonKnoten + " -> " + kante.zuKnoten);
 
-                knotenVon.kantenVonKnoten.add(kante);// TODO wenn Matrix überarbeiter wird
-                knotenZu.kantenZuKnoten.add(kante);//TODO wenn Matrix überarbeiter wird
+                knotenVon.kantenVonKnoten.add(kante);//
+                knotenZu.kantenZuKnoten.add(kante);//
 
                 //Ausgewählte Knoten mit Kante fest verbinden (bind)
                 kante.startXProperty().bind(knotenVon.centerXProperty().add(knotenVon.translateXProperty()));
@@ -948,10 +946,9 @@ public class Controller
         }
     }
 
-    /**Prüft ob zwischen
+    /**Prüft ob zwischen Knoten bereits eine Verbindung besteht
      * @param von Knotennr. "von"
      * @param zu Knotennr. "zu"
-     * eine Verbindung bereits besteht
      * @return true, wenn Verbindung schon vorhanden ist*/
     private boolean verbindungVorhanden(int von, int zu)
     {

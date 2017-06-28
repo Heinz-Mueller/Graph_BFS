@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * Knoten mit mehreren Listen. Besteht aus einem Kreis und mehreren Texten die an den Kreis gebunden werden
  */
 
-
 class Knoten extends Circle
 {
     ArrayList<Kante> kantenAnKnoten = new ArrayList<>();
